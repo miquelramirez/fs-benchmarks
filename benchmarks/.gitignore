@@ -1,0 +1,12 @@
+
+# Don't version the automatically generated instances
+array-sort*/instance*.pddl
+block-grouping*/instance*.pddl
+blocksworld*/instance*.pddl
+counters*/instance*.pddl
+gardening*/instance*.pddl
+gripper*/instance*.pddl
+hanoi*/instance*.pddl
+missionaries-and-cannibals*/instance*.pddl
+n-puzzle*/instance*.pddl
+simple-sokoban*/instance*.pddl
