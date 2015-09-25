@@ -60,7 +60,7 @@ public:
 	External(const std::string& data_dir) : ExternalBase(data_dir) {}
 
     void registerComponents() const {
-    	LogicalComponentRegistry::instance().add("@geq_or_0", [](const std::vector<fs::Term::cptr>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });
+    	LogicalComponentRegistry::instance().addFormulaCreator("@geq_or_0", [](const std::vector<fs::Term::cptr>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });
     	LogicalComponentRegistry::instance().add(typeid(isZeroOrNotSmallerThanFormula), new GecodeTranslator());
     }
 };
