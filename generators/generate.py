@@ -9,21 +9,9 @@ import importlib
 import sys
 import json
 from base import save_file
+from .benchmarks import shortnames
 
-_tags = {
-    "array-sort": "array-sort",
-    "block-grouping": "block-grouping",
-    "blocksworld": "blocksworld",
-    "counters": "counters",
-    "gardening": "gardening",
-    "gripper": "gripper",
-    "hanoi": "hanoi",
-    "missionaries": "missionaries-and-cannibals",
-    "n-puzzle": "n-puzzle",
-    "sokoban": "sokoban",
-}
-
-_tagkeys = _tags.keys()
+_tagkeys = shortnames.keys()
 
 
 def parse_arguments():
@@ -62,7 +50,7 @@ def main():
     sorted_problems = sorted(problems)
 
     for problem in sorted_problems:  # We iterate through problems ordered alphabetic. to ensure full determinism
-        directory = _tags[problem]
+        directory = shortnames[problem]
         package = importlib.import_module(directory + ".generator")
         package.generate(random, base_dir)
 
