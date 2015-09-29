@@ -17,6 +17,10 @@
         size_t - int
     )
 
+    (:constants
+        bottom - disk_
+    )
+
     ;; In Hector's formulation, the type of the argument ?d of the 'loc'
     ;; function has type disk, not disk_. That makes the move action fail
     ;; to type check, because it assigns (loc (top ?pi)), and (top ?pi)
@@ -35,9 +39,6 @@
         (size ?ds - disk_) - size_t
     )
 
-    (:constants
-        bottom - disk_
-    )
 
   (:action move
    :parameters (?pi ?pj - peg)
