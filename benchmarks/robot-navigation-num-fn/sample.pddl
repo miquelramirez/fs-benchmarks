@@ -1,7 +1,5 @@
 (define (problem sample)
     (:domain robot-navigation-num-fn)
-    (:objects)
-
     (:init
         (= (x) 0.0)
         (= (y) 0.0)
@@ -15,13 +13,13 @@
         (= (dx north) 0.0) (= (dy north) 1.5)
         (= (dx south) 0.0) (= (dy south) -1.5)
         (= (dx east) 1.5) (= (dy east) 0.0)
-        (= (dx west) -1.5) (= (dy north) 0.0)
+        (= (dx west) -1.5) (= (dy west) 0.0)
     )
 
     (:goal
       (and
-          (>= (x) 3) (<= (x) 5)
-          (>= (y) 3) (<= (y) 5)
+          (>= (x) 3.0) (<= (x) 5.0)
+          (>= (y) 3.0) (<= (y) 5.0)
       )
     )
 

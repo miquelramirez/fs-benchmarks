@@ -4,8 +4,6 @@
 
 (define (domain robot-navigation-num-fn)
 
-  (:requirements typing)
-
   (:types
             ;;angle - int
             direction - object
