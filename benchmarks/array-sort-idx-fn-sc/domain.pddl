@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-(define (domain array-sort-idx-fn)
+(define (domain array-sort-idx-fn-sc)
     (:requirements :typing)
     (:types
         position - int

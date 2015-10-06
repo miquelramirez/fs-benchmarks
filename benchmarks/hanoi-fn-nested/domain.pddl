@@ -39,7 +39,6 @@
         (size ?ds - disk_) - size_t
     )
 
-
   (:action move
    :parameters (?pi ?pj - peg)
    :precondition (and
