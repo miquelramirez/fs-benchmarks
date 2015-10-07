@@ -18,7 +18,7 @@
     ;; Swap the values of the two given array positions
     (:action swap
         :parameters (?i ?j - position)
-        :precondition (and )  ;; empty precondition
+        :precondition (and (< ?i ?j))
         :effect       (and
             (assign (idx ?i) (idx ?j))
             (assign (idx ?j) (idx ?i))
