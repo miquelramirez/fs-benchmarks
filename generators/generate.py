@@ -9,7 +9,7 @@ import importlib
 import sys
 import json
 from base import save_file
-from .benchmarks import shortnames
+from benchmarks import shortnames
 
 _tagkeys = shortnames.keys()
 
