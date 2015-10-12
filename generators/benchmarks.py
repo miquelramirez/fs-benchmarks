@@ -28,5 +28,6 @@ shortnames = {
     "hanoi": "hanoi",
     "missionaries": "missionaries-and-cannibals",
     "n-puzzle": "n-puzzle",
+    "n-queens": "n-queens",
     "sokoban": "sokoban",
 }
