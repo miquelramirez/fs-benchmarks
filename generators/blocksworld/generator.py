@@ -189,7 +189,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in range(3, 26, 3):
+    for size in range(5, 31, 5):
         for run in range(1, 4):
             name = instance_name(size, run)
             problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size)
@@ -208,6 +208,11 @@ def generate(random, output):
 
             # Functional version + nested fluents + height constraint
             generator(FStripsPrinter(problem, nested=True, height=True))
+
+    for size in range(20, 101, 20):
+        for run in range(1, 4):
+            name = instance_name(size, run)
+            problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size)
 
             # Standard PDDL version with tower goal
             generator(PDDLPrinter(problem, tower=True))

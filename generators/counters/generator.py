@@ -113,7 +113,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [2] + list(range(4, 51, 4)):
+    for size in range(5, 51, 5):
         # First we generate the standard inequality versions
         domain = "counters"
         name = instance_name(size)

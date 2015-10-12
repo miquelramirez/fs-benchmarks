@@ -138,7 +138,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for n in [2, 3, 4]:  # We generate only 8- and 15- puzzle instances
+    for n in [3, 4]:  # We generate only 8- and 15- puzzle instances
         for run in range(1, 11):
             domain = "n-puzzle"
             name = instance_name(n**2 - 1, run)

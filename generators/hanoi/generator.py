@@ -146,7 +146,7 @@ def generate(random, output):
     generator = Generator(output)
     domain = "hanoi"
     num_pegs = 3
-    for num_disks in range(3, 30, 2):
+    for num_disks in range(3, 16):
         name = instance_name(num_pegs, num_disks)
         problem = Problem(name, domain, num_pegs, num_disks)
         generator(PDDLPrinter(problem))  # STRIPS version
