@@ -15,6 +15,7 @@ benchmark_sets = dict(
         "missionaries": ["missionaries-and-cannibals-fn"],
         "n-puzzle": ["n-puzzle-fn-v1", "n-puzzle-fn-v2", "n-puzzle-fn-v1-nested", "n-puzzle-fn-v2-nested"],
         "n-queens": ["n-queens-fn"],
+        "partition": ["partition-fn"],
         "sokoban": ["simple-sokoban-fn", "simple-sokoban-fn-alldiff", "simple-sokoban-fn-nested",
                     "simple-sokoban-fn-nested-alldiff", "simple-sokoban-rnd-fn", "simple-sokoban-rnd-fn-alldiff"],
     })
