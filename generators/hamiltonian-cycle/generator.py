@@ -16,7 +16,6 @@ def parse_arguments():
                         help='Output dir where the generated problems will be placed')
     args = parser.parse_args()
 
-    assert args.max >= 4
     return args
 
 
@@ -59,10 +58,10 @@ class FStripsPrinter(ProblemPrinter):
     def add_constraints(self):
         if self.constrained:
             constraint_elems = ["(prev {})".format(n) for n in self.problem.nodes]
-            self.instance.add_goal("(alldiff_constraint {})".format(' '.join(constraint_elems)))
+            self.instance.add_goal("(@alldiff {})".format(' '.join(constraint_elems)))
 
     def get_domain_name(self):
-        return 'fn-' + self.problem.domain
+        return self.problem.domain + '-fn'
 
 
 class PDDLPrinter(ProblemPrinter):
@@ -89,6 +88,9 @@ class PDDLPrinter(ProblemPrinter):
         for n in self.problem.nodes:
             self.instance.add_goal("(visited {})".format(n))
 
+    def get_domain_name(self):
+        return self.problem.domain + '-strips'
+
 
 class Problem(object):
     def __init__(self, random, name, domain, size, prob):
@@ -114,7 +116,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in range(20, 21, 20):
+    for size in range(20, 61, 20):
         for p in [.2, .4, .6]:
             for run in range(1, 4):
                 name = instance_name(size, p, run)
