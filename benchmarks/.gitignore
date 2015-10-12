@@ -9,4 +9,5 @@ gripper*/instance*.pddl
 hanoi*/instance*.pddl
 missionaries-and-cannibals*/instance*.pddl
 n-puzzle*/instance*.pddl
+n-queens*/instance*.pddl
 simple-sokoban*/instance*.pddl
