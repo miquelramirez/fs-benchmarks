@@ -56,6 +56,7 @@ def main():
 
     save_file('last_generation.json', json.dumps(dict(
         comment="This is the global generator configuration used the last time the generator was invoked",
+        command="python3 generate.py --seed {} --problems {}".format(args.seed, ' '.join(sorted_problems)),
         seed=args.seed, problems=sorted_problems)))
 
 if __name__ == "__main__":
