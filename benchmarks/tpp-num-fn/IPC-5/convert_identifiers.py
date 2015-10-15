@@ -6,7 +6,8 @@ def normalize_identifiers( text ) :
     stuff_to_subst = [  ('drive-cost', 'drive_cost'),
                         ('total-cost', 'total_cost'),
                         ('on-sale', 'on_sale'),
-                        ('TPP-Metric', 'TPP_Metric')
+                        ('TPP-Metric', 'TPP_Metric'),
+                        ('(loc truck0 depot0)', '(= (loc truck0) depot0)')
     ]
 
     for term, replacement in stuff_to_subst :

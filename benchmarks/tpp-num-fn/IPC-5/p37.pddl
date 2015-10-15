@@ -2233,7 +2233,7 @@ goods0 goods1 goods2 goods3 goods4 goods5 goods6 goods7 goods8 goods9 goods10 go
 (= (on_sale goods28 market40) 0)
 (= (on_sale goods32 market40) 0)
 (= (on_sale goods36 market40) 0)
-(loc truck0 depot0)
+(= (loc truck0) depot0)
 (= (drive_cost depot0 market1) 381.20)
 (= (drive_cost market1 depot0) 381.20)
 (= (drive_cost depot0 market2) 737.52)
@@ -3988,7 +3988,7 @@ goods0 goods1 goods2 goods3 goods4 goods5 goods6 goods7 goods8 goods9 goods10 go
 (>= (bought goods34) (request goods34))
 (>= (bought goods35) (request goods35))
 (>= (bought goods36) (request goods36))
-(loc truck0 depot0)))
+(= (loc truck0) depot0)))
 
 (:metric minimize (total_cost))
 )
