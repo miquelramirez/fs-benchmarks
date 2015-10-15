@@ -105,9 +105,9 @@ def generate(random, output):
     
     domain = "gripper"
     for num_grippers in [2, 4]:
-        for num_rooms in [2, 4, 6]:
-            for max_balls_per_room in [5, 10]:
-                for run in range(1, 4):
+        for num_rooms in [2, 5, 8]:
+            for max_balls_per_room in [10, 15]:
+                for run in range(1, 3):
                     name = instance_name(num_grippers, num_rooms, max_balls_per_room, run)
                     problem = Problem(random, name, domain, num_grippers, num_rooms, max_balls_per_room)
                     generator(FStripsPrinter(problem, nested=False))  # Functional version

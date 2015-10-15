@@ -29,22 +29,22 @@ class GecodeTranslator : public AtomicFormulaTranslator {
 public:
 	GecodeTranslator() {}
 
-	void registerVariables(const fs::AtomicFormula::cptr formula, SimpleCSP& csp, GecodeCSPVariableTranslator& translator, Gecode::IntVarArgs& intvars, Gecode::BoolVarArgs& boolvars) const {
+	void registerVariables(const fs::AtomicFormula::cptr formula, GecodeCSPVariableTranslator& translator) const {
 		// Register recursively subterms variables
-		AtomicFormulaTranslator::registerVariables(formula, csp, translator, intvars, boolvars);
+		AtomicFormulaTranslator::registerVariables(formula, translator);
 
 		// TODO - Register two boolean reification variables b1 and b2 in the translator.
 		throw std::runtime_error("Gecode translator still unimplemented");
 	}
 
-	void registerConstraints(const fs::AtomicFormula::cptr formula, SimpleCSP& csp, GecodeCSPVariableTranslator& translator) const  {
+	void registerConstraints(const fs::AtomicFormula::cptr formula, GecodeCSPVariableTranslator& translator) const  {
 		auto concrete = dynamic_cast<const isZeroOrNotSmallerThanFormula*>(formula);
 		assert(concrete);
 
 		// Register possible nested constraints recursively by calling the parent registrar
-		AtomicFormulaTranslator::registerConstraints(formula, csp, translator);
+		AtomicFormulaTranslator::registerConstraints(formula, translator);
 
-		Gecode::IntVarArgs variables = translator.resolveVariables(concrete->getSubterms(), CSPVariableType::Input, csp);
+		Gecode::IntVarArgs variables = translator.resolveVariables(concrete->getSubterms(), CSPVariableType::Input, translator.getBaseCSP());
 
 		// TODO - Recover the boolean reification variables.
 		// reification_vars;

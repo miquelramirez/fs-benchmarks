@@ -6,7 +6,9 @@ blocksworld*/instance*.pddl
 counters*/instance*.pddl
 gardening*/instance*.pddl
 gripper*/instance*.pddl
+hamiltonian-cycle*/instance*.pddl
 hanoi*/instance*.pddl
 missionaries-and-cannibals*/instance*.pddl
 n-puzzle*/instance*.pddl
+n-queens*/instance*.pddl
 simple-sokoban*/instance*.pddl
