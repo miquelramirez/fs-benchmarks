@@ -26,6 +26,7 @@
 	(:action move
 		:parameters (?car - car ?to - curb)
 		:precondition (and
+			(not (= (loc ?car) ?to))  ;; Don't move the car to its same curb!
 			(= (curb_pos ?car) (occupation (loc ?car)))  ; The car is the last in its curb, and thus can move out
 			;; occupation(?to) < MAX_OCCUPATION  (this one is implicit!)
 		)
