@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; n-puzzle Domain
+;;; Parking Domain
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; The parking problem, adapted to Functional STRIPS from the sequential track
 ;;; of the 2011 IPC:
