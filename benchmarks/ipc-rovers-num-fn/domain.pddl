@@ -25,7 +25,7 @@
   (equipped_for_imaging ?r - rover)
   (have_rock_analysis ?r - rover ?w - waypoint)
   (have_soil_analysis ?r - rover ?w - waypoint)
-	(calibrated ?c - camera ?r - rover)
+	(calibrated ?c - camera)
 	(supports ?c - camera ?m - mode)
   (visible ?w - waypoint ?p - waypoint)
   (have_image ?r - rover ?o - objective ?m - mode)
@@ -121,37 +121,31 @@
 )
 
 (:action calibrate
- :parameters (?r - rover ?i - camera ?t - objective ?w - waypoint)
+ :parameters (?i - camera ?t - objective)
  :precondition (and
-                    (equipped_for_imaging ?r)
-                    (>= (energy ?r) 2)
+                    (>= (energy (on_board ?i)) 2)
                     (calibration_target ?i ?t)
-                    (= (location ?r) ?w)
-                    (visible_from ?t ?w)
-                    (= (on_board ?i) ?r)
+                    (visible_from ?t (location (on_board ?i)))
 		)
 
   :effect (and
-                (decrease (energy ?r) 2)
-                (calibrated ?i ?r)
+                (decrease (energy (on_board ?i)) 2)
+                (calibrated ?i)
           )
 )
 
 (:action take_image
- :parameters (?r - rover ?p - waypoint ?o - objective ?i - camera ?m - mode)
+ :parameters (?o - objective ?i - camera ?m - mode)
  :precondition (and
-                    (calibrated ?i ?r)
-                    (= (on_board ?i) ?r)
-                    (equipped_for_imaging ?r)
+                    (calibrated ?i)
                     (supports ?i ?m)
-                    (visible_from ?o ?p)
-                    (= (location ?r) ?p)
-                    (>= (energy ?r) 1)
+                    (visible_from ?o (location (on_board ?i)))
+                    (>= (energy (on_board ?i)) 1)
              )
  :effect (and
-                (have_image ?r ?o ?m)
-                (not (calibrated ?i ?r))
-                (decrease (energy ?r) 1)
+                (have_image (on_board ?i) ?o ?m)
+                (not (calibrated ?i))
+                (decrease (energy (on_board ?i)) 1)
 		)
 )
 
