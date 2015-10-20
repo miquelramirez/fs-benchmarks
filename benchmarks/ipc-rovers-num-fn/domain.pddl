@@ -11,6 +11,7 @@
         mode - object
         objective - object
         store_status - object
+        count energy_level - int
 )
 
 (:constants
@@ -26,7 +27,6 @@
   (have_soil_analysis ?r - rover ?w - waypoint)
 	(calibrated ?c - camera ?r - rover)
 	(supports ?c - camera ?m - mode)
-  (available ?r - rover)
   (visible ?w - waypoint ?p - waypoint)
   (have_image ?r - rover ?o - objective ?m - mode)
   (communicated_soil_data ?w - waypoint)
@@ -36,33 +36,31 @@
 	(at_rock_sample ?w - waypoint)
   (visible_from ?o - objective ?w - waypoint)
 	(calibration_target ?i - camera ?o - objective)
-	(on_board ?i - camera ?r - rover)
 	(channel_free ?l - lander)
 	(in_sun ?w - waypoint)
-
 )
 
 (:functions
   (location ?s - situated) - waypoint
   (store ?r - rover) - store
-  (status ?s - store ) - status
-  (energy ?r - rover)  - number
-  (recharges) - number
+  (status ?s - store ) - store_status
+  (on_board ?c - camera) - rover
+  (energy ?r - rover)  - energy_level
+  (recharges) - count
 )
 
 (:action navigate
 :parameters (?x - rover ?y - waypoint ?z - waypoint)
 :precondition (and
                     (can_traverse ?x ?y ?z)
-                    (available ?x)
                     (= (location ?x) ?y)
                     (visible ?y ?z)
                     (>= (energy ?x) 8)
-	    )
+	            )
 :effect (and
               (decrease (energy ?x) 8)
-              (= (location ?x) ?z)
-		)
+              (assign (location ?x) ?z)
+		    )
 )
 
 (:action recharge
@@ -88,7 +86,7 @@
                     (= (status (store ?x)) empty)
 		)
 :effect (and
-              (= (status (store ?x)) full)
+              (assign (status (store ?x)) full)
               (decrease (energy ?x) 3)
               (have_soil_analysis ?x ?p)
               (not (at_soil_sample ?p))
@@ -105,7 +103,7 @@
                     (= (status (store ?x)) empty)
 		)
 :effect (and
-              (= (status (store ?x)) full)
+              (assign (status (store ?x)) full)
               (decrease (energy ?x) 5)
               (have_rock_analysis ?x ?p)
               (not (at_rock_sample ?p))
@@ -118,7 +116,7 @@
                     (= (status (store ?x)) full)
 		)
     :effect (and
-                  (= (status (store ?x)) empty)
+                  (assign (status (store ?x)) empty)
 	  )
 )
 
@@ -130,7 +128,7 @@
                     (calibration_target ?i ?t)
                     (= (location ?r) ?w)
                     (visible_from ?t ?w)
-                    (on_board ?i ?r)
+                    (= (on_board ?i) ?r)
 		)
 
   :effect (and
@@ -143,7 +141,7 @@
  :parameters (?r - rover ?p - waypoint ?o - objective ?i - camera ?m - mode)
  :precondition (and
                     (calibrated ?i ?r)
-                    (on_board ?i ?r)
+                    (= (on_board ?i) ?r)
                     (equipped_for_imaging ?r)
                     (supports ?i ?m)
                     (visible_from ?o ?p)
@@ -164,13 +162,11 @@
                     (= (location ?l) ?y)
                     (have_soil_analysis ?r ?p)
                     (visible ?x ?y)
-                    (available ?r)
                     (channel_free ?l)
                     (>= (energy ?r) 4)
             )
  :effect (and
               (communicated_soil_data ?p)
-              (available ?r)
               (decrease (energy ?r) 4)
 	)
 )
@@ -183,12 +179,10 @@
                     (have_rock_analysis ?r ?p)
                     (>= (energy ?r) 4)
                     (visible ?x ?y)
-                    (available ?r)
                     (channel_free ?l)
             )
  :effect (and
                 (communicated_rock_data ?p)
-                (available ?r)
                 (decrease (energy ?r) 4)
           )
 )
@@ -201,13 +195,11 @@
                     (= (location ?l) ?y)
                     (have_image ?r ?o ?m)
                     (visible ?x ?y)
-                    (available ?r)
                     (channel_free ?l)
                     (>= (energy ?r) 6)
             )
  :effect (and
                     (communicated_image_data ?o ?m)
-                    (available ?r)
                     (decrease (energy ?r) 6)
           )
 )
