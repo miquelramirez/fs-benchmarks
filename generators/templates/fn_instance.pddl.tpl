@@ -1,3 +1,4 @@
+${header_comment}
 (define (problem ${instance_name})
   (:domain ${domain_name})
   (:objects

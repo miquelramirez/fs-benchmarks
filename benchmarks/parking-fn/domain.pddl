@@ -6,6 +6,12 @@
 ;;;
 ;;; http://www.plg.inf.uc3m.es/ipc2011-deterministic/DomainsSequential.html#Parking
 ;;;
+;;; [C&P from above] This domain is original from the learning part of IPC2008. The domain involves parking
+;;; cars on a street with N curb locations, and where cars can be double-parked but not triple-parked.
+;;; The goal is to find a plan to move from one configuration of parked cars to another configuration,
+;;; by driving cars from one curb location to another. The problems in the competition contain 2*(N-1) cars,
+;;; which allows one free curb space and guarantees solvability.
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain parking-fn)

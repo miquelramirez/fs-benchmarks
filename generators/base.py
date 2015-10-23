@@ -17,6 +17,7 @@ class PlanningProblem(object):
         self.goal = []
         self.state_constraints = []
         self.bounds = []
+        self.header_comment_lines = []
 
     def add_object(self, obj, t):
         assert obj not in self.objects, "Object already declared"
@@ -34,13 +35,18 @@ class PlanningProblem(object):
     def add_domain_bound(self, bound):
         self.bounds.append(bound)
 
+    def add_int_bound(self, typename, lower, upper):
+        self.add_domain_bound("({} - int[{}..{}])".format(typename, lower, upper))
+
     def print_objects(self):
         grouped = defaultdict(list)
         for o, t in self.objects.items():
             grouped[t].append(o)
 
-        print_list = lambda l: ' '.join(l)
-        return ["{} - {}".format(print_list(all_t), t) for t, all_t in grouped.items()]
+        return ["{} - {}".format(' '.join(all_t), t) for t, all_t in grouped.items()]
+
+    def add_header_comment(self, comment):
+        self.header_comment_lines.append(comment)
 
     def print(self):
         template = os.path.dirname(os.path.realpath(__file__)) + '/templates/fn_instance.pddl.tpl'
@@ -55,9 +61,15 @@ class PlanningProblem(object):
             instance_name=sanitize(self.name),
             domain_name=sanitize(self.domain_name),
             state_constraints=sctr,
-            domain_bounds=bounds
-
+            domain_bounds=bounds,
+            header_comment=self.format_header_comment()
         )
+
+    def format_header_comment(self):
+        if not self.header_comment_lines:
+            return ''
+        return ';; ' + '\n;; '.join(self.header_comment_lines) + '\n'
+
 
 
 class AbstractProblemPrinter(object):

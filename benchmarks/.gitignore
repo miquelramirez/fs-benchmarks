@@ -1,5 +1,5 @@
 
-# Don't version the automatically generated instances
+# Don't version automatically generated instances
 array-sort*/instance*.pddl
 block-grouping*/instance*.pddl
 blocksworld*/instance*.pddl
@@ -12,3 +12,6 @@ missionaries-and-cannibals*/instance*.pddl
 n-puzzle*/instance*.pddl
 n-queens*/instance*.pddl
 simple-sokoban*/instance*.pddl
+
+# Don't version automatically translated instances
+parking-fn/pfile*
