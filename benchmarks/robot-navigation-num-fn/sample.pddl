@@ -1,5 +1,5 @@
 (define (problem sample)
-    (:domain robot-navigation-num-fn)
+    (:domain robot_navigation_num_fn)
     (:init
         (= (x) 0.0)
         (= (y) 0.0)

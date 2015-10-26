@@ -18,14 +18,12 @@
 	    (price ?g - goods ?m - market) - number
 	    (bought ?g - goods) - number
 	    (request ?g - goods) - number
-	    (total_cost) - number
 )
 
 (:action drive
  :parameters (?t - truck ?from ?to - place)
- :precondition (and  (= (loc ?t) ?from) )
+ :precondition (and  (= (loc ?t) ?from)  )
  :effect (and  (assign (loc ?t) ?to)
-	             (increase (total_cost) (drive_cost ?from ?to))
         )
 )
 
@@ -38,7 +36,6 @@
                 )
  :effect (and
               (decrease (on_sale ?g ?m) (- (request ?g) (bought ?g)))
-	            (increase (total_cost) (* (- (request ?g) (bought ?g)) (price ?g ?m)))
 	            (assign (bought ?g) (request ?g))
          )
 )
@@ -51,7 +48,6 @@
 		                (<= (on_sale ?g ?m) (- (request ?g) (bought ?g)))
                )
  :effect (and (assign (on_sale ?g ?m) 0.0)
-	            (increase (total_cost) (* (on_sale ?g ?m) (price ?g ?m)))
 	            (increase (bought ?g) (on_sale ?g ?m))
          )
 )

@@ -77,6 +77,7 @@
   :parameters (?v - vehicle ?dst - place)
   :precondition (and
                       (= (type ?v) cart)
+                      (not (= ?dst nowhere))
                       (connected_by_land (location ?v) ?dst)
                 )
   :effect (and
@@ -89,6 +90,7 @@
   :parameters (?v - vehicle ?dst - place)
   :precondition (and
                       (= (type ?v) train)
+                      (not (= ?dst nowhere))
                       (connected_by_rail (location ?v) ?dst)
                       (>= (available coal ?v) 1)
                 )
@@ -102,6 +104,7 @@
   :parameters (?v - vehicle ?p2 - place)
   :precondition (and (= (type ?v) ship)
                      (connected_by_sea (location ?v) ?p2)
+                     (not (= ?p2 nowhere))
                      (>= (available coal ?v) 2)
                 )
   :effect (and  (assign (location ?v) ?p2)

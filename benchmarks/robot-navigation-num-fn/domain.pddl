@@ -2,7 +2,7 @@
 ;; to get into area defined by coordinates
 ;; (x^{G}_{min}, x^{G}_{max}, y^{G}_{min}, y^{G}_{max})
 
-(define (domain robot-navigation-num-fn)
+(define (domain robot_navigation_num_fn)
 
   (:types
             ;;angle - int
