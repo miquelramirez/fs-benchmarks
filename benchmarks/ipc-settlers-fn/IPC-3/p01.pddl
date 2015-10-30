@@ -1,6 +1,6 @@
 (define
       (problem settlers)
-      (:domain civ_fn)
+      (:domain civ_fn_fn)
 
  (:objects
   vehicle4 vehicle3 vehicle2 vehicle1 vehicle0 - vehicle
