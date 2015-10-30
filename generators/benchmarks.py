@@ -1,4 +1,10 @@
 
+# -----------------------------------------------------------------------------
+# This file contains several pieces of information necessary for the automatic
+# generation / translation of all benchmarks, of experiments, etc.
+# -----------------------------------------------------------------------------
+
+
 benchmark_sets = dict(
     # Functional STRIPS benchmark sets
     fs={
@@ -33,4 +39,10 @@ shortnames = {
     "n-puzzle": "n-puzzle",
     "n-queens": "n-queens",
     "sokoban": "sokoban",
+    "parking": "parking"
+}
+
+#  A mapping between translators and the original directory where the translator gets the instances to translate
+translations = {
+    "parking": "parking-strips"
 }
