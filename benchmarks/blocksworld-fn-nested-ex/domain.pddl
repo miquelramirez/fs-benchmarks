@@ -1,19 +1,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Blocksworld domain
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; The classical blocksworld problem, functional version.
+;;; The classical blocksworld problem, functional version with nested fluents.
 ;;; Loosely based on the IPC 2008 version available at <http://ipc.informatik.uni-freiburg.de/PddlExtension>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain blocksworld-fn-ex)
+(define (domain blocksworld-fn-nested-ex)
 
   (:types place color - object
           block - place
   )
 
-  (:constants
-  	table - place
-  )
+  (:constants table - place)
 
   (:predicates
    (clear ?b - place)
@@ -25,27 +23,24 @@
    )
 
   (:action move-to-block
-   :parameters (?b - block ?from - place ?to - block)
+   :parameters (?b - block ?to - block)
    :precondition (and
               (clear ?b)
 		      (clear ?to)
-		      (= (loc ?b) ?from)
 		      (not (= ?b ?to))
-		      (not (= ?b ?from))
-              (not (= ?from ?to)))
+              (not (= (loc ?b) ?to)))
    :effect (and (assign (loc ?b) ?to)
-		(clear ?from)
+		(clear (loc ?b))
 		(not (clear ?to))
 		)
    )
 
   (:action move-to-table
-   :parameters (?b ?from - block)
+   :parameters (?b - block)
    :precondition (and (clear ?b)
-                 (not (= ?b ?from))
-                 (= (loc ?b) ?from))
+                 (not (= (loc ?b) table)))
    :effect (and (assign (loc ?b) table)
-		(clear ?from))
+		(clear (loc ?b)))
    )
 
 )

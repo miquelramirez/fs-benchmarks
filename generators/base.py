@@ -54,6 +54,9 @@ class PlanningProblem(object):
         sctr = "(:constraints {})".format(' '.join(self.state_constraints)) if self.state_constraints else ''
         bounds = "(:bounds {})".format(' '.join(self.bounds)) if self.bounds else ''
 
+        if len(self.goal) > 1:
+            self.goal = ['(and '] + self.goal + [')']
+
         return Template(load_file(template)).substitute(
             objects='\n\t'.join(self.print_objects()),
             init='\n\t'.join(self.init),

@@ -1,6 +1,6 @@
 
 (define (problem instance_5_1)
-  (:domain blocksworld-fn-ex)
+  (:domain blocksworld-fn-nested-ex)
   (:objects
     b1 b2 b3 - block
     red green blue - color

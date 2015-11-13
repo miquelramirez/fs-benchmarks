@@ -47,11 +47,15 @@ class ProblemPrinter(AbstractProblemPrinter):
 
 class FStripsPrinter(ProblemPrinter):
     def __init__(self, problem, nested=False, height=False, tower=False):
-        """ Generate a random blocksworld problem, FSTRIPS encoding.
-            'height' uses an additional 'height' functional symbol to provide a more strict goal formula.
-            'tower' changes the goal to an "anonymous-tower" goal - i.e. build a tower regardless of block identities.
         """
+        Generate a random blocksworld problem, FSTRIPS encoding, in one of several possible variants:
+        :param nested: encoding with nested fluents.
+        :param height: uses an additional 'height' functional symbol to provide a more constrained goal formula.
+        :param tower: changes the goal to an "anonymous-tower" goal - i.e. build a tower regardless of block identities.
+        """
+        # Check for incompatibilities
         assert not (height and tower)
+
         self.height_constraint = height
         self.tower_goal = tower
         self.nested = nested
@@ -103,6 +107,58 @@ class FStripsPrinter(ProblemPrinter):
             self.instance.add_domain_bound("(height_t - int[0..{}])".format(self.problem.max_height))
 
 
+class ExistentialGoalFStripsPrinter(FStripsPrinter):
+    """
+    A problem where the goal is an existentially quantified formula taking into account the colors of different
+    blocks and their positions, but not their IDs
+    """
+
+    def __init__(self, problem, nested=False):
+        super().__init__(problem, nested=nested)
+
+    def add_init(self):
+        super().add_init()
+        for b, c in zip(self.problem.blocks, self.problem.block_colors):
+            self.instance.add_init('(= (color {}) {})'.format(b, c))
+
+    def add_objects(self):
+        super().add_objects()
+        for o in self.problem.colors:
+            self.instance.add_object(o, "color")
+
+    def get_domain_name(self):
+        components = [self.problem.domain, 'fn', 'ex']
+        if self.nested:
+            components.insert(2, 'nested')
+        return '-'.join(components)
+
+    def add_goals(self):
+        blocks = self.problem.quantified_blocks
+        blocks_line = ' '.join(blocks)  # e.g. the string "?b1_ ?b2_ ?b3_"
+        quantif = "(exists ({} - block) ( and ".format(blocks_line)
+        alldiff = "(@alldiff {})".format(blocks_line)
+        colors = ' '.join(["(= (color {}) {})".format(b, c) for b, c in zip(blocks, self.problem.quantified_block_colors)])
+        locations = ' '.join(["(= (loc {}) {})".format(b1, b2) for b1, b2 in zip(blocks, blocks[1:])])
+
+        whole_goal = ' '.join([quantif, alldiff, colors, locations, '))'])
+        self.instance.add_goal(whole_goal)
+
+"""
+    An example:
+
+    (exists (?b1_ ?b2_ ?b3_ - block) ( and
+        (@alldiff ?b1_ ?b2_ ?b3_)
+        (= (color ?b1_) red)
+        (= (color ?b2_) blue)
+        (= (color ?b3_) red)
+
+        (= (loc ?b1_) ?b2_)
+        (= (loc ?b2_) ?b3_)
+    ))
+
+"""
+
+
 class PDDLPrinter(ProblemPrinter):
 
     def __init__(self, problem, tower=False):
@@ -143,14 +199,54 @@ class PDDLPrinter(ProblemPrinter):
         self.instance.add_init("(handempty)")
 
 
+class ExistentialGoalPDDLPrinter(PDDLPrinter):
+    """
+    A problem where the goal is an existentially quantified formula taking into account the colors of different
+    blocks and their positions, but not their IDs
+    """
+
+    def __init__(self, problem):
+        super().__init__(problem)
+
+    def add_init(self):
+        super().add_init()
+        for b, c in zip(self.problem.blocks, self.problem.block_colors):
+            self.instance.add_init('(hascolor {} {})'.format(b, c))
+
+    def add_objects(self):
+        super().add_objects()
+        for o in self.problem.colors:
+            self.instance.add_object(o, "color")
+
+    def get_domain_name(self):
+        components = [self.problem.domain, 'strips', 'ex']
+        return '-'.join(components)
+
+    def add_goals(self):
+        blocks = self.problem.quantified_blocks
+        blocks_line = ' '.join(blocks)  # e.g. the string "?b1_ ?b2_ ?b3_"
+        quantif = "(exists ({} - block) ( and ".format(blocks_line)
+        colors = ' '.join(["(hascolor {} {})".format(b, c) for b, c in zip(blocks, self.problem.quantified_block_colors)])
+        locations = ' '.join(["(on {} {})".format(b1, b2) for b1, b2 in zip(blocks, blocks[1:])])
+
+        whole_goal = ' '.join([quantif, colors, locations, '))'])
+        self.instance.add_goal(whole_goal)
+
+
 class Problem(object):
-    def __init__(self, random, name, domain, num_blocks):
+    def __init__(self, random, name, domain, num_blocks, existentials=0):
         self.random = random
         self.name = name
         self.domain = domain
         self.num_blocks = num_blocks
         self.max_height = num_blocks
+        self.existentials = existentials
         self.blocks = ['b{}'.format(i) for i in range(1, num_blocks+1)]
+
+        self.colors = ['red', 'blue']
+        self.block_colors = [random.choice(self.colors) for _ in range(1, self.num_blocks + 1)]
+        self.quantified_blocks = ["?b{}_".format(i) for i in range(1, self.existentials + 1)]
+        self.quantified_block_colors = [random.choice(self.colors) for _ in range(1, self.existentials + 1)]
 
         # We simply need two random configurations of blocks as initial and goal state.
         self.init, self.clear, self.init_heights = self.generate_random_configuration(self.blocks)
@@ -222,6 +318,21 @@ def generate(random, output):
 
             # Functional version + nested fluents + tower goal
             generator(FStripsPrinter(problem, nested=True, tower=True))
+
+    for size in range(5, 31, 5):
+        for existentials in range(2, size // 2, 2):
+            for run in range(1, 4):
+                name = instance_name(size, existentials, run)
+                problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size, existentials=existentials)
+
+                # STRIPS version with existential goal
+                generator(ExistentialGoalPDDLPrinter(problem))
+
+                # Functional version with existential goal
+                generator(ExistentialGoalFStripsPrinter(problem))
+
+                # Functional version with existential goal, nested-fluent move action
+                generator(ExistentialGoalFStripsPrinter(problem, nested=True))
 
 
 def main():

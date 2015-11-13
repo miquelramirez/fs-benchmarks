@@ -9,9 +9,9 @@ ${header_comment}
     ${init}
   )
 
-  (:goal (and 
+  (:goal
     ${goal}
-  ))
+  )
 
   ${state_constraints}
 
