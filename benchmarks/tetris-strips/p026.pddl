@@ -244,7 +244,7 @@ rightl0 rightl1 rightl2 rightl3 rightl4 rightl5 - right_l
 (clear f5-3f)
 )
 )
-(:metric minimize (total-cost))
+
 )
 ;; DESCRIPTION OF THE INITIAL STATE
 ;; 0   ##  ##  ##  ** 
