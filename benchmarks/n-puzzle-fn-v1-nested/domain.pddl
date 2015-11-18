@@ -10,7 +10,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain fn-n-puzzle)
+(define (domain n-puzzle-fn-v1-nested)
     (:requirements :typing)
     (:types
         direction - object

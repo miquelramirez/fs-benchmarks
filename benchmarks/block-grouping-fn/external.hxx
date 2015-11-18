@@ -28,7 +28,9 @@ public:
 	CanMoveFormula(const std::vector<fs::Term::cptr>& subterms) : ExternallyDefinedFormula(subterms) {
 		assert(subterms.size() == 2);
 	}
-	
+
+	CanMoveFormula* clone(const std::vector<fs::Term::cptr>& subterms) const { return new CanMoveFormula(subterms); }
+
 	virtual std::string name() const { return "can_move"; }
 	
 protected:

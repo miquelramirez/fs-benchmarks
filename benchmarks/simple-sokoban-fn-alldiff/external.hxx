@@ -27,6 +27,8 @@ public:
 	CanPushFormula(const std::vector<fs::Term::cptr>& subterms) : ExternallyDefinedFormula(subterms) {
 		assert(subterms.size() == 2);
 	}
+
+	CanPushFormula* clone(const std::vector<fs::Term::cptr>& subterms) const { return new CanPushFormula(subterms); }
 	
 	virtual std::string name() const { return "can_push"; }
 	

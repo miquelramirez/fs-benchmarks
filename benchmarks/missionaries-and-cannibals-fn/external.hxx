@@ -16,6 +16,8 @@ public:
 		assert(subterms.size() == 2);
 	}
 
+	isZeroOrNotSmallerThanFormula* clone(const std::vector<fs::Term::cptr>& subterms) const { return new isZeroOrNotSmallerThanFormula(subterms); }
+
 	virtual std::string name() const { return "is_0_or_not_smaller_than"; }
 
 protected:
