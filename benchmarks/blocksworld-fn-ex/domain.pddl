@@ -11,9 +11,7 @@
           block - place
   )
 
-  (:constants
-  	table - place
-  )
+  (:constants table - place)
 
   (:predicates
    (clear ?b - place)
