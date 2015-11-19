@@ -36,7 +36,7 @@
 
     (:functions
         (top ?p - peg) - disk_
-        (loc ?ds - disk_) - disk_
+        (loc ?ds - disk) - disk_
         (size ?ds - disk_) - size_t
     )
 
