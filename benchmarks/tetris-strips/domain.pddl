@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tetris
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; A simplified version of the classical tetris domain, used for the first time in IPC-2015
+;;; A simplified version of the classical tetris domain, used for the first time in IPC-2014
 ;;; https://helios.hud.ac.uk/scommv/IPC-14/domains_sequential.html
 ;;;
 ;;; Author: Mauro Vallati

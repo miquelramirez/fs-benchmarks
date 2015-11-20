@@ -252,7 +252,7 @@ rightl0 rightl1 rightl2 rightl3 rightl4 rightl5 - right_l
 (at_right_l rightl5 f0-0f f1-0f f1-1f)
 (at_square square0 f0-1f)
 (at_square square1 f2-1f)
-(= (total-cost) 0)
+
 )
 (:goal
 (and

@@ -183,7 +183,7 @@ rightl0 - right_l
 (at_two straight1 f0-2f f1-2f)
 (at_two straight2 f3-1f f4-1f)
 (at_square square0 f3-0f)
-(= (total-cost) 0)
+
 )
 (:goal
 (and
