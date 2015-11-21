@@ -15,6 +15,7 @@
 
   (:goal
   	(exists (?c1 ?c2 ?c3 ?c4 - color_t) (and
+	(not (= ?c1 0)) (not (= ?c2 0)) (not (= ?c3 0)) (not (= ?c4 0))
 
 	(not (= ?c1 ?c2))
 	(not (= ?c2 ?c3))

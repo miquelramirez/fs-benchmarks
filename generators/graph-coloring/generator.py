@@ -20,17 +20,27 @@ def parse_arguments():
     return args
 
 
-def compute_existential_goal(problem, predicate):
+def compute_std_goal(problem, color_predicate):
+    atoms = []
+    for n in problem.vertices:
+        atoms.append("(not (= ({} {}) 0))".format(color_predicate, n))
+    for n1, n2 in problem.connections:
+        atoms.append("(not (= ({} {}) ({} {})))".format(color_predicate, n1, color_predicate, n2))
+    return atoms
+
+
+def compute_existential_goal(problem, predicate, undef_val='undef'):
     variables = ["?c{}".format(i) for i in range(1, problem.num_vertices+1)]
     vars_line = ' '.join(variables)  # e.g. the string "?c1 ?c2 ?c3"
     quantif = "(exists ({} - color_t) ( and ".format(vars_line)
     atoms = []
     for var in variables:
-        atoms.append("(not (= {} undef))".format(var))
+        atoms.append("(not (= {} {}))".format(var, undef_val))
 
-    assert len(problem.vertices) == len(variables)
-    for v, c in zip(problem.vertices, variables):
-        atoms.append("({} {} {})".format(predicate, v, c))
+    if predicate is not None:  # We might want to pass a value of None if we do not want to include this type of atoms
+        assert len(problem.vertices) == len(variables)
+        for v, c in zip(problem.vertices, variables):
+            atoms.append("({} {} {})".format(predicate, v, c))
 
     for i, j in problem.connections_idx:
         atoms.append("(not (= {} {}))".format(variables[i], variables[j]))
@@ -53,21 +63,32 @@ class FStripsCSPPrinter(AbstractProblemPrinter):
             self.instance.add_init("(adjacent {} {})".format(n2, n1))
 
     def add_goals(self):
-        variables = ["?c{}".format(i) for i in range(1, self.problem.num_vertices+1)]
-        vars_line = ' '.join(variables)  # e.g. the string "?c1 ?c2 ?c3"
-        quantif = "(exists ({} - color_t) ( and ".format(vars_line)
-        atoms = []
-        for i, j in self.problem.connections_idx:
-            atoms.append("(not (= {} {}))".format(variables[i], variables[j]))
-
-        whole_goal = ' '.join([quantif, ''.join(atoms), '))'])
-        self.instance.add_goal(whole_goal)
+        self.instance.add_goal(compute_existential_goal(self.problem, None, undef_val='0'))
 
     def add_bounds(self):
         self.instance.add_int_bound("color_t", 0, self.problem.num_colors)
 
     def get_domain_name(self):
         return self.problem.domain + '-fn'
+
+
+class FStripsCSPChoicePrinter(FStripsCSPPrinter):
+    """ A printer for the raw CSP version of the problem """
+    def __init__(self, problem):
+        super().__init__(problem)
+
+    def add_init(self):
+        for n in self.problem.vertices:
+            self.instance.add_init("(= (choice {}) 0)".format(n))
+
+        super().add_init()
+
+    def add_goals(self):
+        for atom in compute_std_goal(self.problem, 'choice'):
+            self.instance.add_goal(atom)
+
+    def get_domain_name(self):
+        return self.problem.domain + '-choice-compilation-fn'
 
 
 class FStripsPrinter(AbstractProblemPrinter):
@@ -103,12 +124,8 @@ class FStripsPrinter(AbstractProblemPrinter):
             self.instance.add_init("(= (color {}) 0)".format(n))
 
     def add_goals(self):
-
-        for n in self.problem.vertices:
-            self.instance.add_goal("(not (= (color {}) 0))".format(n))
-
-        for n1, n2 in self.problem.connections:
-            self.instance.add_goal("(not (= (color {}) (color {})))".format(n1, n2))
+        for atom in compute_std_goal(self.problem, 'color'):
+            self.instance.add_goal(atom)
 
     def add_bounds(self):
         self.instance.add_int_bound("color_t", 0, self.problem.num_colors)
@@ -220,6 +237,7 @@ def generate(random, output):
                 generator(FStripsPrinter(problem))  # The Functional version
                 generator(FStripsExPrinter(problem))  # The Functional version with existentials
                 generator(FStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+                generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
                 generator(StripsPrinter(problem))  # standard STRIPS version
 
 
