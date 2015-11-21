@@ -214,7 +214,8 @@ class ExistentialGoalPDDLPrinter(PDDLPrinter):
             self.instance.add_init('(hascolor {} {})'.format(b, c))
 
     def add_objects(self):
-        super().add_objects()
+        for o in self.problem.blocks:
+            self.instance.add_object(o, "block")
         for o in self.problem.colors:
             self.instance.add_object(o, "color")
 

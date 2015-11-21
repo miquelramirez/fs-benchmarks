@@ -10,7 +10,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain block-grouping)
+(define (domain block-grouping-strips)
     (:types block color location - object)
 
     (:predicates

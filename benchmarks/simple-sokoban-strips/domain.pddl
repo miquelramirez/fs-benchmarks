@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; A simplified version of the standard sokoban domain where there are no obstacles
 
-(define (domain simple-sokoban)
+(define (domain simple-sokoban-strips)
   (:requirements :typing)
   (:types thing location direction - object
           player stone - thing)
