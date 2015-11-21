@@ -26,7 +26,17 @@ benchmark_sets = dict(
         "partition": ["partition-fn"],
         "sokoban": ["simple-sokoban-fn", "simple-sokoban-fn-alldiff", "simple-sokoban-fn-nested",
                     "simple-sokoban-fn-nested-alldiff", "simple-sokoban-rnd-fn", "simple-sokoban-rnd-fn-alldiff"],
-    })
+    },
+
+    # Standard STRIPS benchmark sets
+    strips={
+        "blocksworld": ["blocksworld-strips", "blocksworld-strips-ex", "blocksworld-strips-tower"],
+        "parking": ["parking-strips"],
+        # TODO - This list is incomplete
+
+        "sokoban": ["simple-sokoban-strips", "simple-sokoban-rnd-strips"],
+    }
+)
 
 shortnames = {
     "coloring": "graph-coloring",
