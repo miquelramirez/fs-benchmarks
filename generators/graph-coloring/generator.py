@@ -222,13 +222,13 @@ def generate(random, output):
     generator = Generator(output)
 
     # let's fix this to avoid too many parameters
-    edge_factor = 2
+    edge_factor = 1.8
 
-    colors = {5: [3, 4], 6: [3, 4], 7: [3, 4], 8: [3, 4], 9: [3, 4], 10: [4], 20: [4], 30: [5], 40: [5], 50: [6]}
+    colors = {5: [4, 6], 10: [4, 6], 20: [6, 8], 30: [6, 8], 40: [8], 50: [10]}
 
-    for num_vertices in [5, 6, 7, 8, 9] + list(range(10, 51, 10)):
+    for num_vertices in [5] + list(range(10, 51, 10)):
         for num_colors in colors[num_vertices]:
-            for run in range(1, 3):
+            for run in range(1, 4):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
                 problem = Problem(random=random, name=name, domain="graph-coloring",
                                   num_vertices=num_vertices, num_colors=num_colors,
