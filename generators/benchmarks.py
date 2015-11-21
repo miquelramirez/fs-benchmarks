@@ -8,7 +8,7 @@
 benchmark_sets = dict(
     # Functional STRIPS benchmark sets
     fs={
-        "agent-graph-coloring": ["agent-graph-coloring-fn"],
+        "graph-coloring": ["graph-coloring", "graph-coloring-agent-fn"],
         "array-sort": ["array-sort-fn", "array-sort-idx-fn", "array-sort-idx-fn-sc"],
         "block-grouping": ["block-grouping-fn", "block-grouping-fn-alldiff"],
         "blocksworld": ["blocksworld-fn", "blocksworld-fn-height", "blocksworld-fn-nested",
@@ -29,7 +29,7 @@ benchmark_sets = dict(
     })
 
 shortnames = {
-    "coloring": "agent-graph-coloring",
+    "coloring": "graph-coloring",
     "array-sort": "array-sort",
     "block-grouping": "block-grouping",
     "blocksworld": "blocksworld",
