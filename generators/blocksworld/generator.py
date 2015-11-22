@@ -286,7 +286,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in range(5, 31, 5):
+    for size in [10, 15, 20, 22, 24, 26, 28, 30]:
         for run in range(1, 4):
             name = instance_name(size, run)
             problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size)

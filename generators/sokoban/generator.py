@@ -270,6 +270,9 @@ def generate(random, output):
                 # Functional version with alldiff state constraint
                 generator(FStripsPrinter(problem, sconstraint=True))
 
+                # Functional + alldiff + nested fluents
+                generator(FStripsPrinter(problem, sconstraint=True, nested=True))
+
 
 def main():
     import random

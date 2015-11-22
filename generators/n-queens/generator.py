@@ -68,7 +68,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for n in range(4, 11):  # No solutions exist for n < 4
+    for n in range(4, 20):  # No solutions exist for n < 4
         domain = "n-queens"
         name = instance_name(n)
         problem = Problem(random, name, domain, n)

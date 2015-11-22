@@ -143,10 +143,10 @@ def generate(random, output):
             domain = "n-puzzle"
             name = instance_name(n**2 - 1, run)
             problem = Problem(random, name, domain, n)
-            generator(FStripsV1Printer(problem, nested=False))  # The Functional version
-            generator(FStripsV1Printer(problem, nested=True))  # The Functional version with nested fluents
-            generator(FStripsV2Printer(problem, nested=False))  # The Functional version
-            generator(FStripsV2Printer(problem, nested=True))  # The Functional version with nested fluents
+            # generator(FStripsV1Printer(problem, nested=False))  # The Functional version
+            # generator(FStripsV1Printer(problem, nested=True))  # The Functional version with nested fluents
+            # generator(FStripsV2Printer(problem, nested=False))  # The Functional version
+            # generator(FStripsV2Printer(problem, nested=True))  # The Functional version with nested fluents
 
 
 def main():

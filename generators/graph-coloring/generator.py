@@ -240,6 +240,18 @@ def generate(random, output):
                 generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
                 generator(StripsPrinter(problem))  # standard STRIPS version
 
+    # Generate some extra large instances for the RAW csp version, which is easier!
+    for num_vertices in [60, 70, 80, 90, 100, 200, 300]:
+        for num_colors in [10, 30]:
+            for run in range(1, 4):
+                name = instance_name(num_vertices, num_colors, edge_factor, run)
+                problem = Problem(random=random, name=name, domain="graph-coloring",
+                                  num_vertices=num_vertices, num_colors=num_colors,
+                                  edge_factor=edge_factor)
+
+                generator(FStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+                generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
+
 
 def main():
     import random

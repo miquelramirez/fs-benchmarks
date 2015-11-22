@@ -72,8 +72,8 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [5, 10, 15]:
-        for cardinality in [10, 20, 30]:
+    for size in [10, 15, 20, 30]:
+        for cardinality in [20, 30, 40]:
             for run in range(1, 4):
                 name = instance_name(size, cardinality, run)
                 problem = Problem(random=random, name=name, domain="array-sort", size=size, cardinality=cardinality)

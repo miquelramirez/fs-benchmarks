@@ -51,9 +51,9 @@
 	(= (tile_at 4) 8)
 	(= (tile_at 5) 3)
 	(= (tile_at 6) 5)
-	(= (tile_at 7) 2)
-	(= (tile_at 8) 6)
-	(= (tile_at 9) 2)
+	(= (tile_at 7) 6)
+	(= (tile_at 8) 2)
+	(= (tile_at 9) 0)
 	(= (blank) 9)
   ))
 
