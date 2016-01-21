@@ -161,11 +161,12 @@ class ExistentialGoalFStripsPrinter(FStripsPrinter):
 
 class PDDLPrinter(ProblemPrinter):
 
-    def __init__(self, problem, tower=False):
+    def __init__(self, problem, asp=False, tower=False):
         """ Generate a random blocksworld problem, Standard PDDL  encoding.
             'tower' changes the goal to an "anonymous-tower" goal - i.e. build a tower regardless of block identities.
         """
         self.tower_goal = tower
+        self.asp = asp
         super().__init__(problem)
 
     def add_objects(self):
@@ -174,7 +175,8 @@ class PDDLPrinter(ProblemPrinter):
 
     def get_domain_name(self):
         tower = 'tower' if self.tower_goal else None
-        components = [self.problem.domain, 'strips', tower]
+        asp = 'asp' if self.asp else None
+        components = [self.problem.domain, 'strips', asp, tower]
         return '-'.join([s for s in components if s])
 
     def add_goals(self):
@@ -286,13 +288,16 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [10, 15, 20, 22, 24, 26, 28, 30]:
+    for size in [5, 10, 15, 20, 22, 24, 26, 28, 30]:
         for run in range(1, 4):
             name = instance_name(size, run)
             problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size)
 
             # Standard PDDL version
             generator(PDDLPrinter(problem))
+
+            # Standard PDDL version with additional ASP plan constraints
+            generator(PDDLPrinter(problem, asp=True))
 
             # Functional version
             generator(FStripsPrinter(problem))
