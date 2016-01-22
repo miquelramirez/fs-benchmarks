@@ -4,7 +4,7 @@
 ;;; The classical hamiltonian-cycle problem.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain hamiltonian-cycle-strips)
+(define (domain hamiltonian-cycle-strips-asp)
     (:requirements :typing :adl)
     (:types node)
     (:predicates
