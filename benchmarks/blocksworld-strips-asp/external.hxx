@@ -11,8 +11,8 @@ public:
 	BWASPRules() : LPHandler() {}
 
 	void on_domain_rules(const Problem& problem, std::vector<std::string>& rules) const {
-    	rules.push_back(":- 2 <= { asupported(stack(B,C)) : object(C)}, object(B).");
-		rules.push_back(":- 2 <= { asupported(unstack(B,C)) : object(C)}, object(B).");
+    	rules.push_back(":- 2 <= { _applicable(stack(B,C)) : object(C)}, object(B).");
+		rules.push_back(":- 2 <= { _applicable(unstack(B,C)) : object(C)}, object(B).");
     }
 
     void on_state_rules(const Problem& problem, const State& seed, std::vector<std::string>& rules) const {

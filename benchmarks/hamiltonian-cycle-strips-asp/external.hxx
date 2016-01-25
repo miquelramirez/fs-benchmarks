@@ -11,8 +11,8 @@ public:
 	BWASPRules() : LPHandler() {}
 
 	void on_domain_rules(const Problem& problem, std::vector<std::string>& rules) const {
-		rules.push_back(":- 2 <= { asupported(move(N1,N2)) : node(N2)}, node(N1).");
-		rules.push_back(":- 2 <= { asupported(move(N1,N2)) : node(N1)}, node(N2).");
+		rules.push_back(":- 2 <= { _applicable(move(N1,N2)) : node(N2)}, node(N1).");
+		rules.push_back(":- 2 <= { _applicable(move(N1,N2)) : node(N1)}, node(N2).");
     }
 
     void on_state_rules(const Problem& problem, const State& seed, std::vector<std::string>& rules) const {
