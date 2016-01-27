@@ -83,6 +83,47 @@ class PDDLPrinter(ProblemPrinter):
         return self.problem.domain + '-strips'
 
 
+class ExPDDLPrinter(PDDLPrinter):
+
+    def add_init(self):
+        for i in range(0, self.problem.counters):
+            self.instance.add_init('(value c{} i{})'.format(i, self.problem.init_values[i]))
+        for i in range(0, self.problem.max_int - 1):
+            self.instance.add_init("(SUCC i{} i{})".format(i, i+1))
+
+        # Add the actual inequalities
+        for i in range(0, self.problem.max_int):
+            for j in range(i+1, self.problem.max_int):
+                self.instance.add_init("(lt i{} i{})".format(i, j))
+
+    def add_goals(self):
+        ex_vars = ' '.join("?v{}".format(i) for i in range(0, self.problem.counters))  # e.g. the string "?v1 ?v2 ?v3"
+        quantif = "(exists ({} - int) ( and ".format(ex_vars)
+        values = ' '.join("(value c{} ?v{})".format(i, i) for i in range(0, self.problem.counters))
+        relations = ' '.join("(lt ?v{} ?v{})".format(i, i+1) for i in range(0, self.problem.counters - 1))
+        goal = ' '.join([quantif, values, relations, '))'])
+        self.instance.add_goal(goal)
+
+    def get_domain_name(self):
+        return self.problem.domain + '-strips-ex'
+
+
+class PairwiseExPDDLPrinter(ExPDDLPrinter):
+
+    def add_goals(self):
+        idxs = list(range(0, self.problem.counters))
+        for i, j in zip(idxs, idxs[1:]):
+            ex_vars = ' '.join("?v{}".format(i) for i in (i, j))
+            quantif = "(exists ({} - int) ( and ".format(ex_vars)
+            values = ' '.join("(value c{} ?v{})".format(i, i) for i in (i, j))
+            relations = "(lt ?v{} ?v{})".format(i, j)
+            goal = ' '.join([quantif, values, relations, '))'])
+            self.instance.add_goal(goal)
+
+    def get_domain_name(self):
+        return self.problem.domain + '-strips-ex-pw'
+
+
 class MetricPDDLPrinter(FStripsPrinter):
     # It turns out that the Metric PDDL version is almost equal to the FStrips version,
     # since all functional symbols numerical domain.
@@ -119,6 +160,8 @@ def generate(random, output):
         name = instance_name(size)
         problem = Problem(random, name, domain, size, size*2)
         generator(PDDLPrinter(problem))  # The PDDL version
+        generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+        generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
         generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
         generator(FStripsPrinter(problem))  # The Functional version
 
@@ -127,6 +170,7 @@ def generate(random, output):
         name = instance_name(size)
         problem = Problem(random, name, domain, size, size*2, inv=True)
         generator(PDDLPrinter(problem))  # The PDDL version
+        generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
         generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
         generator(FStripsPrinter(problem))  # The Functional version
 
@@ -136,6 +180,8 @@ def generate(random, output):
             name = instance_name(size, run)
             problem = Problem(random, name, domain, size, size*2, rnd=True)
             generator(PDDLPrinter(problem))  # The PDDL version
+            generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+            generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
             generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
             generator(FStripsPrinter(problem))  # The Functional version
 

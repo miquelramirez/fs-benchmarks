@@ -174,6 +174,65 @@ class PDDLPrinter(ProblemPrinter):
             return self.problem.domain + '-strips'
 
 
+class ExPDDLPrinter(PDDLPrinter):
+
+    def add_init(self):
+        ProblemPrinter.add_init(self)  # We call directyle the grandparent's method
+
+        for elem, pos in self.problem.positions.items():
+            self.instance.add_init("(at {} {})".format(elem, self.print_pos(pos)))
+
+        for block, color in self.problem.block_color.items():
+            self.instance.add_init("(block-color {} {})".format(block, color))
+
+    def add_goals(self):
+        used_colors = {c: i for i, c in enumerate(set(self.problem.block_color.values()))}
+
+        ex_vars = ["?l{}".format(i) for i in range(0, len(used_colors))]  # e.g. "?l1 ?l2 ?l3"
+        quantif = "(exists ({} - location) ( and ".format(' '.join(ex_vars))
+
+        inequalitites = ""
+        if len(used_colors) > 1:
+            inequalitites = ' '.join("(not (= {} {}))".format(l1, l2)
+                                     for l1, l2 in itertools.product(ex_vars, ex_vars) if l1 < l2)
+
+        locations = ' '.join("(at {} ?l{})".format(b, used_colors[c]) for b, c in self.problem.block_color.items())
+
+        goal = ' '.join([quantif, inequalitites, locations, '))'])
+        self.instance.add_goal(goal)
+
+    def get_domain_name(self):
+            return self.problem.domain + '-strips-ex'
+
+
+class PairwiseExPDDLPrinter(ExPDDLPrinter):
+
+    def add_goals(self):
+        used_colors = {c: i for i, c in enumerate(set(self.problem.block_color.values()))}
+
+        idxs = list(used_colors.values())
+
+        if len(idxs) == 1:  # We only have one color, no need to do complicate pairings of the existentials
+            super().add_goals()
+            return
+
+        color_pairs = [(i, j) for i, j in itertools.product(idxs, idxs) if i < j]
+
+        for i, j in color_pairs:
+            ex_vars = ["?l{}".format(i), "?l{}".format(j)]
+            quantif = "(exists ({} - location) ( and ".format(' '.join(ex_vars))
+
+            inequalitites = "(not (= {} {}))".format(ex_vars[0], ex_vars[1])
+            locations = ' '.join("(at {} ?l{})".format(b, used_colors[c])
+                                 for b, c in self.problem.block_color.items() if used_colors[c] in (i, j))
+
+            goal = ' '.join([quantif, inequalitites, locations, '))'])
+            self.instance.add_goal(goal)
+
+    def get_domain_name(self):
+            return self.problem.domain + '-strips-ex-pw'
+
+
 class MetricPDDLPrinter(FStripsPrinter):
 
     def get_domain_name(self):
@@ -229,6 +288,8 @@ def generate(random, output):
                                   size=size, num_blocks=num_blocks, num_categories=num_categories)
 
                 generator(PDDLPrinter(problem))  # The PDDL version
+                generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+                generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
 
                 #  Currently disabled - cannot seem to encode cell positions as integers.
                 # generate(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
