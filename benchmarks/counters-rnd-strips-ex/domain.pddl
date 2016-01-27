@@ -6,7 +6,7 @@
   (:requirements :strips :typing :equality :adl)
   (:types counter int)
   (:predicates 
-    (lt ?x ?y - counter)  ;; The integer value x is less than y (static)
+    (lt ?x ?y - int)  ;; The integer value x is less than y (static)
 	(value ?c - counter ?i - int)  ;; The value shown in counter ?c is ?i
     (SUCC ?i1 ?i2 - int) ;; i2 is the successor integer of i1 (static)
   )

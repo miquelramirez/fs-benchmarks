@@ -25,6 +25,7 @@ def parse_arguments():
     parser.add_argument("--output", default="../benchmarks",
                         help='Output dir where the generated problems will be placed')
     parser.add_argument("--seed", type=int, default=None, help='The random seed')
+    parser.add_argument("--clean", '-c', action="store_true", help='Clean all automatically generated instances')
     args = parser.parse_args()
     return args
 
