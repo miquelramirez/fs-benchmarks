@@ -48,7 +48,7 @@ def compute_existential_goal(problem, predicate, undef_val='undef'):
     return ' '.join([quantif, ' '.join(atoms), '))'])
 
 
-class FStripsCSPPrinter(AbstractProblemPrinter):
+class FStripsCSPChoicePrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
     def __init__(self, problem):
         super().__init__(problem)
@@ -61,27 +61,8 @@ class FStripsCSPPrinter(AbstractProblemPrinter):
         for n1, n2 in self.problem.connections:
             self.instance.add_init("(adjacent {} {})".format(n1, n2))
             self.instance.add_init("(adjacent {} {})".format(n2, n1))
-
-    def add_goals(self):
-        self.instance.add_goal(compute_existential_goal(self.problem, None, undef_val='0'))
-
-    def add_bounds(self):
-        self.instance.add_int_bound("color_t", 0, self.problem.num_colors)
-
-    def get_domain_name(self):
-        return self.problem.domain + '-fn'
-
-
-class FStripsCSPChoicePrinter(FStripsCSPPrinter):
-    """ A printer for the raw CSP version of the problem """
-    def __init__(self, problem):
-        super().__init__(problem)
-
-    def add_init(self):
         for n in self.problem.vertices:
             self.instance.add_init("(= (choice {}) 0)".format(n))
-
-        super().add_init()
 
     def add_goals(self):
         for atom in compute_std_goal(self.problem, 'choice'):
@@ -149,7 +130,75 @@ class FStripsExPrinter(FStripsPrinter):
         return self.problem.domain + '-agent-ex-fn'
 
 
-class StripsPrinter(AbstractProblemPrinter):
+class ExStripsCSPPrinter(AbstractProblemPrinter):
+    """ A printer for the raw CSP version of the problem """
+    def __init__(self, problem):
+        super().__init__(problem)
+
+    def add_objects(self):
+        for o in self.problem.vertices:
+            self.instance.add_object(o, "vertex")
+        for o in self.problem.colors:
+            self.instance.add_object(o, "color_t")
+
+    def add_init(self):
+        for n1, n2 in self.problem.connections:
+            self.instance.add_init("(adjacent {} {})".format(n1, n2))
+            self.instance.add_init("(adjacent {} {})".format(n2, n1))
+
+    def add_goals(self):
+        self.instance.add_goal(compute_existential_goal(self.problem, None, undef_val='0'))
+
+    def get_domain_name(self):
+        return self.problem.domain + '-strips-ex'
+
+
+class StripsCSPPrinter(AbstractProblemPrinter):
+    """ A printer for the raw CSP version of the problem """
+    def __init__(self, problem):
+        super().__init__(problem)
+
+    def add_objects(self):
+        for o in self.problem.vertices:
+            self.instance.add_object(o, "vertex")
+        for o in self.problem.colors:
+            self.instance.add_object(o, "color_t")
+
+    def add_init(self):
+        for n in self.problem.vertices:
+            self.instance.add_init("(not-painted {})".format(n))
+            for c in self.problem.colors:
+                self.instance.add_init("(not-has-color {} {})".format(n, c))
+
+        for n1, n2 in self.problem.connections:
+            self.instance.add_init("(adjacent {} {})".format(n1, n2))
+            self.instance.add_init("(adjacent {} {})".format(n2, n1))
+
+    def add_goals(self):
+        for n in self.problem.vertices:
+                self.instance.add_goal("(painted {})".format(n))
+
+    def get_domain_name(self):
+        return self.problem.domain + '-strips'
+
+
+class StripsPrinter(StripsCSPPrinter):
+    def __init__(self, problem):
+        super().__init__(problem)
+
+    def add_init(self):
+        super().add_init()
+        self.instance.add_init("(at a {})".format(self.problem.agent_location))
+        self.instance.add_init("(not-carrying a)")
+
+        for i, loc in enumerate(self.problem.can_locations.values()):
+            self.instance.add_init("(at {} {})".format(self.problem.colors[i], loc))
+
+    def get_domain_name(self):
+        return self.problem.domain + '-agent-strips'
+
+
+class ExStripsPrinter(AbstractProblemPrinter):
     def __init__(self, problem):
         super().__init__(problem)
 
@@ -171,9 +220,6 @@ class StripsPrinter(AbstractProblemPrinter):
         for can, color in zip(self.problem.cans, self.problem.colors):
             self.instance.add_init("(color {} {})".format(can, color))
 
-        for can, col in self.problem.pencil_colors.items():
-            self.instance.add_init("(color {} {})".format(can, col))
-
         self.instance.add_init("(color a undef)")
 
         for n in self.problem.vertices:
@@ -187,7 +233,7 @@ class StripsPrinter(AbstractProblemPrinter):
         self.instance.add_goal(compute_existential_goal(self.problem, 'color'))
 
     def get_domain_name(self):
-        return self.problem.domain + '-agent-strips'
+        return self.problem.domain + '-agent-strips-ex'
 
 
 class Problem(object):
@@ -224,11 +270,11 @@ def generate(random, output):
     # let's fix this to avoid too many parameters
     edge_factor = 1.8
 
-    colors = {5: [4, 6], 10: [4, 6], 20: [6, 8], 30: [6, 8], 40: [8], 50: [10]}
+    colors = {5: [4, 6], 10: [4, 6], 20: [6, 8], 30: [8], 50: [10]}
 
-    for num_vertices in [5] + list(range(10, 51, 10)):
-        for num_colors in colors[num_vertices]:
-            for run in range(1, 4):
+    for num_vertices, colors in colors.items():
+        for num_colors in colors:
+            for run in range(1, 3):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
                 problem = Problem(random=random, name=name, domain="graph-coloring",
                                   num_vertices=num_vertices, num_colors=num_colors,
@@ -236,20 +282,23 @@ def generate(random, output):
 
                 generator(FStripsPrinter(problem))  # The Functional version
                 generator(FStripsExPrinter(problem))  # The Functional version with existentials
-                generator(FStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+                generator(StripsCSPPrinter(problem))  # The Strips version, raw CSP version of the problem
+                generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
                 generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
-                generator(StripsPrinter(problem))  # standard STRIPS version
+                generator(StripsPrinter(problem))  # standard STRIPS version, custom version
+                generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
 
     # Generate some extra large instances for the RAW csp version, which is easier!
-    for num_vertices in [60, 70, 80, 90, 100, 200, 300]:
+    for num_vertices in [75, 100, 300, 500]:
         for num_colors in [10, 30]:
-            for run in range(1, 4):
+            for run in range(1, 3):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
                 problem = Problem(random=random, name=name, domain="graph-coloring",
                                   num_vertices=num_vertices, num_colors=num_colors,
                                   edge_factor=edge_factor)
 
-                generator(FStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+                generator(StripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+                generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
                 generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
 
 

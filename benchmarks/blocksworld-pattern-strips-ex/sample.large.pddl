@@ -1,6 +1,6 @@
 
 (define (problem sample-large)
-  (:domain blocksworld-strips-ex)
+  (:domain blocksworld-pattern-strips-ex)
   (:objects
     b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 - block
 	red green blue - color

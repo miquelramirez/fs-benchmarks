@@ -9,75 +9,59 @@
 ;;; which she can drop at any moment in order to pick another of different color.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define (domain graph-coloring-agent-strips)
-    (:requirements :typing)
-    (:types colorable color_t - object
-    		thing vertex - colorable
-            agent pencil - thing
-	)
+	(:requirements :strips :typing)
+
+	(:types agent color_t - movable
+			vertex)
 
 	(:constants a - agent undef - color_t)
 
-    (:predicates
-        (adjacent ?n1 ?n2 - vertex)          ;; The graph topology
-        (color ?x - colorable ?c - color_t)
-        (carrying ?p - pencil)
-        (on ?t - thing ?v - vertex)
-    )
-
-
-    ;; Move an agent through one of the graph edges.
-    (:action move
-		:parameters (?from ?to - vertex)
-		:precondition (and (adjacent ?from ?to) (on a ?from))
-		:effect       (and (on a ?to) (not (on a ?from)))
-    )
-
-    ;; Pick a pencil
-    (:action pick
-		:parameters (?in - vertex ?p - pencil ?c - color_t)
-		:precondition (and
-			(on a ?in)
-			(on ?p ?in)
-			(color ?p ?c)
-			(color a undef)   ;; The agent is carrying no pencil
-		)
-		:effect (and
-			(carrying ?p)
-			(color a ?c)
-			(not (color a undef))
-		)
-    )
-    
-    ;; Drop a pencil
-    (:action drop
-		:parameters (?in - vertex ?p - pencil ?c - color_t)
-		:precondition (and
-			(carrying ?p)
-			(color ?p ?c)
-			(on a ?in)
-		)
-		:effect (and
-			(on ?p ?in)
-			(not (color a ?c))
-			(color a undef)
-			(not (carrying ?p))
-		)
-    )    
-
-    ;; Paint a vertex with the color currently being carried
-    (:action paint
-		:parameters (?in - vertex ?c - color_t)
-		:precondition (and
-			(color a ?c)
-			(color ?in undef) ;; The vertex is not painted
-			(not (= ?c undef))
-			(on a ?in)
-		)
-		:effect   (and
-			(color ?in ?c)
-			(not (color ?in undef))
-		)
+	(:predicates
+		(adjacent ?n - vertex ?nn - vertex)
+		(not-has-color ?n - vertex ?c - color_t)
+		(painted ?n - vertex)
+		(not-painted ?n - vertex)
+		(at ?m - movable ?n - vertex)
+		(carrying ?a - agent ?c - color_t)
+		(not-carrying ?a - agent)
 	)
+
+	(:action move
+		:parameters (?a - agent ?f - vertex ?t - vertex)
+		:precondition (and (at ?a ?f) (adjacent ?f ?t))
+		:effect (and (not (at ?a ?f)) (at ?a ?t))
+	)
+
+  (:action pickup
+   :parameters (?a - agent ?c - color_t ?n - vertex)
+   :precondition (and (at ?a ?n)
+                      (at ?c ?n)
+                      (not-carrying ?a))
+   :effect (and (not (at ?c ?n))
+                (carrying ?a ?c)
+                (not (not-carrying ?a)))
+   )
+
+  (:action drop
+   :parameters (?a - agent ?c - color_t ?n - vertex)
+   :precondition (and (at ?a ?n)
+                      (carrying ?a ?c))
+   :effect (and (not (carrying ?a ?c))
+                (at ?c ?n)
+                (not-carrying ?a))
+   )
+
+  (:action paint
+   :parameters (?a - agent ?n - vertex ?c - color_t)
+   :precondition (and (at ?a ?n)
+                      (carrying ?a ?c)
+                      (not-painted ?n)
+                      (forall (?an - vertex)
+                              (imply (adjacent ?an ?n)
+                                     (not-has-color ?an ?c))))
+   :effect (and (not (not-has-color ?n ?c))
+                (not (not-painted ?n))
+                (painted ?n))
+   )
 )

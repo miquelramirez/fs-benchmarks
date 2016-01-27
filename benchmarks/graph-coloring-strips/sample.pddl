@@ -1,5 +1,5 @@
 (define (problem sample)
-  (:domain graph-coloring-agent-strips)
+  (:domain graph-coloring-strips)
 
   (:objects
    n0 - vertex
@@ -13,10 +13,6 @@
    (adjacent n1 n0)
    (adjacent n1 n2)
    (adjacent n2 n1)
-   (at c1 n0)
-   (at c2 n2)
-   (at a n1)
-   (not-carrying a)
    (not-painted n0)
    (not-has-color n0 c1)
    (not-has-color n0 c2)

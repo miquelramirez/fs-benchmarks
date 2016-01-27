@@ -325,20 +325,20 @@ def generate(random, output):
             # Functional version + nested fluents + tower goal
             generator(FStripsPrinter(problem, nested=True, tower=True))
 
-    for size in range(5, 31, 5):
-        for existentials in range(2, size // 2, 2):
-            for run in range(1, 4):
-                name = instance_name(size, existentials, run)
-                problem = Problem(random=random, name=name, domain="blocksworld", num_blocks=size, existentials=existentials)
+    sizes = [(5, 2), (10, 4), (15, 2), (15, 4), (20, 4), (20, 6), (20, 8), (30, 8), (30, 10), (50, 10)]
+    for size, existentials in sizes:
+        for run in range(1, 3):
+            name = instance_name(size, existentials, run)
+            problem = Problem(random=random, name=name, domain="blocksworld-pattern", num_blocks=size, existentials=existentials)
 
-                # STRIPS version with existential goal
-                generator(ExistentialGoalPDDLPrinter(problem))
+            # STRIPS version with existential goal
+            generator(ExistentialGoalPDDLPrinter(problem))
 
-                # Functional version with existential goal
-                generator(ExistentialGoalFStripsPrinter(problem))
+            # Functional version with existential goal
+            generator(ExistentialGoalFStripsPrinter(problem))
 
-                # Functional version with existential goal, nested-fluent move action
-                generator(ExistentialGoalFStripsPrinter(problem, nested=True))
+            # Functional version with existential goal, nested-fluent move action
+            generator(ExistentialGoalFStripsPrinter(problem, nested=True))
 
 
 def main():

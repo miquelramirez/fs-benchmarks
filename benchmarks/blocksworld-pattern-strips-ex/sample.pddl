@@ -1,6 +1,6 @@
 
 (define (problem sample)
-  (:domain blocksworld-strips-ex)
+  (:domain blocksworld-pattern-strips-ex)
   (:objects
     b1 b2 b3 - block
     red green blue - color
@@ -20,7 +20,7 @@
 		(hascolor b3 red)
 	)
 
-	(:goal (and
+	(:goal
 		(exists (?b1_ ?b2_ ?b3_ - block) (
 			and
 				(hascolor ?b1_ red)
@@ -29,5 +29,5 @@
 				(on ?b1_ ?b2_)
 				(on ?b2_ ?b3_)
 		))
-	))
+	)
 )

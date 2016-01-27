@@ -2,7 +2,7 @@
 ;;; The classical blocksworld domain
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain blocksworld-strips-ex)
+(define (domain blocksworld-pattern-strips-ex)
   (:requirements :strips)
 
   (:types block color - object)

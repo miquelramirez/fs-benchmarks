@@ -5,12 +5,9 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain graph-coloring-fn)
+(define (domain graph-coloring-strips-ex)
     (:requirements :typing :object-fluents)
-    (:types vertex - object
-            color_t - int
-
-	)
+    (:types vertex color_t - object)
 
 	(:constants )
 
