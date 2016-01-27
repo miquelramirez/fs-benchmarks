@@ -14,7 +14,7 @@ public:
 
 		rules.push_back("_goal_at(S,L) :- _applicable(push_to_goal(_,S,_,_,L,_))."); // Goal condition
 		rules.push_back(":- 2 <= { _goal_at(S,L) : stone(S)}, location(L)."); // Functional Constraint
-		rules.push_back(":- _goal_at(S,L), not supported(at(S, L))."); // Reached
+		rules.push_back(":- _goal_at(S,L), not at(S, L)."); // Reached
 		rules.push_back(":- 2 <= { _goal_at(S,L) : location(L)}, stone(S)."); // stone locations alldiff
     }
 
