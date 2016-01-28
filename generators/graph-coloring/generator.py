@@ -280,7 +280,7 @@ def compile_dimacs_instances():
         if not graph:
             continue
         identifier = os.path.splitext(os.path.basename(filename))[0]
-        if identifier not in chromatic_numbers:
+        if identifier not in chromatic_numbers or chromatic_numbers[identifier] > 10:
             continue  # ATM we only compile a graph if we know its chromatic number
         yield identifier, graph, chromatic_numbers[identifier]
 
