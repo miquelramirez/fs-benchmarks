@@ -6,7 +6,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain graph-coloring-strips-ex)
-    (:requirements :typing :object-fluents)
+    (:requirements :typing)
     (:types vertex color_t - object)
 
 	(:constants )
