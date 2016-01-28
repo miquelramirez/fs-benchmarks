@@ -273,10 +273,15 @@ class RandomProblem(Problem):
 def compile_dimacs_instances():
     """  Compiles the DIMACS graph in the appropriate subdirectory into a planning problem """
     data_dir = os.path.dirname(os.path.abspath('../' + __file__)) + '/data'
+    chromatic_numbers = dimacs.read_chromatic_numbers(data_dir + '/chromatic.csv')
     for filename in glob.iglob(data_dir + '/*.col'):
         graph = dimacs.read_graph(filename)
+        if not graph:
+            continue
         identifier = os.path.splitext(os.path.basename(filename))[0]
-        yield identifier, graph
+        if identifier not in chromatic_numbers:
+            continue  # ATM we only compile a graph if we know its chromatic number
+        yield identifier, graph, chromatic_numbers[identifier]
 
 
 def generate_all_encodings(generator, problem):
@@ -290,8 +295,8 @@ def generate_all_encodings(generator, problem):
 
 
 def generate_dimacs_instances(generator, random):
-    for identifier, graph in compile_dimacs_instances():
-        for num_colors in [10, 15]:
+    for identifier, graph, k in compile_dimacs_instances():
+        for num_colors in [k, k+1]:
             name = instance_name(identifier, len(graph.nodes), len(graph.edges), num_colors, base="dimacs")
             problem = Problem(random, name, "graph-coloring", num_colors, graph)
             generate_all_encodings(generator, problem)
