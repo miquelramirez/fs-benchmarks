@@ -137,5 +137,6 @@ def sanitize(s):
     return s.replace('.', '')
 
 
-def instance_name(*args):
-    return 'instance_{}'.format('_'.join((str(a) for a in args)))
+def instance_name(*args, **kwargs):
+    base = kwargs.get('base', 'instance')
+    return base + '_' + '_'.join((str(a) for a in args))

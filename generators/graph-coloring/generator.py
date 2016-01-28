@@ -3,13 +3,14 @@
     Problem generator for the graph-coloring-agent domain.
 """
 import argparse
+import glob
 import os
 import sys
 
 sys.path.append("..")
 from base import Generator, AbstractProblemPrinter, instance_name
 from utils.random_graph import random_walk
-
+from utils import dimacs
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Generate graph-coloring-agent problem instances.')
@@ -237,20 +238,19 @@ class ExStripsPrinter(AbstractProblemPrinter):
 
 
 class Problem(object):
-    def __init__(self, random, name, domain, num_vertices, num_colors, edge_factor):
+    def __init__(self, random, name, domain, num_colors, graph):
         self.name = name
         self.domain = domain
-        self.num_vertices = num_vertices
+        self.num_vertices = len(graph.nodes)
         self.num_colors = num_colors
-        self.edge_factor = edge_factor
+        self.graph = graph
 
         # Graph topology
         self.vertices = ["v{}".format(i) for i in range(1, self.num_vertices+1)]
-        graph = random_walk(list(range(self.num_vertices)), int(self.num_vertices*self.edge_factor))
         self.connections = []
         self.connections_idx = []
 
-        for i, j in graph.edges:
+        for i, j in self.graph.edges:
             n_i, n_j = self.vertices[i], self.vertices[j]
             self.connections.append((n_i, n_j))
             self.connections_idx.append((i, j))
@@ -264,8 +264,44 @@ class Problem(object):
         self.agent_location = random.choice(self.vertices)
 
 
+class RandomProblem(Problem):
+    def __init__(self, random, name, domain, num_vertices, num_colors, edge_factor):
+        graph = random_walk(list(range(num_vertices)), int(num_vertices * edge_factor))
+        super().__init__(random, name, domain, num_colors, graph)
+
+
+def compile_dimacs_instances():
+    """  Compiles the DIMACS graph in the appropriate subdirectory into a planning problem """
+    data_dir = os.path.dirname(os.path.abspath('../' + __file__)) + '/data'
+    for filename in glob.iglob(data_dir + '/*.col'):
+        graph = dimacs.read_graph(filename)
+        identifier = os.path.splitext(os.path.basename(filename))[0]
+        yield identifier, graph
+
+
+def generate_all_encodings(generator, problem):
+    generator(FStripsPrinter(problem))  # The Functional version
+    generator(FStripsExPrinter(problem))  # The Functional version with existentials
+    generator(StripsCSPPrinter(problem))  # The Strips version, raw CSP version of the problem
+    generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
+    generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
+    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
+    generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
+
+
+def generate_dimacs_instances(generator, random):
+    for identifier, graph in compile_dimacs_instances():
+        for num_colors in [10, 15]:
+            name = instance_name(identifier, len(graph.nodes), len(graph.edges), num_colors, base="dimacs")
+            problem = Problem(random, name, "graph-coloring", num_colors, graph)
+            generate_all_encodings(generator, problem)
+
+
 def generate(random, output):
     generator = Generator(output)
+
+    # Compile the hard instances in DIMACS format into our format
+    generate_dimacs_instances(generator, random)
 
     # let's fix this to avoid too many parameters
     edge_factor = 1.8
@@ -276,26 +312,19 @@ def generate(random, output):
         for num_colors in colors:
             for run in range(1, 3):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
-                problem = Problem(random=random, name=name, domain="graph-coloring",
-                                  num_vertices=num_vertices, num_colors=num_colors,
-                                  edge_factor=edge_factor)
-
-                generator(FStripsPrinter(problem))  # The Functional version
-                generator(FStripsExPrinter(problem))  # The Functional version with existentials
-                generator(StripsCSPPrinter(problem))  # The Strips version, raw CSP version of the problem
-                generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
-                generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
-                generator(StripsPrinter(problem))  # standard STRIPS version, custom version
-                generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
+                problem = RandomProblem(random=random, name=name, domain="graph-coloring",
+                                        num_vertices=num_vertices, num_colors=num_colors,
+                                        edge_factor=edge_factor)
+                generate_all_encodings(generator, problem)
 
     # Generate some extra large instances for the RAW csp version, which is easier!
-    for num_vertices in [75, 100, 300, 500]:
+    for num_vertices in [100, 300, 500]:
         for num_colors in [10, 30]:
             for run in range(1, 3):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
-                problem = Problem(random=random, name=name, domain="graph-coloring",
-                                  num_vertices=num_vertices, num_colors=num_colors,
-                                  edge_factor=edge_factor)
+                problem = RandomProblem(random=random, name=name, domain="graph-coloring",
+                                        num_vertices=num_vertices, num_colors=num_colors,
+                                        edge_factor=edge_factor)
 
                 generator(StripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
                 generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
