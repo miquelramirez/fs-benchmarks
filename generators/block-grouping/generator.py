@@ -278,24 +278,24 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [5, 7, 9]:
-        for num_blocks in range(5, 41, 5):
-            num_categories = max(2, num_blocks//4)
+    sizes = [(5, 5), (5, 10), (10, 5), (10, 10), (10, 15), (10, 20), (10, 30), (10, 40)]
+    for size, num_blocks in sizes:
+        num_categories = max(2, num_blocks//4)
 
-            for run in range(1, 4):
-                name = instance_name(size, num_blocks, num_categories, run)
-                problem = Problem(random=random, name=name, domain="block-grouping",
-                                  size=size, num_blocks=num_blocks, num_categories=num_categories)
+        for run in range(1, 4):
+            name = instance_name(size, num_blocks, num_categories, run)
+            problem = Problem(random=random, name=name, domain="block-grouping",
+                              size=size, num_blocks=num_blocks, num_categories=num_categories)
 
-                generator(PDDLPrinter(problem))  # The PDDL version
-                generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
-                generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
+            generator(PDDLPrinter(problem))  # The PDDL version
+            generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+            generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
 
-                #  Currently disabled - cannot seem to encode cell positions as integers.
-                # generate(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
+            #  Currently disabled - cannot seem to encode cell positions as integers.
+            # generate(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
 
-                generator(FStripsPrinter(problem))  # The Functional version
-                generator(AlldiffFStripsPrinter(problem))  # The Functional version
+            generator(FStripsPrinter(problem))  # The Functional version
+            generator(AlldiffFStripsPrinter(problem))  # The Functional version
 
 
 def main():
