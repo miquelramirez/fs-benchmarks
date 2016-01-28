@@ -270,7 +270,7 @@ def generate(random, output):
     # let's fix this to avoid too many parameters
     edge_factor = 1.8
 
-    colors = {5: [4, 6], 10: [4, 6], 20: [6, 8], 30: [8], 50: [10]}
+    colors = {5: [4, 6], 10: [4, 6], 20: [6, 8], 30: [8], 50: [10], 60: [10], 70: [10]}
 
     for num_vertices, colors in colors.items():
         for num_colors in colors:

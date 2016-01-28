@@ -130,7 +130,10 @@ class AlldiffFStripsPrinter(FStripsPrinter):
 
         if len(color_representative) > 1:
             alldiffed_blocks = ["(loc {})".format(block) for block in color_representative.values()]
-            self.instance.add_goal("(@alldiff {})".format(' '.join(alldiffed_blocks)))
+            if len(alldiffed_blocks) == 2:  # No need to alldiff for only two variables
+                self.instance.add_goal("(not (= {} {}))".format(alldiffed_blocks[0], alldiffed_blocks[1]))
+            else:
+                self.instance.add_goal("(@alldiff {})".format(' '.join(alldiffed_blocks)))
 
         for block, color in self.problem.block_color.items():
             representative = color_representative[color]
