@@ -272,7 +272,8 @@ class RandomProblem(Problem):
 
 def compile_dimacs_instances():
     """  Compiles the DIMACS graph in the appropriate subdirectory into a planning problem """
-    data_dir = os.path.dirname(os.path.abspath('../' + __file__)) + '/data'
+    data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/data'
+    # data_dir = os.path.dirname(os.path.abspath('../' + __file__)) + '/data'
     chromatic_numbers = dimacs.read_chromatic_numbers(data_dir + '/chromatic.csv')
     for filename in glob.iglob(data_dir + '/*.col'):
         graph = dimacs.read_graph(filename)
