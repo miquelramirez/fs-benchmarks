@@ -285,13 +285,21 @@ def compile_dimacs_instances():
 
 
 def generate_all_encodings(generator, problem):
+    generate_agent_encodings(generator, problem)
+    generate_pure_csp_encodings(generator, problem)
+
+
+def generate_agent_encodings(generator, problem):
     generator(FStripsPrinter(problem))  # The Functional version
     generator(FStripsExPrinter(problem))  # The Functional version with existentials
+    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
+    generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
+
+
+def generate_pure_csp_encodings(generator, problem):
     generator(StripsCSPPrinter(problem))  # The Strips version, raw CSP version of the problem
     generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
     generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
-    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
-    generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
 
 
 def generate_dimacs_instances(generator, random):
@@ -320,7 +328,7 @@ def generate(random, output):
                 problem = RandomProblem(random=random, name=name, domain="graph-coloring",
                                         num_vertices=num_vertices, num_colors=num_colors,
                                         edge_factor=edge_factor)
-                generate_all_encodings(generator, problem)
+                generate_agent_encodings(generator, problem)
 
     # Generate some extra large instances for the RAW csp version, which is easier!
     for num_vertices in [100, 300, 500]:
@@ -331,9 +339,7 @@ def generate(random, output):
                                         num_vertices=num_vertices, num_colors=num_colors,
                                         edge_factor=edge_factor)
 
-                generator(StripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
-                generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
-                generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
+                generate_pure_csp_encodings(generator, problem)
 
 
 def main():
