@@ -22,10 +22,12 @@ def parse_arguments():
     return args
 
 
-def compute_std_goal(problem, color_predicate):
+def compute_std_goal(problem, color_predicate, nonnull=False):
     atoms = []
-    for n in problem.vertices:
-        atoms.append("(not (= ({} {}) 0))".format(color_predicate, n))
+    if nonnull:
+        for n in problem.vertices:
+            atoms.append("(not (= ({} {}) 0))".format(color_predicate, n))
+
     for n1, n2 in problem.connections:
         atoms.append("(not (= ({} {}) ({} {})))".format(color_predicate, n1, color_predicate, n2))
     return atoms
@@ -36,8 +38,10 @@ def compute_existential_goal(problem, predicate, undef_val='undef'):
     vars_line = ' '.join(variables)  # e.g. the string "?c1 ?c2 ?c3"
     quantif = "(exists ({} - color_t) ( and ".format(vars_line)
     atoms = []
-    for var in variables:
-        atoms.append("(not (= {} {}))".format(var, undef_val))
+
+    if undef_val is not None:  # We want to ensure that where is an explicit check for non-undefinedness
+        for var in variables:
+            atoms.append("(not (= {} {}))".format(var, undef_val))
 
     if predicate is not None:  # We might want to pass a value of None if we do not want to include this type of atoms
         assert len(problem.vertices) == len(variables)
@@ -67,7 +71,7 @@ class FStripsCSPChoicePrinter(AbstractProblemPrinter):
             self.instance.add_init("(= (choice {}) 0)".format(n))
 
     def add_goals(self):
-        for atom in compute_std_goal(self.problem, 'choice'):
+        for atom in compute_std_goal(self.problem, 'choice', nonnull=True):
             self.instance.add_goal(atom)
 
     def get_domain_name(self):
@@ -112,21 +116,6 @@ class FStripsPrinter(AbstractProblemPrinter):
         return self.problem.domain + '-agent-fn'
 
 
-class FStripsExPrinter(FStripsPrinter):
-    def __init__(self, problem):
-        super().__init__(problem)
-
-    def add_init_vertex_color(self):
-        for n in self.problem.vertices:
-            self.instance.add_init("(painted {} 0)".format(n))
-
-    def add_goals(self):
-        self.instance.add_goal(compute_existential_goal(self.problem, 'painted'))
-
-    def get_domain_name(self):
-        return self.problem.domain + '-agent-ex-fn'
-
-
 class ExStripsCSPPrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
     def __init__(self, problem):
@@ -144,7 +133,7 @@ class ExStripsCSPPrinter(AbstractProblemPrinter):
             self.instance.add_init("(adjacent {} {})".format(n2, n1))
 
     def add_goals(self):
-        self.instance.add_goal(compute_existential_goal(self.problem, None, undef_val='0'))
+        self.instance.add_goal(compute_existential_goal(self.problem, None, undef_val=None))
 
     def get_domain_name(self):
         return self.problem.domain + '-strips-ex'
@@ -287,7 +276,6 @@ def generate_all_encodings(generator, problem):
 
 def generate_agent_encodings(generator, problem):
     generator(FStripsPrinter(problem))  # The Functional version
-    generator(FStripsExPrinter(problem))  # The Functional version with existentials
     generator(StripsPrinter(problem))  # standard STRIPS version, custom version
     generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
 
