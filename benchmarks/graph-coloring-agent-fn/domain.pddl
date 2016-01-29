@@ -4,8 +4,8 @@
 ;;; A variation of the classical graph-coloring problem in which an
 ;;; agent moves around the graph in order to paint the vertices.
 ;;;
-;;; A number of colored pencils are spread around the graph.
-;;; The agent carries at most one pencil of a certain color at any time,
+;;; A number of colors are spread around the graph.
+;;; The agent carries at most one color of a certain color at any time,
 ;;; which she can drop at any moment in order to pick another of different color.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -14,7 +14,7 @@
     (:requirements :typing :object-fluents)
     (:types colorable - object
     		thing vertex - colorable
-            agent pencil - thing
+            agent - thing
             color_t - int
 	)
 
@@ -25,9 +25,9 @@
     )
 
     (:functions
-        (loc ?t - thing) - vertex            ;; The position of the agent or of a colored pencil
-        (color ?v - colorable) - color_t     ;; The color of a pencil, vertex, or being carried by the agent
-        (carrying) - pencil               	 ;; The pencil being carried by the agent (only if (color a) is != 0)
+        (loc ?t - thing) - vertex            ;; The position of the agent
+        (color_loc ?c - color_t) - vertex    ;; The position of a color
+        (color ?v - colorable) - color_t     ;; The color of a vertex, or of the color being carried by the agent
     )
 
     ;; Move an agent through one of the graph edges.
@@ -37,28 +37,27 @@
 		:effect       (and (assign (loc a) ?to))
     )
 
-    ;; Pick a pencil
+    ;; Pick a color
     (:action pick
-		:parameters (?p - pencil)
+		:parameters (?c - color_t)
 		:precondition (and
-			(= (loc a) (loc ?p))
-			(= (color a) 0)   ;; The agent is carrying no pencil
+			(= (loc a) (color_loc ?c))
+			(= (color a) 0)   ;; The agent is carrying no color
 		)
 		:effect (and
-			(assign (color a) (color ?p))
-			(assign (carrying) ?p)
+			(assign (color a) ?c)
 		)
     )
     
-    ;; Drop a pencil
+    ;; Drop a color
     (:action drop
-		:parameters ()
+		:parameters (?c - color_t)
 		:precondition (and
-			(not (= (color a) 0))   ;; The agent is carrying some colored pencil
+			(= (color a) ?c)   ;; The agent is carrying some color
 		)
 		:effect (and
 			(assign (color a) 0)
-			(assign (loc (carrying)) (loc a))
+			(assign (color_loc ?c) (loc a))
 		)
     )    
 
@@ -67,7 +66,7 @@
 		:parameters ()
 		:precondition (and
 			(= (color (loc a)) 0)  ;; The vertex is not painted
-			(not (= (color a) 0))  ;; The agent is carrying some colored pencil
+			(not (= (color a) 0))  ;; The agent is carrying some color
 		)
 		:effect   (and
 			(assign (color (loc a)) (color a))

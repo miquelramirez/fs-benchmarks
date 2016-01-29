@@ -12,6 +12,7 @@ from base import Generator, AbstractProblemPrinter, instance_name
 from utils.random_graph import random_walk
 from utils import dimacs
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Generate graph-coloring-agent problem instances.')
     parser.add_argument("--output-dir", default="../../benchmarks",
@@ -78,8 +79,6 @@ class FStripsPrinter(AbstractProblemPrinter):
         super().__init__(problem)
 
     def add_objects(self):
-        for o in self.problem.cans:
-            self.instance.add_object(o, "pencil")
         for o in self.problem.vertices:
             self.instance.add_object(o, "vertex")
 
@@ -87,11 +86,8 @@ class FStripsPrinter(AbstractProblemPrinter):
 
         self.instance.add_init("(= (loc a) {})".format(self.problem.agent_location))
 
-        for can, loc in self.problem.can_locations.items():
-            self.instance.add_init("(= (loc {}) {})".format(can, loc))
-
-        for can, col in self.problem.pencil_colors.items():
-            self.instance.add_init("(= (color {}) {})".format(can, col))
+        for col, loc in self.problem.icolor_locations.items():
+            self.instance.add_init("(= (color_loc {}) {})".format(col, loc))
 
         self.instance.add_init("(= (color a) 0)")
 
@@ -192,7 +188,7 @@ class StripsPrinter(StripsCSPPrinter):
         self.instance.add_init("(at a {})".format(self.problem.agent_location))
         self.instance.add_init("(not-carrying a)")
 
-        for i, loc in enumerate(self.problem.can_locations.values()):
+        for i, loc in enumerate(self.problem.color_locations.values()):
             self.instance.add_init("(at {} {})".format(self.problem.colors[i], loc))
 
     def get_domain_name(self):
@@ -204,8 +200,6 @@ class ExStripsPrinter(AbstractProblemPrinter):
         super().__init__(problem)
 
     def add_objects(self):
-        for o in self.problem.cans:
-            self.instance.add_object(o, "pencil")
         for o in self.problem.vertices:
             self.instance.add_object(o, "vertex")
         for o in self.problem.colors:
@@ -215,11 +209,8 @@ class ExStripsPrinter(AbstractProblemPrinter):
 
         self.instance.add_init("(on a {})".format(self.problem.agent_location))
 
-        for can, loc in self.problem.can_locations.items():
+        for can, loc in self.problem.color_locations.items():
             self.instance.add_init("(on {} {})".format(can, loc))
-
-        for can, color in zip(self.problem.cans, self.problem.colors):
-            self.instance.add_init("(color {} {})".format(can, color))
 
         self.instance.add_init("(color a undef)")
 
@@ -255,13 +246,17 @@ class Problem(object):
             self.connections.append((n_i, n_j))
             self.connections_idx.append((i, j))
 
-        # Can locations and amounts - amount of each color is high enough
-        self.cans = ["pencil{}".format(i) for i in range(1, self.num_colors+1)]
+        # Color locations
         self.colors = ["c{}".format(i) for i in range(1, self.num_colors+1)]
-
-        self.pencil_colors = {can: i for i, can in enumerate(self.cans, 1)}
-        self.can_locations = {can: random.choice(self.vertices) for can in self.cans}
         self.agent_location = random.choice(self.vertices)
+
+        self.icolor_locations = {}
+        self.color_locations = {}
+        for i, color in enumerate(self.colors, 1):
+            v = random.choice(self.vertices)
+            self.icolor_locations[i] = v
+            self.color_locations[color] = v
+
 
 
 class RandomProblem(Problem):
