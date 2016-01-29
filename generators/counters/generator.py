@@ -154,7 +154,7 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [3, 5, 7, 9, 11, 13, 15, 20, 25, 30, 50]:
+    for size in [3, 5, 7, 9, 11, 13, 15, 20, 25, 30, 40, 50]:
         # First we generate the standard inequality versions
         domain = "counters"
         name = instance_name(size)
