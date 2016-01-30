@@ -136,7 +136,11 @@ class ExistentialGoalFStripsPrinter(FStripsPrinter):
         blocks = self.problem.quantified_blocks
         blocks_line = ' '.join(blocks)  # e.g. the string "?b1_ ?b2_ ?b3_"
         quantif = "(exists ({} - block) ( and ".format(blocks_line)
-        alldiff = "(@alldiff {})".format(blocks_line)
+        if len(blocks) > 2:
+            alldiff = "(@alldiff {})".format(blocks_line)
+        else:
+            assert len(blocks) == 2
+            alldiff = "(not (= {} {}))".format(blocks[0], blocks[1])
         colors = ' '.join(["(= (color {}) {})".format(b, c) for b, c in zip(blocks, self.problem.quantified_block_colors)])
         locations = ' '.join(["(= (loc {}) {})".format(b1, b2) for b1, b2 in zip(blocks, blocks[1:])])
 
@@ -325,11 +329,12 @@ def generate(random, output):
             # Functional version + nested fluents + tower goal
             generator(FStripsPrinter(problem, nested=True, tower=True))
 
-    sizes = [(5, 2), (10, 4), (15, 2), (15, 4), (20, 4), (20, 6), (20, 8), (30, 8), (30, 10), (50, 10)]
+    sizes = [(5, 2), (10, 4), (10, 6), (15, 6), (15, 8), (20, 4), (20, 6), (20, 8), (30, 8), (30, 10), (50, 10)]
     for size, existentials in sizes:
-        for run in range(1, 3):
+        for run in range(1, 4):
             name = instance_name(size, existentials, run)
-            problem = Problem(random=random, name=name, domain="blocksworld-pattern", num_blocks=size, existentials=existentials)
+            problem = Problem(random=random, name=name, domain="blocksworld-pattern", num_blocks=size,
+                              existentials=existentials)
 
             # STRIPS version with existential goal
             generator(ExistentialGoalPDDLPrinter(problem))
