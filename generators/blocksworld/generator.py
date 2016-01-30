@@ -329,7 +329,7 @@ def generate(random, output):
             # Functional version + nested fluents + tower goal
             generator(FStripsPrinter(problem, nested=True, tower=True))
 
-    sizes = [(5, 2), (10, 4), (10, 6), (15, 6), (15, 8), (20, 4), (20, 6), (20, 8), (30, 8), (30, 10), (50, 10)]
+    sizes = [(5, 2), (10, 4), (10, 6), (15, 6), (15, 8), (20, 6), (20, 8), (30, 8), (30, 10), (50, 10)]
     for size, existentials in sizes:
         for run in range(1, 4):
             name = instance_name(size, existentials, run)
