@@ -198,8 +198,8 @@ class ExStripsPrinter(AbstractProblemPrinter):
 
         self.instance.add_init("(on a {})".format(self.problem.agent_location))
 
-        for can, loc in self.problem.color_locations.items():
-            self.instance.add_init("(on {} {})".format(can, loc))
+        for col, loc in self.problem.color_locations.items():
+            self.instance.add_init("(color_on {} {})".format(col, loc))
 
         self.instance.add_init("(color a undef)")
 

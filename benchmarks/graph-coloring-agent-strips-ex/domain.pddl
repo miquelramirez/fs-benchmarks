@@ -4,8 +4,8 @@
 ;;; A variation of the classical graph-coloring problem in which an
 ;;; agent moves around the graph in order to paint the vertices.
 ;;;
-;;; A number of colored pencils are spread around the graph.
-;;; The agent carries at most one pencil of a certain color at any time,
+;;; A number of colors are spread around the graph.
+;;; The agent carries at most one color of a certain color at any time,
 ;;; which she can drop at any moment in order to pick another of different color.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -14,7 +14,7 @@
     (:requirements :typing)
     (:types colorable color_t - object
     		thing vertex - colorable
-            agent pencil - thing
+            agent - thing
 	)
 
 	(:constants a - agent undef - color_t)
@@ -22,7 +22,7 @@
     (:predicates
         (adjacent ?n1 ?n2 - vertex)          ;; The graph topology
         (color ?x - colorable ?c - color_t)
-        (carrying ?p - pencil)
+        (color_on  ?c - color_t ?v - vertex) ;; The location of a color
         (on ?t - thing ?v - vertex)
     )
 
@@ -34,35 +34,31 @@
 		:effect       (and (on a ?to) (not (on a ?from)))
     )
 
-    ;; Pick a pencil
+    ;; Pick a color
     (:action pick
-		:parameters (?in - vertex ?p - pencil ?c - color_t)
+		:parameters (?in - vertex ?c - color_t)
 		:precondition (and
 			(on a ?in)
-			(on ?p ?in)
-			(color ?p ?c)
+			(color_on ?c ?in)
 			(color a undef)   ;; The agent is carrying no pencil
 		)
 		:effect (and
-			(carrying ?p)
 			(color a ?c)
 			(not (color a undef))
 		)
     )
     
-    ;; Drop a pencil
+    ;; Drop a color
     (:action drop
-		:parameters (?in - vertex ?p - pencil ?c - color_t)
+		:parameters (?in - vertex ?c - color_t)
 		:precondition (and
-			(carrying ?p)
-			(color ?p ?c)
+			(color a ?c)
 			(on a ?in)
 		)
 		:effect (and
-			(on ?p ?in)
+			(color_on ?c ?in)
 			(not (color a ?c))
 			(color a undef)
-			(not (carrying ?p))
 		)
     )    
 
