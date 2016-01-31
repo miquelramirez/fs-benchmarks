@@ -281,11 +281,22 @@ class Problem(object):
 def generate(random, output):
     generator = Generator(output)
 
-    sizes = [(5, 5), (5, 10), (10, 5), (10, 10), (10, 15), (10, 20), (10, 30), (10, 40)]
-    for size, num_blocks in sizes:
-        num_categories = max(2, num_blocks//4)
+    # sizes = [(5, 5), (5, 10), (10, 5), (10, 10), (10, 15), (10, 20), (10, 30), (10, 40)]
+    dimensions = [(5, 5, 2), (5, 5, 3), (5, 5, 4),
+                  (5, 10, 2), (5, 10, 3), (5, 10, 4),
+                  (5, 15, 2), (5, 15, 3), (5, 15, 4),
+                  (5, 20, 2), (5, 20, 3), (5, 20, 4),
+                  (10, 5, 2), (10, 5, 3), (10, 5, 4),
+                  (10, 10, 2), (10, 10, 3), (10, 10, 4),
+                  (10, 15, 2), (10, 15, 3), (10, 15, 4),
+                  (10, 20, 2), (10, 20, 3), (10, 20, 4)
+                  ]
 
-        for run in range(1, 4):
+    # print(list(itertools.product([5,10], [5,10,15,20], [2,3,4])))
+    for size, num_blocks, num_categories in dimensions:
+        # num_categories = max(2, num_blocks//4)
+
+        for run in range(1, 3):
             name = instance_name(size, num_blocks, num_categories, run)
             problem = Problem(random=random, name=name, domain="block-grouping",
                               size=size, num_blocks=num_blocks, num_categories=num_categories)
