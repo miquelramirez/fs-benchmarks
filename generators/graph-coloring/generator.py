@@ -287,18 +287,21 @@ def generate_pure_csp_encodings(generator, problem):
 
 
 def generate_dimacs_instances(generator, random):
+    counter = 0
     for identifier, graph, k in compile_dimacs_instances():
+        counter += 1
         for num_colors in [k, k+1]:
             name = instance_name(identifier, len(graph.nodes), len(graph.edges), num_colors, base="dimacs")
             problem = Problem(random, name, "graph-coloring", num_colors, graph)
             generate_all_encodings(generator, problem)
+    return counter
 
 
 def generate(random, output):
     generator = Generator(output)
 
     # Compile the hard instances in DIMACS format into our format
-    generate_dimacs_instances(generator, random)
+    num_dimacs = generate_dimacs_instances(generator, random)
 
     # let's fix this to avoid too many parameters
     edge_factor = 1.8
@@ -325,6 +328,7 @@ def generate(random, output):
 
                 generate_pure_csp_encodings(generator, problem)
 
+    print("Processed a total of {} DIMACS instances".format(num_dimacs))
 
 def main():
     import random
