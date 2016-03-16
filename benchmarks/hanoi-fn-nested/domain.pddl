@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (domain fn-hanoi)
+(define (domain hanoi-fn-nested)
 
     (:types
         disk_ peg - object
