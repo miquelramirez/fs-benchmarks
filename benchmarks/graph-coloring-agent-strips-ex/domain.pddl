@@ -54,6 +54,7 @@
 		:precondition (and
 			(color a ?c)
 			(on a ?in)
+			(not (= ?c undef))
 		)
 		:effect (and
 			(color_on ?c ?in)

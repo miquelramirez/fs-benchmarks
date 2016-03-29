@@ -54,6 +54,7 @@
 		:parameters (?c - color_t)
 		:precondition (and
 			(= (color a) ?c)   ;; The agent is carrying some color
+			(not (= ?c 0))
 		)
 		:effect (and
 			(assign (color a) 0)
