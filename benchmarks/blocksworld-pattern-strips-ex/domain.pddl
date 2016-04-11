@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain blocksworld-pattern-strips-ex)
-  (:requirements :strips)
+  (:requirements :strips :typing)
 
   (:types block color - object)
 

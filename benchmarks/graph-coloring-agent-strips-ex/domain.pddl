@@ -11,7 +11,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain graph-coloring-agent-strips-ex)
-    (:requirements :typing)
+    (:requirements :typing :equality)
     (:types colorable color_t - object
     		thing vertex - colorable
             agent - thing

@@ -110,7 +110,8 @@ class FStripsPrinter(AbstractProblemPrinter):
             self.instance.add_goal(atom)
 
     def add_bounds(self):
-        self.instance.add_int_bound("color_t", 0, self.problem.num_colors)
+        self.instance.add_int_bound("color_t", 1, self.problem.num_colors)
+        self.instance.add_int_bound("color_t_undef", 0, self.problem.num_colors)
 
     def get_domain_name(self):
         return self.problem.domain + '-agent-fn'

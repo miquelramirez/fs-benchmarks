@@ -15,7 +15,7 @@
     (:types colorable - object
     		thing vertex - colorable
             agent - thing
-            color_t - int
+            color_t color_t_undef - int
 	)
 
 	(:constants a - agent)
@@ -27,7 +27,7 @@
     (:functions
         (loc ?t - thing) - vertex            ;; The position of the agent
         (color_loc ?c - color_t) - vertex    ;; The position of a color
-        (color ?v - colorable) - color_t     ;; The color of a vertex, or of the color being carried by the agent
+        (color ?v - colorable) - color_t_undef     ;; The color of a vertex, or of the color being carried by the agent
     )
 
     ;; Move an agent through one of the graph edges.

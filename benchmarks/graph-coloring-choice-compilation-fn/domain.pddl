@@ -16,7 +16,7 @@
 (define (domain graph-coloring-choice-compilation-fn)
     (:requirements :typing :object-fluents)
     (:types vertex - object
-            color_t - int
+            color_t color_t_undef - int
 
 	)
 
@@ -27,11 +27,11 @@
     )
 
     (:functions
-    	(choice ?v - vertex) - color_t
+    	(choice ?v - vertex) - color_t_undef
     )
 
     (:action choose :parameters (?v - vertex ?c - color_t)
-    :precondition (and (not (= ?c 0)) (= (choice ?v) 0))
+    :precondition (and (= (choice ?v) 0))
     :effect       (and (assign (choice ?v) ?c))
     )
 )
