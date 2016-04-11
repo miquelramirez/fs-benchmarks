@@ -1,5 +1,5 @@
 (define (problem sample)
-  (:domain gripper-fn)
+  (:domain gripper-fn-nested)
 
   (:objects
    a b c d e - room

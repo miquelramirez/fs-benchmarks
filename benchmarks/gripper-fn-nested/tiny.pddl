@@ -1,5 +1,5 @@
 (define (problem tiny)
-  (:domain gripper-fn)
+  (:domain gripper-fn-nested)
 
   (:objects a b - room)
 
