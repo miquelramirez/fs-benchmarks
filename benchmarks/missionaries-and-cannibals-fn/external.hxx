@@ -12,11 +12,11 @@ using namespace fs0::gecode;
 //! X = 0 or X >= Y
 class isZeroOrNotSmallerThanFormula : public fs::ExternallyDefinedFormula {
 public:
-	isZeroOrNotSmallerThanFormula(const std::vector<fs::Term::cptr>& subterms) : ExternallyDefinedFormula(subterms) {
+	isZeroOrNotSmallerThanFormula(const std::vector<const fs::Term*>& subterms) : ExternallyDefinedFormula(subterms) {
 		assert(subterms.size() == 2);
 	}
 
-	isZeroOrNotSmallerThanFormula* clone(const std::vector<fs::Term::cptr>& subterms) const { return new isZeroOrNotSmallerThanFormula(subterms); }
+	isZeroOrNotSmallerThanFormula* clone(const std::vector<const fs::Term*>& subterms) const { return new isZeroOrNotSmallerThanFormula(subterms); }
 
 	virtual std::string name() const { return "is_0_or_not_smaller_than"; }
 
@@ -31,7 +31,7 @@ class GecodeTranslator : public AtomicFormulaTranslator {
 public:
 	GecodeTranslator() {}
 
-	void registerVariables(const fs::AtomicFormula::cptr formula, GecodeCSPVariableTranslator& translator) const {
+	void registerVariables(const fs::AtomicFormula* formula, GecodeCSPVariableTranslator& translator) const {
 		// Register recursively subterms variables
 		AtomicFormulaTranslator::registerVariables(formula, translator);
 
@@ -39,7 +39,7 @@ public:
 		throw std::runtime_error("Gecode translator still unimplemented");
 	}
 
-	void registerConstraints(const fs::AtomicFormula::cptr formula, GecodeCSPVariableTranslator& translator) const  {
+	void registerConstraints(const fs::AtomicFormula* formula, GecodeCSPVariableTranslator& translator) const  {
 		auto concrete = dynamic_cast<const isZeroOrNotSmallerThanFormula*>(formula);
 		assert(concrete);
 
@@ -62,7 +62,7 @@ public:
 	External(const std::string& data_dir) : ExternalBase(data_dir) {}
 
     void registerComponents() const {
-    	LogicalComponentRegistry::instance().addFormulaCreator("@geq_or_0", [](const std::vector<fs::Term::cptr>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });
+    	LogicalComponentRegistry::instance().addFormulaCreator("@geq_or_0", [](const std::vector<const fs::Term*>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });
     	LogicalComponentRegistry::instance().add(typeid(isZeroOrNotSmallerThanFormula), new GecodeTranslator());
     }
 };

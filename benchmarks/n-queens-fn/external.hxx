@@ -24,7 +24,7 @@ extern std::unique_ptr<External> external;
 
 class AbsTerm : public fs::ExternallyDefinedTerm {
 public:
-	AbsTerm(const std::vector<fs::Term::cptr>& subterms) : ExternallyDefinedTerm(subterms) {
+	AbsTerm(const std::vector<const fs::Term*>& subterms) : ExternallyDefinedTerm(subterms) {
 		assert(subterms.size() == 1);
 	}
 

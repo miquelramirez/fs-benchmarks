@@ -25,11 +25,11 @@ extern std::unique_ptr<External> external;
 
 class CanMoveFormula : public fs::ExternallyDefinedFormula {
 public:
-	CanMoveFormula(const std::vector<fs::Term::cptr>& subterms) : ExternallyDefinedFormula(subterms) {
+	CanMoveFormula(const std::vector<const fs::Term*>& subterms) : ExternallyDefinedFormula(subterms) {
 		assert(subterms.size() == 2);
 	}
 
-	CanMoveFormula* clone(const std::vector<fs::Term::cptr>& subterms) const { return new CanMoveFormula(subterms); }
+	CanMoveFormula* clone(const std::vector<const fs::Term*>& subterms) const { return new CanMoveFormula(subterms); }
 
 	virtual std::string name() const { return "can_move"; }
 	
