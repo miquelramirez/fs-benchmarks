@@ -1,6 +1,5 @@
 
-#include "external_base.hxx"
-#include <languages/fstrips/builtin.hxx>
+#include <utils/external.hxx>#include <languages/fstrips/builtin.hxx>
 
 namespace fs = fs0::language::fstrips;
 
@@ -17,6 +16,17 @@ public:
 	}
 
    // void registerComponents() const;
+};
+
+class External : public fs0::ExternalI {
+public:
+	//! The constructor
+	External(const ProblemInfo& info, const std::string& data_dir) {}
+
+	inline unsigned abs(const ObjectIdxVector& parameters) {
+	 	assert(parameters.size() == 1);
+		return std::abs(parameters[0]);
+	}
 };
 
 /*

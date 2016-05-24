@@ -1,6 +1,6 @@
 
 #include <state.hxx>
-#include "external_base.hxx"
+#include <utils/external.hxx>
 #include <asp/lp_handler.hxx>
 
 using namespace fs0;
@@ -23,13 +23,11 @@ public:
     }
 };
 
-class External : public ExternalBase {
+
+class External : public fs0::ExternalI {
 public:
 	//! The constructor
-	External(const std::string& data_dir) : ExternalBase(data_dir) {}
+	External(const ProblemInfo& info, const std::string& data_dir) {}
 
     LPHandler* get_asp_handler() const { return new ASPRules; }
 };
-
-
-

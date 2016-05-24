@@ -1,24 +1,32 @@
 
-#include "external_base.hxx"
+#include <utils/external.hxx>
 #include <languages/fstrips/builtin.hxx>
 
 namespace fs = fs0::language::fstrips;
 
 using namespace fs0;
 
-class External : public ExternalBase {
+class External : public fs0::ExternalI {
+protected:
+	const BinaryFunction& _next;
+
 public:
 	//! The constructor
-	External(const std::string& data_dir) : ExternalBase(data_dir) {}
+	External(const ProblemInfo& info, const std::string& data_dir) :
+		_next(info.get_extension<BinaryFunction>("next"))
+	{}
 
     bool can_push(const ObjectIdxVector& params) {
         assert(params.size() == 2);
         std::pair<unsigned, unsigned> key = {params[0], params[1]};
-        return next.find(key) != next.end();
+		const auto& data = _next.get_data();
+        return data.find(key) != data.end();
     }
 
     void registerComponents() const;
 };
+
+
 
 extern std::unique_ptr<External> external;
 

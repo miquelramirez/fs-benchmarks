@@ -1,5 +1,5 @@
 
-#include "external_base.hxx"
+#include <utils/external.hxx>
 #include <languages/fstrips/builtin.hxx>
 #include <constraints/registry.hxx>
 #include <constraints/gecode/csp_translator.hxx>
@@ -60,6 +60,17 @@ class External : public ExternalBase {
 public:
 	//! The constructor
 	External(const std::string& data_dir) : ExternalBase(data_dir) {}
+
+    void registerComponents() const {
+    	LogicalComponentRegistry::instance().addFormulaCreator("@geq_or_0", [](const std::vector<const fs::Term*>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });
+    	LogicalComponentRegistry::instance().add(typeid(isZeroOrNotSmallerThanFormula), new GecodeTranslator());
+    }
+};
+
+class External : public fs0::ExternalI {
+public:
+	//! The constructor
+	External(const ProblemInfo& info, const std::string& data_dir) {}
 
     void registerComponents() const {
     	LogicalComponentRegistry::instance().addFormulaCreator("@geq_or_0", [](const std::vector<const fs::Term*>& subterms){ return new isZeroOrNotSmallerThanFormula(subterms); });

@@ -1,16 +1,16 @@
 
 
-#include "external_base.hxx"
+#include <utils/external.hxx>
 #include <languages/fstrips/builtin.hxx>
 
 namespace fs = fs0::language::fstrips;
 
 using namespace fs0;
 
-class External : public ExternalBase {
+class External : public fs0::ExternalI {
 public:
 	//! The constructor
-	External(const std::string& data_dir) : ExternalBase(data_dir) {}
+	External(const ProblemInfo& info, const std::string& data_dir) {}
 
     bool can_move(const ObjectIdxVector& params) {
         assert(params.size() == 2);
