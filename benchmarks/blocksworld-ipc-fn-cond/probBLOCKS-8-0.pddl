@@ -1,0 +1,7 @@
+(define (problem BLOCKS-8-0)
+(:domain blocksworld-fn)
+(:objects H G F E C B D A  - block)
+(:init (clear table)  (clear A) (clear D) (clear B) (clear C) (= (loc E) table) (= (loc F) table)
+ (= (loc B) table) (= (loc C) table) (= (loc A) G) (= (loc G) E) (= (loc D) H) (= (loc H) F) )
+(:goal (AND (= (loc D) F) (= (loc F) E) (= (loc E) H) (= (loc H) C) (= (loc C) A) (= (loc A) G) (= (loc G) B)))
+)
