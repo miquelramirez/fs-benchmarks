@@ -24,12 +24,12 @@
   (:action move
    :parameters (?b - block ?to - place)
    :precondition (and
-              (clear ?b)
-		      (clear ?to)
-		      (not (= ?b ?to))
-              (not (= (loc ?b) ?to)))
+		(clear ?b)
+		(clear ?to)
+		(not (= ?b ?to))
+		(not (= (loc ?b) ?to)))
    :effect (and
-   		(assign (loc ?b) ?to)
+		(assign (loc ?b) ?to)
 		(clear (loc ?b))
 		(when (not (= ?to table)) (not (clear ?to)))
 	)
