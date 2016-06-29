@@ -107,6 +107,32 @@ class FStripsPrinter(ProblemPrinter):
             self.instance.add_domain_bound("(height_t - int[0..{}])".format(self.problem.max_height))
 
 
+class TWFStripsPrinter(FStripsPrinter):
+    def get_domain_name(self):
+        components = [self.problem.domain, 'fn']
+        return '-'.join(components)
+
+    def add_init(self):
+        super().add_init()
+
+        for b in self.problem.blocks:
+            self.instance.add_init('(= (w {}) {})'.format(b, self.problem.weights[b]))
+            self.instance.add_init('(= (tower {}) {})'.format(b, self.problem.towers[b]))
+            self.instance.add_init('(= (tw {}) {})'.format(b, self.problem.tower_weights[b]))
+
+    def add_bounds(self):
+        self.instance.add_domain_bound("(weight - int[0..{}])".format(self.problem.max_weight))
+
+    def add_goals(self):
+        # (= (tw (tower A)) (tw (tower B)))
+        for b1, b2 in zip(self.problem.blocks, self.problem.blocks[1:]):
+            self.instance.add_goal('(= (tw (tower {})) (tw (tower {})))'.format(b1, b2))
+
+        # (@nvalues (tower A) (tower B) (tower C) (tower D) 3)
+        alltowers = ' '.join('(tower {})'.format(b) for b in self.problem.blocks)
+        self.instance.add_goal('(@nvalues {} {})'.format(alltowers, self.problem.num_towers))
+
+
 class ExistentialGoalFStripsPrinter(FStripsPrinter):
     """
     A problem where the goal is an existentially quantified formula taking into account the colors of different
@@ -264,7 +290,7 @@ class Problem(object):
         # We generate a permutation of blocks and keep building towers of random height from left to right,
         # until all blocks have been exhausted.
 
-        permutation = list(blocks)  # copy the list, since shuffle is an in-place operation
+        permutation = list(blocks)  # copy the list, since shuffle is antowers in-place operation
         self.random.shuffle(permutation)  # Now we have a permutation
 
         locations, heights = {}, {'table': 0}
@@ -289,8 +315,72 @@ class Problem(object):
         return locations, clear, heights
 
 
+class TowerWeightProblem(Problem):
+    def __init__(self, random, name, domain, num_blocks, towers):
+        super().__init__(random=random, name=name, domain=domain, num_blocks=num_blocks)
+        assert towers >= 2
+        self.num_towers = towers
+
+        total_weight = towers * random.randint(1, 6) * num_blocks
+        tower_weight = int(total_weight / 3)
+
+        # Divide blocks into block classes among which we'll distribute an equal amount of weight
+        breakpoints = [-1] + sorted(random.sample(range(1, num_blocks-1), towers-1)) + [num_blocks-1]
+        classes = []
+        for l, u in zip(breakpoints, breakpoints[1:]):
+            classes.append(list(range(l+1, u+1)))
+
+        weights = []
+        for group in classes:
+            weight_bounds = [0] + sorted(random.sample(range(1, tower_weight), len(group)-1)) + [tower_weight]
+
+            partials = []
+            for l, u in zip(weight_bounds, weight_bounds[1:]):
+                partials.append(u-l)
+            assert len(partials) == len(group)
+            assert sum(partials) == tower_weight
+
+            weights += partials
+
+        assert sum(weights) == total_weight
+        assert len(self.blocks) == len(weights)
+        self.weights = dict(zip(self.blocks, weights))
+
+        def compute_tower(block):
+            base = block
+            while self.init[base] != 'table':
+                base = self.init[base]
+            return base
+
+        self.towers = {}
+        for b in self.blocks:
+            self.towers[b] = compute_tower(b)
+
+        def compute_tower_weight(block):
+            return sum(self.weights[b] for b in self.blocks if self.towers[b] == block)
+
+        self.tower_weights = {}
+        for b in self.blocks:
+            self.tower_weights[b] = compute_tower_weight(b)
+
+        self.max_weight = total_weight
+
+
 def generate(random, output):
     generator = Generator(output)
+
+    #
+    # TOWER-WEIGHTS VARIANT
+    #
+    for size in range(5, 21, 5):
+        for towers in [3]:
+            for run in range(1, 4):
+                name = instance_name(size, towers, run)
+                problem = TowerWeightProblem(random=random, name=name, towers=towers,
+                                             domain="blocksworld-tower-weights", num_blocks=size)
+
+                # Functional version
+                generator(TWFStripsPrinter(problem))
 
     for size in [5, 10, 15, 20, 22, 24, 26, 28, 30]:
         for run in range(1, 4):
@@ -344,6 +434,7 @@ def generate(random, output):
 
             # Functional version with existential goal, nested-fluent move action
             generator(ExistentialGoalFStripsPrinter(problem, nested=True))
+
 
 
 def main():
