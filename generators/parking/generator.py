@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-    Problem generator for the parking domain.
+    Problem translator for the parking domain.
 """
 import argparse
 import os
