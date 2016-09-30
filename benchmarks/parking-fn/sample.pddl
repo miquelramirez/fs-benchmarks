@@ -1,5 +1,5 @@
-(define   (problem parking)
-  (:domain parking)
+(define   (problem sample)
+  (:domain parking-fn)
   (:objects
      car_00  car_01  car_02  car_03  car_04  car_05  car_06  car_07  - car
      curb_00 curb_01 curb_02 curb_03 curb_04  - curb

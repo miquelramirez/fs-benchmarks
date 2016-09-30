@@ -5,11 +5,12 @@
 import argparse
 import os
 import sys
+
+sys.path.append("..")
+
 from translator import TranslationPrinter
 import util
 import pddl  # This should be imported from a custom-set PYTHONPATH containing the path to Fast Downward's PDDL parser
-
-sys.path.append("..")
 from base import Generator
 
 
