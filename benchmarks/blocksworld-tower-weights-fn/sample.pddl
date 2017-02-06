@@ -35,7 +35,7 @@
 	 (= (tw (tower B)) (tw (tower C)))
 	 (= (tw (tower C)) (tw (tower D)))
 	 ;; (not (= (tower A) (tower B)))
-	 (@nvalues (tower A) (tower B) (tower C) (tower D) 3)
+	 (@nvalues (tower A) (tower B) (tower C) (tower D) 2)
 	)
   )
 

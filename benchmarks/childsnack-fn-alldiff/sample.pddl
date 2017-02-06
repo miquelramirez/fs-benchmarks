@@ -1,6 +1,6 @@
 
 (define (problem sample)
-  (:domain childsnack-fn)
+  (:domain childsnack-fn-alldiff)
   (:objects
     child1 child2 child3 child4 - child
     bread1 bread2 bread3 bread4 - bread-portion

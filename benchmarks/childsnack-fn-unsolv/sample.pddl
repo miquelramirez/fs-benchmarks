@@ -32,7 +32,7 @@
 	(allergic child2)
 	(allergic child3)
 	(not_allergic child1)
-	(not_allergic child4)
+	(allergic child4)
 
 
 	(= (loc child1) table1)
@@ -55,12 +55,16 @@
   )
 
   (:goal
+    (exists (?s1 ?s2 ?s3 ?s4 - sandwich ?b1 ?b2 ?b3 ?b4 - bread-portion ?c1 ?c2 ?c3 ?c4 - content-portion )
     (and
-     (not (= (served child1) undef_s))
-     (not (= (served child2) undef_s))
-     (not (= (served child3) undef_s))
-     (not (= (served child4) undef_s))
-	 (@alldiff (served child1) (served child2) (served child3) (served child4))
+      (@alldiff ?s1 ?s2 ?s3 ?s4)
+      (@alldiff ?b1 ?b2 ?b3 ?b4)
+      (@alldiff ?c1 ?c2 ?c3 ?c4)
+      (data child1 ?s1 ?b1 ?c1)
+      (data child2 ?s2 ?b2 ?c2)
+      (data child3 ?s3 ?b3 ?c3)
+      (data child4 ?s4 ?b4 ?c4)
+	 )
     )
   )
 
