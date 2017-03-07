@@ -10,12 +10,12 @@ using namespace fs0;
 
 class External : public fs0::ExternalI {
 protected:
-	const CompiledBinaryConstraint& _next;
+	const BinaryFunction& _next;
 
 public:
 	//! The constructor
 	External(const ProblemInfo& info, const std::string& data_dir) :
-		_next(info.get_extension<CompiledBinaryConstraint>("next"))
+		_next(info.get_extension<BinaryFunction>("next"))
 	{}
 
     bool can_push(const ObjectIdxVector& params) const {
@@ -24,7 +24,7 @@ public:
 
     bool can_push(const State& s, const ObjectIdxVector& params) const {
         assert(params.size() == 2);
-        return _next.isSatisfied( params[0], params[1]);
+        return _next.get_function()(params);
     }
 
     void registerComponents() const;
