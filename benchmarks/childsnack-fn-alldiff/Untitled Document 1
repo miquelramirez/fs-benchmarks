@@ -1,0 +1,3 @@
+(= (tw (tower b1)) 20)
+(= (tw (tower b2)) 20)
+(= (tw (tower b3)) 20)

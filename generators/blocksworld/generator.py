@@ -108,6 +108,10 @@ class FStripsPrinter(ProblemPrinter):
 
 
 class TWFStripsPrinter(FStripsPrinter):
+    def __init__(self, problem, weight_constraint):
+        self.weight_constraint = weight_constraint
+        super().__init__(problem)
+
     def get_domain_name(self):
         components = [self.problem.domain, 'fn']
         return '-'.join(components)
@@ -131,6 +135,10 @@ class TWFStripsPrinter(FStripsPrinter):
         # (@nvalues (tower A) (tower B) (tower C) (tower D) 3)
         alltowers = ' '.join('(tower {})'.format(b) for b in self.problem.blocks)
         self.instance.add_goal('(@nvalues {} {})'.format(alltowers, self.problem.num_towers))
+
+        if self.weight_constraint:
+            alltws = ' '.join('(tw {})'.format(b) for b in self.problem.blocks)
+            self.instance.add_goal('(@sum {} {})'.format(alltws, self.problem.total_weight))
 
 
 class ExistentialGoalFStripsPrinter(FStripsPrinter):
@@ -321,7 +329,7 @@ class TowerWeightProblem(Problem):
         assert towers >= 2
         self.num_towers = towers
 
-        total_weight = towers * random.randint(1, 6) * num_blocks
+        self.total_weight = total_weight = towers * random.randint(1, 6) * num_blocks
         tower_weight = int(total_weight / 3)
 
         # Divide blocks into block classes among which we'll distribute an equal amount of weight
@@ -363,7 +371,7 @@ class TowerWeightProblem(Problem):
         for b in self.blocks:
             self.tower_weights[b] = compute_tower_weight(b)
 
-        self.max_weight = total_weight
+        self.max_weight = total_weight + 1
 
 
 def generate(random, output):
@@ -380,7 +388,7 @@ def generate(random, output):
                                              domain="blocksworld-tower-weights", num_blocks=size)
 
                 # Functional version
-                generator(TWFStripsPrinter(problem))
+                generator(TWFStripsPrinter(problem, weight_constraint=True))
 
     for size in [5, 10, 15, 20, 22, 24, 26, 28, 30]:
         for run in range(1, 4):
