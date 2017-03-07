@@ -30,20 +30,18 @@ public:
     void registerComponents() const;
 };
 
-extern std::unique_ptr<External> external;
 
 class CanPushFormula : public fs::AxiomaticFormula {
 public:
-	CanPushFormula(const std::vector<const fs::Term*>& subterms) : fs::AxiomaticFormula(subterms) {
-		assert(subterms.size() == 2);
-	}
+	CanPushFormula(const std::vector<const fs::Term*>& subterms);
 
-	CanPushFormula* clone(const std::vector<const fs::Term*>& subterms) const { return new CanPushFormula(subterms); }
+	CanPushFormula* clone(const std::vector<const fs::Term*>& subterms) const override { return new CanPushFormula(subterms); }
 
-	virtual std::string name() const { return "can_push"; }
+	virtual std::string name() const override { return "can_push"; }
 
     bool compute(const State& state, std::vector<ObjectIdx>& arguments) const override { return _satisfied(arguments); };
 
 protected:
-	bool _satisfied(const ObjectIdxVector& values) const { return external->can_push(values); }
+	bool _satisfied(const ObjectIdxVector& values) const override { return _external.can_push(values); }
+	const External& _external;
 };
