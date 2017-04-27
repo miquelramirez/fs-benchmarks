@@ -52,7 +52,11 @@ shortnames = {
     "n-puzzle": "n-puzzle",
     "n-queens": "n-queens",
     "sokoban": "sokoban",
-    "parking": "parking"
+    "parking": "parking",
+    "transport" : "transport",
+    "openstacks" : "openstacks",
+    "floortile" : "floortile",
+    "hiking" : "hiking"
 }
 
 #  A mapping between translators and the original directory where the translator gets the instances to translate
@@ -61,4 +65,6 @@ translations = {
     "childsnack": "childsnack-sat14-strips",
     "transport": "transport-sat14-strips",
     "openstacks": "openstacks-sat14-strips",
+    "floortile": "floortile-sat14-strips",
+    "hiking": "hiking-sat14-strips"
 }
