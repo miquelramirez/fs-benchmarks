@@ -58,6 +58,7 @@ shortnames = {
 #  A mapping between translators and the original directory where the translator gets the instances to translate
 translations = {
     "parking": "parking-strips",
+    "parking-sat14": "parking-sat14-strips",
     "childsnack": "childsnack-sat14-strips",
     "transport": "transport-sat14-strips",
     "openstacks": "openstacks-sat14-strips",
