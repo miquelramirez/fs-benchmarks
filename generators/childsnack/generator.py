@@ -120,8 +120,11 @@ class FStripsPrinter(TranslationPrinter):
 
 def generate(random, output):
     generator = Generator(output)
-    domain_name = "childsnack"
 
+    _gen(generator, "childsnack-sat14")
+
+
+def _gen(generator, domain_name):
     for instance_name, filename, task in util.get_instances_of(domain_name):
         translator = FStripsPrinter(domain_name, instance_name, filename, task)
         generator(translator)
