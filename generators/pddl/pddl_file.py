@@ -36,6 +36,8 @@ def extract_domain_name(task_filename):
         domain_filename = os.path.join(dirname, basename[:3] + "-domain.pddl")
     if not os.path.exists(domain_filename) and re.match(r"p[0-9][0-9]\b", basename):
         domain_filename = os.path.join(dirname, "domain_" + basename)
+    if not os.path.exists(domain_filename) and re.match(r"p[0-9]+_[0-9]+\b", basename):
+        domain_filename = os.path.join(dirname, "domain_" + basename)
     if not os.path.exists(domain_filename) and basename.endswith("-problem.pddl"):
         domain_filename = os.path.join(dirname, basename[:-13] + "-domain.pddl")
     if not os.path.exists(domain_filename):

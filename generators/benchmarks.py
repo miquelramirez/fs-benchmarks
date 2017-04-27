@@ -59,5 +59,6 @@ shortnames = {
 translations = {
     "parking": "parking-strips",
     "childsnack": "childsnack-sat14-strips",
-    "transport": "transport-sat14-strips"
+    "transport": "transport-sat14-strips",
+    "openstacks": "openstacks-sat14-strips",
 }

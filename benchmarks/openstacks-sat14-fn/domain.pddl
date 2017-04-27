@@ -1,6 +1,6 @@
 ;; openstacks, strips version
 
-(define (domain openstacks-sequencedstrips-fn)
+(define (domain openstacks-sat14-fn)
     (:requirements :typing :adl :action-costs)
 
     (:types

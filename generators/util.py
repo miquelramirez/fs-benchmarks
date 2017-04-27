@@ -13,7 +13,7 @@ def get_instance_files(basedir):
     """
     for filename in glob.iglob(basedir + '/*.pddl'):
         _, instance_name = os.path.split(filename)
-        if instance_name != 'domain.pddl':  # Don't process the domain file itself as an instance file!
+        if 'domain' not in instance_name:  # Don't process the domain file itself as an instance file!
             yield instance_name, filename
 
 

@@ -15,7 +15,7 @@ from base import Generator
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='Translate \'transport\' problem instances.')
+    parser = argparse.ArgumentParser(description='Translate \'openstacks\' problem instances.')
     parser.add_argument("--output-dir", default="../../benchmarks",
                         help='Output dir where the generated problems will be placed')
     args = parser.parse_args()
@@ -24,12 +24,18 @@ def parse_arguments():
 
 class FStripsPrinter(TranslationPrinter):
     def __init__(self, domain_name, instance_name, filename, task):
+        self.min_count = 9999999
+        self.max_count = -1
         super().__init__(domain_name, instance_name, filename, task)
         self.instance.add_metric('minimize', 'total-cost')
 
     def translate_objects(self, objects):
-        for o in objects:  # Add all objects but capacity-number's
-            if o.type != 'capacity-number':
+        for o in objects:  # Add all objects but counts.
+            if o.type == 'count':
+                val = int(o.name[1:])
+                self.min_count = min(val, self.min_count)
+                self.max_count = max(val, self.max_count)
+            else:
                 self.instance.add_object(o.name, o.type)
 
     def add_init(self):  # We need to redefine add_init to allow for the use of the location dictionaries
@@ -48,9 +54,6 @@ class FStripsPrinter(TranslationPrinter):
             fluent = atom.fluent
             if fluent.symbol == 'total-cost':
                 return ["(= (total-cost) {})".format(atom.expression.value)]
-            elif fluent.symbol == 'road-length':
-                l1, l2 = fluent.args
-                return ["(= (road-length {} {}) {})".format(l1, l2, atom.expression.value)]
 
         assert isinstance(atom, pddl.Atom)
         name = atom.predicate
@@ -60,30 +63,38 @@ class FStripsPrinter(TranslationPrinter):
             symbol = 'vloc' if 'truck' in thing else 'ploc'
             return ["(= ({} {}) {})".format(symbol, thing, place)]
 
-        elif name == 'capacity':
-            truck, capacity = atom.args
-            _, capacity_val = capacity.split('-')
-            return ["(= (capacity {}) {})".format(truck, capacity_val)]
+        elif name == 'stacks-avail':
+            num, = atom.args
+            val = int(num[1:])
+            return ["(= (stacks-avail) {})".format(val)]
 
-        elif name == 'capacity-predecessor':  # 'capacity-predecessor' is unnecessary in the FSTRIPS
+        elif name == 'next-count':
             return []
 
-        elif name == 'road':
+        elif name == 'includes':
             l1, l2 = atom.args
-            return ["(road {} {})".format(l1, l2)]
+            return ["(includes {} {})".format(l1, l2)]
+
+        elif name == 'waiting':
+            l1, = atom.args
+            return ["(waiting {})".format(l1)]
+
+        elif name == 'shipped':
+            l1, = atom.args
+            return ["(shipped {})".format(l1)]
 
         assert False
 
     def get_domain_name(self):
-        return 'transport-sat14-fn'
+        return 'openstacks-sat14-fn'
 
     def add_bounds(self):
-        self.instance.add_int_bound('capacity-number', 0, 4)  # Capacity seems to be fixed in all instances
+        self.instance.add_int_bound('count', self.min_count, self.max_count)
 
 
 def generate(random, output):
     generator = Generator(output)
-    domain_name = "transport"
+    domain_name = "openstacks"
 
     for instance_name, filename, task in util.get_instances_of(domain_name):
         translator = FStripsPrinter(domain_name, instance_name, filename, task)
