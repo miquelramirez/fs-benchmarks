@@ -1,3 +1,4 @@
 last_generation.json
 data/*
 !data/chromatic.csv
+*.pyc
