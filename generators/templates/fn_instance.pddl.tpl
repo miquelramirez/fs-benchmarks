@@ -16,4 +16,6 @@ ${header_comment}
   ${state_constraints}
 
   ${domain_bounds}
+
+  ${metric}
 )

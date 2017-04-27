@@ -18,6 +18,7 @@ class PlanningProblem(object):
         self.state_constraints = []
         self.bounds = []
         self.header_comment_lines = []
+        self.metric = ''
 
     def add_object(self, obj, t):
         assert obj not in self.objects, "Object already declared"
@@ -48,6 +49,10 @@ class PlanningProblem(object):
     def add_header_comment(self, comment):
         self.header_comment_lines.append(comment)
 
+    def add_metric(self, type, var):
+        assert type in ('minimize', 'maximize')
+        self.metric = '(:metric {} ({}))'.format(type, var)
+
     def print(self):
         template = os.path.dirname(os.path.realpath(__file__)) + '/templates/fn_instance.pddl.tpl'
 
@@ -65,7 +70,8 @@ class PlanningProblem(object):
             domain_name=sanitize(self.domain_name),
             state_constraints=sctr,
             domain_bounds=bounds,
-            header_comment=self.format_header_comment()
+            header_comment=self.format_header_comment(),
+            metric=self.metric
         )
 
     def format_header_comment(self):
