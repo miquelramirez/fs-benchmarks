@@ -26,6 +26,7 @@ benchmark_sets = dict(
         "partition": ["partition-fn"],
         "sokoban": ["simple-sokoban-fn", "simple-sokoban-fn-alldiff", "simple-sokoban-fn-nested",
                     "simple-sokoban-fn-nested-alldiff", "simple-sokoban-rnd-fn", "simple-sokoban-rnd-fn-alldiff"],
+        "agile-robot-world": ["agile-robot-world-hybrid"]
     },
 
     # Standard STRIPS benchmark sets
@@ -56,7 +57,8 @@ shortnames = {
     "transport" : "transport",
     "openstacks" : "openstacks",
     "floortile" : "floortile",
-    "hiking" : "hiking"
+    "hiking" : "hiking",
+    "agr" : "agile-robot-world"
 }
 
 #  A mapping between translators and the original directory where the translator gets the instances to translate
