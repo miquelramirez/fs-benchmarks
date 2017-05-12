@@ -6,13 +6,10 @@ import argparse
 import glob
 import os
 import sys
+import json
 
 sys.path.append("..")
-
-from translator import TranslationPrinter
-import util
-import pddl  # This should be imported from a custom-set PYTHONPATH containing the path to Fast Downward's PDDL parser
-from base import Generator
+from base import Generator, AbstractProblemPrinter, instance_name
 
 
 def parse_arguments():
@@ -23,119 +20,64 @@ def parse_arguments():
     return args
 
 
-class FStripsPrinter(TranslationPrinter):
-    def __init__(self, domain_name, instance_name, filename, task):
-        # A dictionary mapping car names to their curb
-        self.curbs = []
-        self.init_car_loc = {}
-        self.goal_car_loc = {}
+class FStripsPrinter(AbstractProblemPrinter):
+    def __init__(self, problem, domain_name, data, layout_name):
+        self.domain_name = domain_name
+        self.data = data
+        self.layout_name = layout_name
+        super().__init__(problem)
 
-        self.index_car_locations(task.init, self.init_car_loc)
-        self.index_car_locations(self.get_goal_atoms(task), self.goal_car_loc)
+    def add_objects(self):
+        self.instance.add_object("{}".format(self.layout_name), "layout")
+        for i in range(0, self.data["ghosts"]):
+            self.instance.add_object("g{}".format(i), "ghost")
 
-        super().__init__(domain_name, instance_name, filename, task)
+    def add_init(self):
 
-        self.add_occupation_atoms()
+        self.instance.add_init('(needs_init)'.format())
+        self.instance.add_init('(alive the_pacman)'.format())
+        self.instance.add_init('(= (map_layout) {})'.format(self.layout_name))
+        self.instance.add_init('(= (at the_pacman) -1)'.format())
+        for i in range(0, self.data["ghosts"]):
+            self.instance.add_init('(= (at g{}) -1)'.format(i))
+        self.instance.add_init('(= (collected) 0)'.format())
 
-    @staticmethod
-    def index_car_locations(original, where):
-        for atom in original:
-            if isinstance(atom, pddl.Atom) and atom.predicate == 'at-curb-num':
-                car, curb = atom.args
-                where[car] = curb
+        for i in range(0, self.data["num_locations"]):
+            self.instance.add_init('(= (num_pellets {}) 0)'.format(i))
 
-    def translate_objects(self, objects):
-        for o in objects:  # Simply add the same objects with the same types than the original problem
-            self.instance.add_object(o.name, o.type)
-            if o.type == 'curb':
-                self.curbs.append(o.name)
-
-    def add_init(self):  # We need to redefine add_init to allow for the use of the location dictionaries
-        for atom in self.task.init:
-            for translated in self.translate_atom_idx(atom, self.init_car_loc):
-                self.instance.add_init(translated)
-
-    def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
-        for atom in self.get_goal_atoms(self.task):
-            for translated in self.translate_atom_idx(atom, self.goal_car_loc):
-                self.instance.add_goal(translated)
-
-    def translate_atom_idx(self, atom, index):
-        if self.is_total_cost_atom(atom):
-            return []
-        assert isinstance(atom, pddl.Atom)
-        name = atom.predicate
-
-        if name == 'at-curb':  # a car "is at-curb" means its on the first position of the curb
-            car, = atom.args
-            return ["(= (curb_pos {}) 1)".format(car)]
-
-        # the car-clear and curb-clear atoms is redundant in FSTRIPS
-        if name in ('car-clear', 'curb-clear'):
-            return []
-
-        if name == 'at-curb-num':
-            car, curb = atom.args
-            return ["(= (loc {}) {})".format(car, curb)]
-
-        # behind-car denotes that the car is in the second curb row AND that is in the same curb than the other car
-        if name == 'behind-car':
-            car1, car2 = atom.args
-            index[car1] = index[car2]
-            return ["(= (loc {}) {})".format(car1, index[car2]),
-                    "(= (curb_pos {}) 2)".format(car1)]
+    def add_goals(self):
+        self.instance.add_goal("(alive the_pacman)")
+        self.instance.add_goal("(collected {})".format(self.data["num_food"]))
 
     def get_domain_name(self):
-        components = [self.problem.domain, 'fn']
-        return '-'.join(components)
+        return "pacman"
 
     def add_bounds(self):
-        self.instance.add_int_bound('occ_t', 0, 2)
-        self.instance.add_int_bound('curb_pos_t', 1, 2)
-
-    def add_occupation_atoms(self):
-        def compute_occupation(car_locations):
-            occurrences = list(car_locations.values())
-            sorted_curbs = sorted(self.curbs)
-            return [(c, occurrences.count(c)) for c in sorted_curbs]
-
-        for curb, occ in compute_occupation(self.init_car_loc):
-            self.instance.add_init("(= (occupation {}) {})".format(curb, occ))
-
-        for curb, occ in compute_occupation(self.goal_car_loc):
-            self.instance.add_goal("(= (occupation {}) {})".format(curb, occ))
+        max_wh = max(self.data["width"], self.data["height"])
+        self.instance.add_domain_bound("(location - int[-1..{}])".format(self.data["num_locations"]))
+        self.instance.add_domain_bound("(coord - int[0..{}])".format(max_wh))
+        self.instance.add_domain_bound("(pellet_count - int[0..1])".format())
+        self.instance.add_domain_bound("(score - int[0..2])".format())
 
 
-class PacmanInstanceGenerator(object):
-    def __init__(self, layout, layout_name):
-        self.layout = layout
-        self.layout_name = layout_name
-
-    def run(self):
-        pass
+class Problem(object):
+    def __init__(self, name, domain):
+        self.name = name
+        self.domain = domain
 
 
 def generate(random, output):
     domain_name = "pacman"
     layout_dir = os.path.join(output, domain_name, "data", "layouts")
-    pacman_code_dir = os.path.join(output, domain_name)
-    sys.path.insert(0, pacman_code_dir)
-    from viewer import layout
-    sys.path.pop(0)
     generator = Generator(output)
 
-    for filename in glob.iglob(layout_dir + '/*.lay'):
-        layout_name = os.path.split(filename)[1][:-4]  # Filenames end with ".lay"
+    for filename in glob.iglob(layout_dir + '/*.json'):
+        layout_name = os.path.split(filename)[1][:-5]  # Filenames end with ".lay"
+        inst = "inst_{}".format(layout_name)
 
-        # Choose a layout
-        l = layout.getLayout(layout_name)
-        if l is None:
-            raise Exception("The layout " + layout_name + " could be found")
-
-        PacmanInstanceGenerator(l, layout_name).run()
-        pass
-        # translator = FStripsPrinter(domain_name, instance_name, filename, task)
-        # generator(translator)
+        with open(filename) as data_file:
+            data = json.load(data_file)
+            generator(FStripsPrinter(Problem(inst, domain_name), domain_name, data, layout_name))
 
 
 def main():
