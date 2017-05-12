@@ -1,0 +1,1 @@
+{"pacman_orig_pos": [2, 3], "num_food": 2, "layout": "minimaxclassic", "ghost_orig_pos": [[1, 1], [5, 2], [7, 3]], "height": 5, "num_locations": 45, "width": 9, "ghost_pos": [0, 0, 0], "ghosts": 3, "pacman_pos": 0}
