@@ -72,7 +72,13 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
 				_blocked[ _location[loc_idx] ] = false;
 				_init_num_pellets[ _location[loc_idx] ] = 0;
 				
-			} else {
+			} 
+            else if (c == 'o' ) {  // At the moment we just ignore  capsules
+				_blocked[ _location[loc_idx] ] = false;
+				_init_num_pellets[ _location[loc_idx] ] = 0;
+				
+			} 			
+			else {
 				LPT_INFO("cout", "Unknown PACMAN encoding char: " << c);
 				throw std::runtime_error("Unknown PACMAN encoding char!!!");
 			}
