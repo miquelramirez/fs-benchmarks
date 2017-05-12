@@ -8,9 +8,7 @@
         location score coord pellet_count - int
     )
 
-    (:constants
-        the_pacman - pacman
-    )
+    (:constants the_pacman - pacman)
 
     (:predicates
         ;; indicates whether pellet ?p has been eaten
