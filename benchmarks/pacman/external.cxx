@@ -113,7 +113,7 @@ External::move_ghost(const std::vector<ObjectIdx>& args ) const {
 	// there and catch pacman!
 	if (ghost_loc == pacman_loc) return ghost_loc;
 	
-    ObjectIdx selected = ghost_loc;
+    ObjectIdx selected;
     int min_dist = std::numeric_limits<int>::max();
     for ( auto l : _location ) {
         if ( _blocked.at( l ) || !adjacent(ghost_loc, l)) continue;
@@ -124,7 +124,9 @@ External::move_ghost(const std::vector<ObjectIdx>& args ) const {
             min_dist = dist;
         }
     }
-    assert( selected != ghost_loc );
+    
+    assert(min_dist != std::numeric_limits<int>::max());
+    
     LPT_DEBUG("pacman", "Ghost moves to location " << selected << " from " << ghost_loc );
 
     return selected;
