@@ -55,7 +55,7 @@ protected:
     int     get_x( ObjectIdx o ) const { return _location_x.at(o); }//return boost::get<int>( _location_x.at(o) ); }
     int     get_y( ObjectIdx o ) const { return _location_y.at(o); }//return boost::get<int>( _location_y.at(o) ); }
 
-    int     manhattan( ObjectIdx src, ObjectIdx dst ) const {
+    unsigned manhattan( ObjectIdx src, ObjectIdx dst ) const {
         return std::abs( get_x(src) - get_x(dst) ) + std::abs( get_y(src) - get_y(dst) );
     }
 
@@ -72,6 +72,8 @@ protected:
     std::unordered_map<ObjectIdx,ObjectIdx>                     _location_x;
     std::unordered_map<ObjectIdx,ObjectIdx>                     _location_y;
     std::unordered_map<ObjectIdx,bool>                          _blocked;
+	
+	unsigned _width; // The width of the map
 };
 
 

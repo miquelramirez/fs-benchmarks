@@ -12,7 +12,8 @@ namespace boost_fs = boost::filesystem;
 External::External( const ProblemInfo& info, const std::string& data_dir ) :
     _pacman(info.getTypeObjects("pacman")),
     _ghost(info.getTypeObjects("ghost")),
-    _location(info.getTypeObjects("location"))
+    _location(info.getTypeObjects("location")),
+    _width(0)
 {
 
     //! map layout file
@@ -32,18 +33,17 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
     if ( !input.is_open() )
         throw std::runtime_error("[Pacman::External]: Failed to open map data file '" + map_file.string() + "'");
 
-    int width = 0;
     int loc_idx = 1;
     int x = 0;
     int y = 0;
     int ghost = 0;
 
     for ( std::string line; std::getline(input,line);) {
-        if ( width == 0 ) width = line.size();
-        if ( line.size() != (unsigned)width ) {
+        if ( _width == 0 ) _width = line.size();
+        if ( line.size() != _width ) {
             std::stringstream ss;
             ss << "[Pacman::External]: line width mismatch, got ";
-            ss << line.size() << " expected " << width << std::endl;
+            ss << line.size() << " expected " << _width << std::endl;
             throw std::runtime_error( ss.str() );
         }
         x = 0;
@@ -87,7 +87,7 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
         y++;
     }
     LPT_DEBUG("pacman", "Loaded map: '" << map_file << "'" );
-    LPT_DEBUG("pacman", "\t # Locations: " << loc_idx << " width: " << width << " height: " << y );
+    LPT_DEBUG("pacman", "\t # Locations: " << loc_idx << " width: " << _width << " height: " << y );
 }
 
 External::~External() {
@@ -113,23 +113,53 @@ External::move_ghost(const std::vector<ObjectIdx>& args ) const {
 	// there and catch pacman!
 	if (ghost_loc == pacman_loc) return ghost_loc;
 	
-    ObjectIdx selected;
-    int min_dist = std::numeric_limits<int>::max();
-    for ( auto l : _location ) {
-        if ( _blocked.at( l ) || !adjacent(ghost_loc, l)) continue;
+    ObjectIdx selected1 = 0;
+    unsigned min_dist = std::numeric_limits<unsigned>::max();
+	
+	unsigned _num_locations = _location.size(); // Locations are assumed to go between 1 and width*height
+	// Collect the possible adjacent locations. Staying on the same loc is always an option
+	std::vector<int> possible_locs;
+	if (ghost_loc-_width > 0) possible_locs.push_back(ghost_loc-_width); // Move up
+	if (ghost_loc-1 > 0) possible_locs.push_back(ghost_loc-1); // Move to the left
+	possible_locs.push_back(ghost_loc); // Stay quiet
+	if (ghost_loc+1 <= _num_locations) possible_locs.push_back(ghost_loc+1); // Move to the right
+	if (ghost_loc+_width <= _num_locations) possible_locs.push_back(ghost_loc+_width); // Move down
+	
+	
+    for (int loc : possible_locs) {
+		// loc is, by definition, adjacent to ghost_loc
+		assert(adjacent(ghost_loc, loc));
+		
+        if (_blocked.at(loc)) continue;
 
-		int dist = manhattan(l, pacman_loc );
-        if ( dist < min_dist ) {
-            selected = l;
+		unsigned dist = manhattan(loc, pacman_loc);
+        if (dist < min_dist) {
+            selected1 = loc;
             min_dist = dist;
         }
     }
-    
-    assert(min_dist != std::numeric_limits<int>::max());
-    
-    LPT_DEBUG("pacman", "Ghost moves to location " << selected << " from " << ghost_loc );
+    assert(min_dist != std::numeric_limits<unsigned>::max());
 
-    return selected;
+	/*
+	ObjectIdx selected2 = 0;
+	min_dist = std::numeric_limits<unsigned>::max();
+	for ( auto loc : _location ) {
+        if ( _blocked.at(loc) || !adjacent(ghost_loc, loc)) continue;
+
+		unsigned dist = manhattan(loc, pacman_loc);
+        if (dist < min_dist) {
+            selected2 = loc;
+            min_dist = dist;
+        }
+    }
+    assert(min_dist != std::numeric_limits<unsigned>::max());
+    
+    assert(selected1 == selected2);
+	*/
+    
+    LPT_DEBUG("pacman", "Ghost moves to location " << selected1 << " from " << ghost_loc );
+
+    return selected1;
 }
 
 ObjectIdx
