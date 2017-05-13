@@ -27,7 +27,7 @@
 
   
 
-  (:bounds (location - int[1..45]) (coord - int[0..9]) (pellet_count - int[0..1]) (score - int[0..2]))
+  (:bounds (location - int[1..45]) (coord - int[0..9]) (score - int[0..2]))
 
   
 )
