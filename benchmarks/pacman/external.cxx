@@ -37,9 +37,6 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
     int x = 0;
     int y = 0;
     int ghost = 0;
-    _blocked[ _location[0] ] = true;
-    _init_num_pellets[ _location[0] ] = 0;
-    LPT_DEBUG("pacman", "Initialised: loc idx #" << 0 << " object = " << _location[0] );
 
     for ( std::string line; std::getline(input,line);) {
         if ( width == 0 ) width = line.size();
@@ -52,30 +49,31 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
         x = 0;
         for ( auto c : line ) {
             if (c == '%') {
-                _blocked[ _location[loc_idx] ] = true;
-                _init_num_pellets[ _location[loc_idx] ] = 0;
+                _blocked[ loc_idx ] = true;
+                _init_num_pellets[ loc_idx ] = 0;
             }
             else if (c == 'P') {
-                _blocked[ _location[loc_idx] ] = false;
+                _blocked[ loc_idx ] = false;
                 _init_locs[ _pacman[0] ] = _location[ loc_idx ];
-                _init_num_pellets[ _location[loc_idx] ] = 0;
+                _init_num_pellets[ loc_idx ] = 0;
             }
             else if (c == '.') {
-                _blocked[ _location[loc_idx] ] = false;
-                _init_num_pellets[ _location[loc_idx] ] = 1;
+                _blocked[ loc_idx ] = false;
+                _init_num_pellets[ loc_idx ] = 1;
             }
             else if (c == 'G' ) {
-                _blocked[ _location[loc_idx] ] = false;
+                _blocked[ loc_idx ] = false;
                 _init_locs[ _ghost[ghost] ] = _location[ loc_idx ];
-                _init_num_pellets[ _location[loc_idx] ] = 0;
+                _init_num_pellets[ loc_idx ] = 0;
+				++ghost;
             } else if (c == ' ' ) {
-				_blocked[ _location[loc_idx] ] = false;
-				_init_num_pellets[ _location[loc_idx] ] = 0;
+				_blocked[ loc_idx ] = false;
+				_init_num_pellets[ loc_idx ] = 0;
 				
 			} 
             else if (c == 'o' ) {  // At the moment we just ignore  capsules
-				_blocked[ _location[loc_idx] ] = false;
-				_init_num_pellets[ _location[loc_idx] ] = 0;
+				_blocked[ loc_idx ] = false;
+				_init_num_pellets[ loc_idx ] = 0;
 				
 			} 			
 			else {
@@ -84,13 +82,13 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
 			}
 				
 				
-            _location_x[ _location[loc_idx] ] = x;
-            _location_y[ _location[loc_idx] ] = y;
-            LPT_DEBUG("pacman", "Initialised: loc idx #" << loc_idx << " object = " << _location[loc_idx] );
-            LPT_DEBUG("pacman", "\t blocked? " << _blocked[ _location[loc_idx] ]);
-            LPT_DEBUG("pacman", "\t # pellets? " << _init_num_pellets[ _location[loc_idx] ]);
-            LPT_DEBUG("pacman", "\t x? " << _location_x[ _location[loc_idx] ]);
-            LPT_DEBUG("pacman", "\t y? " << _location_y[ _location[loc_idx] ]);
+            _location_x[ loc_idx ] = x;
+            _location_y[ loc_idx ] = y;
+            LPT_DEBUG("pacman", "Initialised: loc idx #" << loc_idx << " object = " << loc_idx );
+            LPT_DEBUG("pacman", "\t blocked? " << _blocked[ loc_idx ]);
+            LPT_DEBUG("pacman", "\t # pellets? " << _init_num_pellets[ loc_idx ]);
+            LPT_DEBUG("pacman", "\t x? " << _location_x[ loc_idx ]);
+            LPT_DEBUG("pacman", "\t y? " << _location_y[ loc_idx ]);
 
             x++;
             loc_idx++;
@@ -121,16 +119,16 @@ External::~External() {
 
 void External::registerComponents() const {
     LPT_DEBUG("pacman", "Registering Components...");
-    LogicalComponentRegistry::instance().
-        addTermCreator( "@initial_location", [](const std::vector<const fs::Term*>& subterms){ return new InitialLocationTerm(subterms); });
-    LogicalComponentRegistry::instance().
-        addTermCreator( "@initial_num_pellets", [](const std::vector<const fs::Term*>& subterms){ return new InitialNumPelletsTerm(subterms); });
+//     LogicalComponentRegistry::instance().
+//         addTermCreator( "@initial_location", [](const std::vector<const fs::Term*>& subterms){ return new InitialLocationTerm(subterms); });
+//     LogicalComponentRegistry::instance().
+//         addTermCreator( "@initial_num_pellets", [](const std::vector<const fs::Term*>& subterms){ return new InitialNumPelletsTerm(subterms); });
     LogicalComponentRegistry::instance().
         addTermCreator( "@@next_location", [](const std::vector<const fs::Term*>& subterms){ return new NextLocationTerm(subterms); });
-    LogicalComponentRegistry::instance().
-        addTermCreator( "@x", [](const std::vector<const fs::Term*>& subterms){ return new XTerm(subterms); });
-    LogicalComponentRegistry::instance().
-        addTermCreator( "@y", [](const std::vector<const fs::Term*>& subterms){ return new YTerm(subterms); });
+//     LogicalComponentRegistry::instance().
+//         addTermCreator( "@x", [](const std::vector<const fs::Term*>& subterms){ return new XTerm(subterms); });
+//     LogicalComponentRegistry::instance().
+//         addTermCreator( "@y", [](const std::vector<const fs::Term*>& subterms){ return new YTerm(subterms); });
 
     LogicalComponentRegistry::instance().
 		addFormulaCreator("@reachable", [](const std::vector<const fs::Term*>& subterms){ return new ReachableFormula(subterms); });
@@ -154,8 +152,33 @@ External::initial_num_pellets(const std::vector<ObjectIdx>& arguments ) const {
 
 
 ObjectIdx
-External::next_location(const std::vector<ObjectIdx>& arguments ) const {
-	throw std::runtime_error("This shouldn't be invoked"); // we need to keep this for the moment being, silly as it is.
+External::next_location(const std::vector<ObjectIdx>& args ) const {
+    assert( args.size() == 2 );
+    ObjectIdx ghost_loc = args[0];
+	ObjectIdx pacman_loc = args[1];
+//     ObjectIdx ghost_loc = state.getValue( _at_ghost_var.at(ghost_id) );
+//     ObjectIdx pacman_loc = state.getValue( _at_pacman_var );
+
+	// If the ghost is at the same location where pacman has moved, let the ghost stay
+	// there and catch pacman!
+	if (ghost_loc == pacman_loc) return ghost_loc;
+	
+    ObjectIdx selected = ghost_loc;
+    int min_dist = std::numeric_limits<int>::max();
+    for ( auto l : _location ) {
+        if ( _blocked.at( l ) ) continue;
+        if ( l == ghost_loc ) continue;
+        if ( !adjacent(ghost_loc, l) ) continue;
+        int dist = manhattan(l, pacman_loc );
+        if ( dist < min_dist ) {
+            selected = l;
+            min_dist = dist;
+        }
+    }
+    assert( selected != ghost_loc );
+    LPT_DEBUG("pacman", "Ghost moves to location " << selected << " from " << ghost_loc );
+
+    return selected;
 }
 
 ObjectIdx
@@ -193,27 +216,7 @@ External::initial_num_pellets(const State& state, const std::vector<ObjectIdx>& 
 
 ObjectIdx
 External::next_location(const State& state, const std::vector<ObjectIdx>& args ) const {
-    assert( args.size() == 1 );
-    ObjectIdx ghost_id = args[0];
-    ObjectIdx ghost_loc = state.getValue( _at_ghost_var.at(ghost_id) );
-    ObjectIdx pacman_loc = state.getValue( _at_pacman_var );
-
-    ObjectIdx selected = ghost_loc;
-    int min_dist = std::numeric_limits<int>::max();
-    for ( auto l : _location ) {
-        if ( _blocked.at( l ) ) continue;
-        if ( l == ghost_loc ) continue;
-        if ( !adjacent(ghost_loc, l) ) continue;
-        int dist = manhattan(l, pacman_loc );
-        if ( dist < min_dist ) {
-            selected = l;
-            min_dist = dist;
-        }
-    }
-    assert( selected != ghost_loc );
-    LPT_DEBUG("pacman", "Ghost " << ghost_id << " goes to location " << selected << " from " << ghost_loc );
-
-    return selected;
+	return next_location(args);
 }
 
 ObjectIdx

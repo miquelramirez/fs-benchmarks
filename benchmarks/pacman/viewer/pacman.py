@@ -611,8 +611,13 @@ def loadAgent(pacman, nographics):
                 return getattr(module, pacman)
     raise Exception('The agent ' + pacman + ' is not specified in any *Agents.py.')
 
+def pos_inv(width, height, val):
+    """  Return a pair (x, y) from a numeric position """
+    x = val % width - 1
+    y = height - int(val / width) - 1
+    return x, y
+
 def load_states( layout, filename ) :
-    num_states = 0
     states = []
 
     with open(filename) as input :
@@ -623,8 +628,15 @@ def load_states( layout, filename ) :
             state = state.split(', ')
             state = [ tok.split('=') for tok in state ]
             state = [ pair for pair in state if 'at' in pair[0]]
-            state = { pair[0]: (int(pair[1])%layout.width,layout.height-1-int(pair[1])/layout.width) for pair in state }
-            states.append(state)
+
+            d = {}
+            for state_var, position in state:
+                d[state_var] = pos_inv(layout.width, layout.height, int(position))
+
+            # state = { pair[0]: (int(pair[1])%layout.width,layout.height-1-int(pair[1])/layout.width) for pair in state }
+            states.append(d)
+
+    return states
     return states[1:]
 
 def replayGameFromStates( layout, states_file, display ) :
@@ -636,31 +648,42 @@ def replayGameFromStates( layout, states_file, display ) :
     state = game.state
     display.initialize(state.data)
 
-    print lambda_states[0]
-    for i in range(1,len(lambda_states)) :
-        print lambda_states[i]
-        print state.data.agentStates[0].configuration.pos
-        nx, ny = lambda_states[i]['at(the_pacman)']
+    for i, s in enumerate(lambda_states, 0):
+        print("Planner state {}: {}".format(i, s))
+
+    print("Starting replay")
+    for i, (s, sprime) in enumerate(zip(lambda_states, lambda_states[1:]), 0):
+        print("Planner state {}: {}".format(i, s))
+        print("Pacman Position according to Pacman Engine: {}".format(state.data.agentStates[0].configuration.pos))
+        nx, ny = s['at(the_pacman)']
         ox, oy = state.data.agentStates[0].configuration.pos
-        v = (nx - ox, ny - oy)
-        print v
-        pacman_action = Actions.vectorToDirection( v )
+        assert nx == ox and ny == oy
+        nxprime, nyprime = sprime['at(the_pacman)']
+        vector_move =  (nxprime - nx, nyprime - ny)
+        pacman_action = Actions.vectorToDirection(vector_move)
         state = state.generateSuccessor(0, pacman_action)
         display.update(state.data)
         rules.process(state,game)
         if state.isWin() or state.isLose() : break
 
-        ghost_actions = []
-        for j in range(1,len(state.data.agentStates)) :
-            nx, ny = lambda_states[i]['at(g_%s)'%(j-1)]
-            ox, oy = state.data.agentStates[j].configuration.pos
-            ghost_action = Actions.vectorToDirection( (nx - ox, ny - oy) )
-            state = state.generateSuccessor(j, ghost_action)
+        for ghost_idx in range(1, len(state.data.agentStates)) :
+            idx = 'at(g{})'.format(ghost_idx-1)
+            nx, ny = s[idx]
+            ox, oy = state.data.agentStates[ghost_idx].configuration.pos
+            assert nx == ox and ny == oy
+
+            nxprime, nyprime = sprime[idx]
+            vector_move = (nxprime - nx, nyprime - ny)
+
+            ghost_action = Actions.vectorToDirection(vector_move)
+            state = state.generateSuccessor(ghost_idx, ghost_action)
             display.update(state.data)
             rules.process(state,game)
             if state.isWin() or state.isLose() : continue
         if state.isWin() or state.isLose() : break
     display.finish()
+
+
 
 
 def replayGame( layout, actions, display ):

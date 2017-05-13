@@ -29,32 +29,39 @@ class FStripsPrinter(AbstractProblemPrinter):
 
     def add_objects(self):
         self.instance.add_object("{}".format(self.layout_name), "layout")
-        for i in range(0, self.data["ghosts"]):
+        for i in range(0, self.data["num_ghosts"]):
             self.instance.add_object("g{}".format(i), "ghost")
 
     def add_init(self):
 
-        self.instance.add_init('(needs_init)'.format())
+        # self.instance.add_init('(needs_init)'.format())
         self.instance.add_init('(alive the_pacman)'.format())
         self.instance.add_init('(= (map_layout) {})'.format(self.layout_name))
-        self.instance.add_init('(= (at the_pacman) -1)'.format())
-        for i in range(0, self.data["ghosts"]):
-            self.instance.add_init('(= (at g{}) -1)'.format(i))
+        self.instance.add_init('(= (at the_pacman) {})'.format(self.data["pacman_pos"]))
+
+        gpos = self.data["ghost_pos"]
+        assert len(gpos) == self.data["num_ghosts"]
+        for i, pos in enumerate(gpos, 0):
+            self.instance.add_init('(= (at g{}) {})'.format(i, pos))
         self.instance.add_init('(= (collected) 0)'.format())
 
-        for i in range(0, self.data["num_locations"]):
-            self.instance.add_init('(= (num_pellets {}) 0)'.format(i))
+        # Print how many pellets in each location
+        pellet_locations = set(self.data["pellets_at"])
+        assert all(p <= self.data["num_locations"] for p in pellet_locations)
+        for i in range(1, self.data["num_locations"]+1):
+            np = 1 if i in pellet_locations else 0
+            self.instance.add_init('(= (num_pellets {}) {})'.format(i, np))
 
     def add_goals(self):
         self.instance.add_goal("(alive the_pacman)")
-        self.instance.add_goal("(collected {})".format(self.data["num_food"]))
+        self.instance.add_goal("(= (collected) {})".format(self.data["num_food"]))
 
     def get_domain_name(self):
         return "pacman"
 
     def add_bounds(self):
         max_wh = max(self.data["width"], self.data["height"])
-        self.instance.add_domain_bound("(location - int[-1..{}])".format(self.data["num_locations"]))
+        self.instance.add_domain_bound("(location - int[1..{}])".format(self.data["num_locations"]))
         self.instance.add_domain_bound("(coord - int[0..{}])".format(max_wh))
         self.instance.add_domain_bound("(pellet_count - int[0..1])".format())
         self.instance.add_domain_bound("(score - int[0..2])".format())

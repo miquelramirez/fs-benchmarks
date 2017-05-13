@@ -8,8 +8,8 @@
 
 import os
 import random
-from .util import manhattanDistance
-from .game import Grid
+from util import manhattanDistance
+from game import Grid
 
 
 VISIBILITY_MATRIX_CACHE = {}

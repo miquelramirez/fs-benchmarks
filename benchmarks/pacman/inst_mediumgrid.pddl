@@ -2,18 +2,16 @@
 (define (problem inst_mediumgrid)
   (:domain pacman)
   (:objects
-    mediumgrid - layout
-	g0 - ghost
+    g0 - ghost
+	mediumgrid - layout
   )
 
   (:init
-    (needs_init)
-	(alive the_pacman)
+    (alive the_pacman)
 	(= (map_layout) mediumgrid)
-	(= (at the_pacman) -1)
-	(= (at g0) -1)
+	(= (at the_pacman) 10)
+	(= (at g0) 47)
 	(= (collected) 0)
-	(= (num_pellets 0) 0)
 	(= (num_pellets 1) 0)
 	(= (num_pellets 2) 0)
 	(= (num_pellets 3) 0)
@@ -32,10 +30,10 @@
 	(= (num_pellets 16) 0)
 	(= (num_pellets 17) 0)
 	(= (num_pellets 18) 0)
-	(= (num_pellets 19) 0)
+	(= (num_pellets 19) 1)
 	(= (num_pellets 20) 0)
 	(= (num_pellets 21) 0)
-	(= (num_pellets 22) 0)
+	(= (num_pellets 22) 1)
 	(= (num_pellets 23) 0)
 	(= (num_pellets 24) 0)
 	(= (num_pellets 25) 0)
@@ -48,10 +46,10 @@
 	(= (num_pellets 32) 0)
 	(= (num_pellets 33) 0)
 	(= (num_pellets 34) 0)
-	(= (num_pellets 35) 0)
+	(= (num_pellets 35) 1)
 	(= (num_pellets 36) 0)
 	(= (num_pellets 37) 0)
-	(= (num_pellets 38) 0)
+	(= (num_pellets 38) 1)
 	(= (num_pellets 39) 0)
 	(= (num_pellets 40) 0)
 	(= (num_pellets 41) 0)
@@ -69,18 +67,19 @@
 	(= (num_pellets 53) 0)
 	(= (num_pellets 54) 0)
 	(= (num_pellets 55) 0)
+	(= (num_pellets 56) 0)
   )
 
   (:goal
     (and 
 	(alive the_pacman)
-	(collected 4)
+	(= (collected) 4)
 	)
   )
 
   
 
-  (:bounds (location - int[-1..56]) (coord - int[0..8]) (pellet_count - int[0..1]) (score - int[0..2]))
+  (:bounds (location - int[1..56]) (coord - int[0..8]) (pellet_count - int[0..1]) (score - int[0..2]))
 
   
 )

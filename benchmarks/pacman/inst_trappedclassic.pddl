@@ -2,19 +2,17 @@
 (define (problem inst_trappedclassic)
   (:domain pacman)
   (:objects
-    trappedclassic - layout
-	g0 g1 - ghost
+    g0 g1 - ghost
+	trappedclassic - layout
   )
 
   (:init
-    (needs_init)
-	(alive the_pacman)
+    (alive the_pacman)
 	(= (map_layout) trappedclassic)
-	(= (at the_pacman) -1)
-	(= (at g0) -1)
-	(= (at g1) -1)
+	(= (at the_pacman) 13)
+	(= (at g0) 18)
+	(= (at g1) 15)
 	(= (collected) 0)
-	(= (num_pellets 0) 0)
 	(= (num_pellets 1) 0)
 	(= (num_pellets 2) 0)
 	(= (num_pellets 3) 0)
@@ -40,10 +38,10 @@
 	(= (num_pellets 23) 0)
 	(= (num_pellets 24) 0)
 	(= (num_pellets 25) 0)
-	(= (num_pellets 26) 0)
-	(= (num_pellets 27) 0)
-	(= (num_pellets 28) 0)
-	(= (num_pellets 29) 0)
+	(= (num_pellets 26) 1)
+	(= (num_pellets 27) 1)
+	(= (num_pellets 28) 1)
+	(= (num_pellets 29) 1)
 	(= (num_pellets 30) 0)
 	(= (num_pellets 31) 0)
 	(= (num_pellets 32) 0)
@@ -54,18 +52,19 @@
 	(= (num_pellets 37) 0)
 	(= (num_pellets 38) 0)
 	(= (num_pellets 39) 0)
+	(= (num_pellets 40) 0)
   )
 
   (:goal
     (and 
 	(alive the_pacman)
-	(collected 4)
+	(= (collected) 4)
 	)
   )
 
   
 
-  (:bounds (location - int[-1..40]) (coord - int[0..8]) (pellet_count - int[0..1]) (score - int[0..2]))
+  (:bounds (location - int[1..40]) (coord - int[0..8]) (pellet_count - int[0..1]) (score - int[0..2]))
 
   
 )

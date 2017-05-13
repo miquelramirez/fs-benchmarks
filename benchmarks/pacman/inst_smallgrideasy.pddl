@@ -6,12 +6,10 @@
   )
 
   (:init
-    (needs_init)
-	(alive the_pacman)
+    (alive the_pacman)
 	(= (map_layout) smallgrideasy)
-	(= (at the_pacman) -1)
+	(= (at the_pacman) 10)
 	(= (collected) 0)
-	(= (num_pellets 0) 0)
 	(= (num_pellets 1) 0)
 	(= (num_pellets 2) 0)
 	(= (num_pellets 3) 0)
@@ -36,7 +34,7 @@
 	(= (num_pellets 22) 0)
 	(= (num_pellets 23) 0)
 	(= (num_pellets 24) 0)
-	(= (num_pellets 25) 0)
+	(= (num_pellets 25) 1)
 	(= (num_pellets 26) 0)
 	(= (num_pellets 27) 0)
 	(= (num_pellets 28) 0)
@@ -48,7 +46,7 @@
 	(= (num_pellets 34) 0)
 	(= (num_pellets 35) 0)
 	(= (num_pellets 36) 0)
-	(= (num_pellets 37) 0)
+	(= (num_pellets 37) 1)
 	(= (num_pellets 38) 0)
 	(= (num_pellets 39) 0)
 	(= (num_pellets 40) 0)
@@ -60,18 +58,19 @@
 	(= (num_pellets 46) 0)
 	(= (num_pellets 47) 0)
 	(= (num_pellets 48) 0)
+	(= (num_pellets 49) 0)
   )
 
   (:goal
     (and 
 	(alive the_pacman)
-	(collected 2)
+	(= (collected) 2)
 	)
   )
 
   
 
-  (:bounds (location - int[-1..49]) (coord - int[0..7]) (pellet_count - int[0..1]) (score - int[0..2]))
+  (:bounds (location - int[1..49]) (coord - int[0..7]) (pellet_count - int[0..1]) (score - int[0..2]))
 
   
 )

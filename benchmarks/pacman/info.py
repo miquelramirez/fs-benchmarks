@@ -28,13 +28,22 @@ def main():
 
         assert pacman_pos is not None
 
+        pellets_orig = l.food.asList()
+        pellets = [location_id(width, height, p) for p in pellets_orig]
+        walls_orig = l.walls.asList()
+        walls = [location_id(width, height, w) for w in walls_orig]
+
         info = dict(
             layout=layout_name,
             width=width,
             height=height,
             num_locations=width*height,
-            ghosts=l.numGhosts,
+            num_ghosts=l.numGhosts,
             num_food=l.food.count(),
+            pellets_orig_at=pellets_orig,
+            pellets_at=pellets,
+            walls_at=walls,
+            walls_orig_at=walls_orig,
             pacman_orig_pos=pacman_pos,
             ghost_orig_pos=ghost_pos,
             pacman_pos=location_id(width, height, pacman_pos),
@@ -50,7 +59,10 @@ def main():
 
 
 def location_id(width, height, location):
-    return 0
+    x, y = location
+    # We need to "invert" the coordinates, miquel starts counting from above,
+    # the pacman programmers from below (!!)
+    return (height-1-y)*width + (x+1)
 
 
 if __name__ == '__main__':
