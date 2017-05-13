@@ -176,10 +176,10 @@ External::valid_move(const State& s, const std::vector<ObjectIdx>& args ) const 
 	ObjectIdx from = args[0];
 	ObjectIdx to = args[1];
 
-    if ( _blocked.at(to)) return false;
+	if (from == to) return true; // A no-op
+    if ( _blocked.at(to) || !adjacent(from, to)) return false;
 
-    if (!adjacent(from, to)) return false;
-    return get_x(from) != get_x(to) || get_y(from) != get_y(to);
+    return get_x(from) != get_x(to) || get_y(from) != get_y(to); // ???
 }
 
 MoveGhostTerm::MoveGhostTerm( const std::vector< const fs::Term*>& subterms )
