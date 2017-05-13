@@ -116,10 +116,9 @@ External::move_ghost(const std::vector<ObjectIdx>& args ) const {
     ObjectIdx selected = ghost_loc;
     int min_dist = std::numeric_limits<int>::max();
     for ( auto l : _location ) {
-        if ( _blocked.at( l ) ) continue;
-        if ( l == ghost_loc ) continue;
-        if ( !adjacent(ghost_loc, l) ) continue;
-        int dist = manhattan(l, pacman_loc );
+        if ( _blocked.at( l ) || !adjacent(ghost_loc, l)) continue;
+
+		int dist = manhattan(l, pacman_loc );
         if ( dist < min_dist ) {
             selected = l;
             min_dist = dist;
