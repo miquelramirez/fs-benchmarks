@@ -50,30 +50,22 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
         for ( auto c : line ) {
             if (c == '%') {
                 _blocked[ loc_idx ] = true;
-                _init_num_pellets[ loc_idx ] = 0;
             }
             else if (c == 'P') {
                 _blocked[ loc_idx ] = false;
-                _init_locs[ _pacman[0] ] = _location[ loc_idx ];
-                _init_num_pellets[ loc_idx ] = 0;
             }
             else if (c == '.') {
                 _blocked[ loc_idx ] = false;
-                _init_num_pellets[ loc_idx ] = 1;
             }
             else if (c == 'G' ) {
                 _blocked[ loc_idx ] = false;
-                _init_locs[ _ghost[ghost] ] = _location[ loc_idx ];
-                _init_num_pellets[ loc_idx ] = 0;
 				++ghost;
             } else if (c == ' ' ) {
 				_blocked[ loc_idx ] = false;
-				_init_num_pellets[ loc_idx ] = 0;
 				
 			} 
             else if (c == 'o' ) {  // At the moment we just ignore  capsules
 				_blocked[ loc_idx ] = false;
-				_init_num_pellets[ loc_idx ] = 0;
 				
 			} 			
 			else {
@@ -86,7 +78,6 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
             _location_y[ loc_idx ] = y;
             LPT_DEBUG("pacman", "Initialised: loc idx #" << loc_idx << " object = " << loc_idx );
             LPT_DEBUG("pacman", "\t blocked? " << _blocked[ loc_idx ]);
-            LPT_DEBUG("pacman", "\t # pellets? " << _init_num_pellets[ loc_idx ]);
             LPT_DEBUG("pacman", "\t x? " << _location_x[ loc_idx ]);
             LPT_DEBUG("pacman", "\t y? " << _location_y[ loc_idx ]);
 
@@ -97,20 +88,6 @@ External::External( const ProblemInfo& info, const std::string& data_dir ) :
     }
     LPT_DEBUG("pacman", "Loaded map: '" << map_file << "'" );
     LPT_DEBUG("pacman", "\t # Locations: " << loc_idx << " width: " << width << " height: " << y );
-
-    //! Variable binding
-
-    unsigned at_sym_id = info.getSymbolId("at");
-    _at_pacman_var = info.resolveStateVariable( at_sym_id, {_pacman[0]});
-
-    for ( auto o : _ghost )
-        _at_ghost_var[o] =  info.resolveStateVariable( at_sym_id, {o});
-
-    unsigned num_pellet_sym_id = info.getSymbolId("num_pellets");
-    for ( auto o : _location )
-        _num_pellets_var[o] = info.resolveStateVariable( num_pellet_sym_id, {o});
-
-
 }
 
 External::~External() {
@@ -119,35 +96,10 @@ External::~External() {
 
 void External::registerComponents() const {
     LPT_DEBUG("pacman", "Registering Components...");
-//     LogicalComponentRegistry::instance().
-//         addTermCreator( "@initial_location", [](const std::vector<const fs::Term*>& subterms){ return new InitialLocationTerm(subterms); });
-//     LogicalComponentRegistry::instance().
-//         addTermCreator( "@initial_num_pellets", [](const std::vector<const fs::Term*>& subterms){ return new InitialNumPelletsTerm(subterms); });
     LogicalComponentRegistry::instance().
         addTermCreator( "@move_ghost", [](const std::vector<const fs::Term*>& subterms){ return new MoveGhostTerm(subterms); });
-//     LogicalComponentRegistry::instance().
-//         addTermCreator( "@x", [](const std::vector<const fs::Term*>& subterms){ return new XTerm(subterms); });
-//     LogicalComponentRegistry::instance().
-//         addTermCreator( "@y", [](const std::vector<const fs::Term*>& subterms){ return new YTerm(subterms); });
-
     LogicalComponentRegistry::instance().
 		addFormulaCreator("@valid_move", [](const std::vector<const fs::Term*>& subterms){ return new ValidMoveFormula(subterms); });
-}
-
-ObjectIdx
-External::initial_location(const std::vector<ObjectIdx>& arguments ) const {
-    assert( arguments.size() == 1 );
-    LPT_DEBUG("pacman", "initial_location(args): argument: " << arguments[0] );
-    LPT_DEBUG("pacman", "\t value: " << _init_locs.at(arguments[0]) );
-    return _init_locs.at(arguments[0]);
-}
-
-ObjectIdx
-External::initial_num_pellets(const std::vector<ObjectIdx>& arguments ) const {
-    assert( arguments.size() == 1 );
-    LPT_DEBUG("pacman", "initial_num_pellets(args): argument: " << arguments[0] );
-    LPT_DEBUG("pacman", "\t value: " << _init_num_pellets.at(arguments[0]) );
-    return _init_num_pellets.at(arguments[0]);
 }
 
 
@@ -156,8 +108,6 @@ External::move_ghost(const std::vector<ObjectIdx>& args ) const {
     assert( args.size() == 2 );
     ObjectIdx ghost_loc = args[0];
 	ObjectIdx pacman_loc = args[1];
-//     ObjectIdx ghost_loc = state.getValue( _at_ghost_var.at(ghost_id) );
-//     ObjectIdx pacman_loc = state.getValue( _at_pacman_var );
 
 	// If the ghost is at the same location where pacman has moved, let the ghost stay
 	// there and catch pacman!
@@ -203,18 +153,6 @@ External::valid_move(const std::vector<ObjectIdx>& arguments ) const {
 }
 
 ObjectIdx
-External::initial_location(const State& state, const std::vector<ObjectIdx>& args ) const {
-    assert( args.size() == 1);
-    return _init_locs.at(args[0]);
-}
-
-ObjectIdx
-External::initial_num_pellets(const State& state, const std::vector<ObjectIdx>& args ) const {
-    assert( args.size() == 1);
-    return _init_num_pellets.at(args[0]);
-}
-
-ObjectIdx
 External::move_ghost(const State& state, const std::vector<ObjectIdx>& args ) const {
 	return move_ghost(args);
 }
@@ -243,48 +181,11 @@ External::valid_move(const State& s, const std::vector<ObjectIdx>& args ) const 
     return get_x(from) != get_x(to) || get_y(from) != get_y(to);
 }
 
-InitialLocationTerm::InitialLocationTerm( const std::vector< const fs::Term*>& subterms )
-    : AxiomaticTerm( ProblemInfo::getInstance().getSymbolId( "@initial_location" ), subterms ),
-    _external( dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
-{
-    assert( subterms.size() == 1);
-}
-
-InitialLocationTerm*
-InitialLocationTerm::clone( const std::vector<const fs::Term*>& subterms) const {
-    return new InitialLocationTerm( subterms );
-}
-
-ObjectIdx
-InitialLocationTerm::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
-    LPT_DEBUG("pacman", "Invoked InitialLocationTerm::compute()");
-    return _external.initial_location( state, arguments );
-}
-
-InitialNumPelletsTerm::InitialNumPelletsTerm( const std::vector< const fs::Term*>& subterms )
-    : AxiomaticTerm( ProblemInfo::getInstance().getSymbolId( "@initial_num_pellets" ), subterms ),
-    _external( dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
-{
-    assert( subterms.size() == 1);
-}
-
-InitialNumPelletsTerm*
-InitialNumPelletsTerm::clone( const std::vector<const fs::Term*>& subterms) const {
-    return new InitialNumPelletsTerm( subterms );
-}
-
-ObjectIdx
-InitialNumPelletsTerm::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
-    LPT_DEBUG("pacman", "Invoked InitialNumPelletsTerm::compute()");
-    return _external.initial_num_pellets( state, arguments );
-}
-
-
 MoveGhostTerm::MoveGhostTerm( const std::vector< const fs::Term*>& subterms )
     : AxiomaticTerm( ProblemInfo::getInstance().getSymbolId( "@move_ghost" ), subterms ),
     _external( dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
 {
-    assert( subterms.size() == 1);
+    assert( subterms.size() == 2);
 }
 
 MoveGhostTerm*
@@ -338,7 +239,7 @@ ValidMoveFormula::ValidMoveFormula( const std::vector<const fs::Term*>& subterms
     : AxiomaticFormula(subterms),
     _external(dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
 {
-    assert(subterms.size() == 1);
+    assert(subterms.size() == 2);
 }
 
 ValidMoveFormula*

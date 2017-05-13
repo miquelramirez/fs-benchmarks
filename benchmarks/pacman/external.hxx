@@ -69,52 +69,12 @@ protected:
     std::vector<ObjectIdx>                                      _pacman;
     std::vector<ObjectIdx>                                      _ghost;
     std::vector<ObjectIdx>                                      _location;
-    VariableIdx                                                 _at_pacman_var;
-    std::unordered_map<ObjectIdx,VariableIdx>                   _at_ghost_var;
-    std::unordered_map<ObjectIdx,VariableIdx>                   _num_pellets_var;
     std::unordered_map<ObjectIdx,ObjectIdx>                     _location_x;
     std::unordered_map<ObjectIdx,ObjectIdx>                     _location_y;
-    std::unordered_map<ObjectIdx,ObjectIdx>                     _init_locs;
-    std::unordered_map<ObjectIdx,ObjectIdx>                     _init_num_pellets;
     std::unordered_map<ObjectIdx,bool>                          _blocked;
-
-    //! These are not
-/*
-    mutable std::unordered_map<ObjectIdx,ObjectIdx>             _x_predator;
-    mutable std::unordered_map<ObjectIdx,ObjectIdx>             _y_predator;
-    mutable std::unordered_map<ObjectIdx,ObjectIdx>             _x_prey;
-    mutable std::unordered_map<ObjectIdx,ObjectIdx>             _y_prey;
-    mutable std::unordered_map<ObjectIdx,int>                   _distance_to_predator;
-*/
 };
 
-class InitialLocationTerm : public fs::AxiomaticTerm {
-public:
-    InitialLocationTerm( const std::vector<const fs::Term*>& subterms );
 
-	InitialLocationTerm* clone(const std::vector<const fs::Term*>& subterms) const override;
-
-    std::string name() const override { return "initial_location"; };
-
-	ObjectIdx compute(const State& state, std::vector<ObjectIdx>& arguments) const override;
-protected:
-
-    const External& _external;
-};
-
-class InitialNumPelletsTerm : public fs::AxiomaticTerm {
-public:
-    InitialNumPelletsTerm( const std::vector<const fs::Term*>& subterms );
-
-	InitialNumPelletsTerm* clone(const std::vector<const fs::Term*>& subterms) const override;
-
-    std::string name() const override { return "initial_num_pellets"; };
-
-	ObjectIdx compute(const State& state, std::vector<ObjectIdx>& arguments) const override;
-protected:
-
-    const External& _external;
-};
 
 class MoveGhostTerm : public fs::AxiomaticTerm {
 public:

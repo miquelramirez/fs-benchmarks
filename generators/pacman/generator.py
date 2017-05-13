@@ -48,9 +48,10 @@ class FStripsPrinter(AbstractProblemPrinter):
         # Print how many pellets in each location
         pellet_locations = set(self.data["pellets_at"])
         assert all(p <= self.data["num_locations"] for p in pellet_locations)
-        for i in range(1, self.data["num_locations"]+1):
-            np = 1 if i in pellet_locations else 0
-            self.instance.add_init('(= (num_pellets {}) {})'.format(i, np))
+        for p in pellet_locations:
+            self.instance.add_init('(pellet_at {})'.format(p))
+
+
 
     def add_goals(self):
         self.instance.add_goal("(alive the_pacman)")
