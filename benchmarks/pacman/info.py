@@ -32,6 +32,8 @@ def main():
         pellets = [location_id(width, height, p) for p in pellets_orig]
         walls_orig = l.walls.asList()
         walls = [location_id(width, height, w) for w in walls_orig]
+        capsules_orig = l.capsules
+        capsules = [location_id(width, height, w) for w in capsules_orig]
 
         info = dict(
             layout=layout_name,
@@ -45,6 +47,8 @@ def main():
             walls_at=walls,
             walls_orig_at=walls_orig,
             pacman_orig_pos=pacman_pos,
+            capsules_orig=capsules_orig,
+            capsules=capsules,
             ghost_orig_pos=ghost_pos,
             pacman_pos=location_id(width, height, pacman_pos),
             ghost_pos=[location_id(width, height, p) for p in ghost_pos],
@@ -53,7 +57,7 @@ def main():
         # Serialize the info to json and move on
         output_filename = filename[:-4] + ".json"
         with open(output_filename, 'w') as outfile:
-            json.dump(info, outfile)
+            json.dump(info, outfile, sort_keys=True, indent=2)
 
     print("Done!")
 
