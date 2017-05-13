@@ -23,7 +23,7 @@
 
     (:functions
         (at ?o - locatable ) - location
-        (@next_location ?g - ghost) - location
+        (@move_ghost ?g - ghost) - location
         (destination ?p - pacman) - location
         (super_mode) - time
     )
@@ -46,7 +46,7 @@
                             (= (slot) 1)
                         )
         :effect (and
-                        (forall (?g  - ghost) (when (active ?g) (assign (location ?g) (@next_location ?g))))
+                        (forall (?g  - ghost) (when (active ?g) (assign (location ?g) (@move_ghost ?g))))
                         (assign (slot) (+ (slot) 1))
                 )
     )

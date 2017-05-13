@@ -124,14 +124,14 @@ void External::registerComponents() const {
 //     LogicalComponentRegistry::instance().
 //         addTermCreator( "@initial_num_pellets", [](const std::vector<const fs::Term*>& subterms){ return new InitialNumPelletsTerm(subterms); });
     LogicalComponentRegistry::instance().
-        addTermCreator( "@@next_location", [](const std::vector<const fs::Term*>& subterms){ return new NextLocationTerm(subterms); });
+        addTermCreator( "@move_ghost", [](const std::vector<const fs::Term*>& subterms){ return new MoveGhostTerm(subterms); });
 //     LogicalComponentRegistry::instance().
 //         addTermCreator( "@x", [](const std::vector<const fs::Term*>& subterms){ return new XTerm(subterms); });
 //     LogicalComponentRegistry::instance().
 //         addTermCreator( "@y", [](const std::vector<const fs::Term*>& subterms){ return new YTerm(subterms); });
 
     LogicalComponentRegistry::instance().
-		addFormulaCreator("@reachable", [](const std::vector<const fs::Term*>& subterms){ return new ReachableFormula(subterms); });
+		addFormulaCreator("@valid_move", [](const std::vector<const fs::Term*>& subterms){ return new ValidMoveFormula(subterms); });
 }
 
 ObjectIdx
@@ -152,7 +152,7 @@ External::initial_num_pellets(const std::vector<ObjectIdx>& arguments ) const {
 
 
 ObjectIdx
-External::next_location(const std::vector<ObjectIdx>& args ) const {
+External::move_ghost(const std::vector<ObjectIdx>& args ) const {
     assert( args.size() == 2 );
     ObjectIdx ghost_loc = args[0];
 	ObjectIdx pacman_loc = args[1];
@@ -198,7 +198,7 @@ External::y(const std::vector<ObjectIdx>& arguments ) const {
 }
 
 bool
-External::reachable(const std::vector<ObjectIdx>& arguments ) const {
+External::valid_move(const std::vector<ObjectIdx>& arguments ) const {
 	throw std::runtime_error("This shouldn't be invoked"); // we need to keep this for the moment being, silly as it is.
 }
 
@@ -215,8 +215,8 @@ External::initial_num_pellets(const State& state, const std::vector<ObjectIdx>& 
 }
 
 ObjectIdx
-External::next_location(const State& state, const std::vector<ObjectIdx>& args ) const {
-	return next_location(args);
+External::move_ghost(const State& state, const std::vector<ObjectIdx>& args ) const {
+	return move_ghost(args);
 }
 
 ObjectIdx
@@ -232,14 +232,15 @@ External::y(const State& state, const std::vector<ObjectIdx>& args ) const {
 }
 
 bool
-External::reachable(const State& s, const std::vector<ObjectIdx>& args ) const {
-    assert(args.size() == 1 );
+External::valid_move(const State& s, const std::vector<ObjectIdx>& args ) const {
+    assert(args.size() == 2 );
+	ObjectIdx from = args[0];
+	ObjectIdx to = args[1];
 
-    if ( _blocked.at(args[0]) ) return false;
+    if ( _blocked.at(to)) return false;
 
-    ObjectIdx pacman_loc = s.getValue( _at_pacman_var );
-    if (!adjacent(pacman_loc, args[0])) return false;
-    return get_x(pacman_loc) != get_x(args[0]) || get_y(pacman_loc) != get_y(args[0]);
+    if (!adjacent(from, to)) return false;
+    return get_x(from) != get_x(to) || get_y(from) != get_y(to);
 }
 
 InitialLocationTerm::InitialLocationTerm( const std::vector< const fs::Term*>& subterms )
@@ -279,22 +280,22 @@ InitialNumPelletsTerm::compute(const State& state, std::vector<ObjectIdx>& argum
 }
 
 
-NextLocationTerm::NextLocationTerm( const std::vector< const fs::Term*>& subterms )
-    : AxiomaticTerm( ProblemInfo::getInstance().getSymbolId( "@@next_location" ), subterms ),
+MoveGhostTerm::MoveGhostTerm( const std::vector< const fs::Term*>& subterms )
+    : AxiomaticTerm( ProblemInfo::getInstance().getSymbolId( "@move_ghost" ), subterms ),
     _external( dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
 {
     assert( subterms.size() == 1);
 }
 
-NextLocationTerm*
-NextLocationTerm::clone( const std::vector<const fs::Term*>& subterms) const {
-    return new NextLocationTerm( subterms );
+MoveGhostTerm*
+MoveGhostTerm::clone( const std::vector<const fs::Term*>& subterms) const {
+    return new MoveGhostTerm( subterms );
 }
 
 ObjectIdx
-NextLocationTerm::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
-    LPT_DEBUG("pacman", "Invoked NextLocationTerm::compute()");
-    return _external.next_location( state, arguments );
+MoveGhostTerm::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
+    LPT_DEBUG("pacman", "Invoked MoveGhostTerm::compute()");
+    return _external.move_ghost( state, arguments );
 }
 
 XTerm::XTerm( const std::vector< const fs::Term*>& subterms )
@@ -333,20 +334,20 @@ YTerm::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
     return _external.y( state, arguments );
 }
 
-ReachableFormula::ReachableFormula( const std::vector<const fs::Term*>& subterms)
+ValidMoveFormula::ValidMoveFormula( const std::vector<const fs::Term*>& subterms)
     : AxiomaticFormula(subterms),
     _external(dynamic_cast<const External&>(ProblemInfo::getInstance().get_external()))
 {
     assert(subterms.size() == 1);
 }
 
-ReachableFormula*
-ReachableFormula::clone(const std::vector<const fs::Term*>& subterms) const {
-    return new ReachableFormula(subterms);
+ValidMoveFormula*
+ValidMoveFormula::clone(const std::vector<const fs::Term*>& subterms) const {
+    return new ValidMoveFormula(subterms);
 }
 
 bool
-ReachableFormula::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
-    LPT_DEBUG("predator_and_prey", "Invoked ReachableFormula::compute()");
-    return _external.reachable( state, arguments );
+ValidMoveFormula::compute(const State& state, std::vector<ObjectIdx>& arguments) const {
+    LPT_DEBUG("predator_and_prey", "Invoked ValidMoveFormula::compute()");
+    return _external.valid_move( state, arguments );
 }

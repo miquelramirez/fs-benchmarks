@@ -31,10 +31,10 @@ public:
     ObjectIdx   initial_num_pellets(const State& state, const std::vector<ObjectIdx>& arguments ) const;
     ObjectIdx   initial_num_pellets(const std::vector<ObjectIdx>& arguments ) const;
 
-    //! next_location(?g)
+    //! move_ghost(?g)
     //! deterministic policy that determines the location the ghost will move
-    ObjectIdx   next_location(const State& state, const std::vector<ObjectIdx>& arguments ) const;
-    ObjectIdx   next_location(const std::vector<ObjectIdx>& arguments ) const;
+    ObjectIdx   move_ghost(const State& state, const std::vector<ObjectIdx>& arguments ) const;
+    ObjectIdx   move_ghost(const std::vector<ObjectIdx>& arguments ) const;
 
     //! x(?o) - x coordinate of an object
     ObjectIdx  x(const State& state, const std::vector<ObjectIdx>& arguments ) const;
@@ -44,10 +44,10 @@ public:
     ObjectIdx  y(const State& state, const std::vector<ObjectIdx>& arguments ) const;
     ObjectIdx  y(const std::vector<ObjectIdx>& arguments ) const;
 
-    //! reachable(?l)
-    //! whether location ?l is reachable from the current location of the pacman
-    bool  reachable(const State& state, const std::vector<ObjectIdx>& arguments ) const;
-    bool  reachable(const std::vector<ObjectIdx>& arguments ) const;
+    //! valid_move(?l)
+    //! whether location ?l is valid_move from the current location of the pacman
+    bool  valid_move(const State& state, const std::vector<ObjectIdx>& arguments ) const;
+    bool  valid_move(const std::vector<ObjectIdx>& arguments ) const;
 
 
 protected:
@@ -116,13 +116,13 @@ protected:
     const External& _external;
 };
 
-class NextLocationTerm : public fs::AxiomaticTerm {
+class MoveGhostTerm : public fs::AxiomaticTerm {
 public:
-    NextLocationTerm( const std::vector<const fs::Term*>& subterms );
+    MoveGhostTerm( const std::vector<const fs::Term*>& subterms );
 
-	NextLocationTerm* clone(const std::vector<const fs::Term*>& subterms) const override;
+	MoveGhostTerm* clone(const std::vector<const fs::Term*>& subterms) const override;
 
-    std::string name() const override { return "next_location"; };
+    std::string name() const override { return "move_ghost"; };
 
 	ObjectIdx compute(const State& state, std::vector<ObjectIdx>& arguments) const override;
 protected:
@@ -158,14 +158,14 @@ protected:
     const External& _external;
 };
 
-class ReachableFormula : public fs::AxiomaticFormula {
+class ValidMoveFormula : public fs::AxiomaticFormula {
 public:
 
-    ReachableFormula( const std::vector<const fs::Term*>& subterms);
+    ValidMoveFormula( const std::vector<const fs::Term*>& subterms);
 
-    ReachableFormula* clone(const std::vector<const fs::Term*>& subterms) const override;
+    ValidMoveFormula* clone(const std::vector<const fs::Term*>& subterms) const override;
 
-    std::string name() const override { return "reachable"; };
+    std::string name() const override { return "valid_move"; };
 
 	bool compute(const State& state, std::vector<ObjectIdx>& arguments) const override;
 
