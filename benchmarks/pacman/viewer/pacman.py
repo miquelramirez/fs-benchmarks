@@ -627,7 +627,7 @@ def load_states( layout, filename ) :
             state = line[-1].replace(']','')
             state = state.split(', ')
             state = [ tok.split('=') for tok in state ]
-            state = [ pair for pair in state if 'at' in pair[0]]
+            state = [ pair for pair in state if 'at' in pair[0] and 'pellet_at' not in pair[0]]
 
             d = {}
             for state_var, position in state:
