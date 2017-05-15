@@ -61,9 +61,7 @@ class FStripsPrinter(AbstractProblemPrinter):
         return "pacman"
 
     def add_bounds(self):
-        max_wh = max(self.data["width"], self.data["height"])
         self.instance.add_domain_bound("(location - int[1..{}])".format(self.data["num_locations"]))
-        self.instance.add_domain_bound("(coord - int[0..{}])".format(max_wh))
         self.instance.add_domain_bound("(score - int[0..{}])".format(self.data["num_food"]))
 
 

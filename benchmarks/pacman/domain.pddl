@@ -5,7 +5,7 @@
     (:types
         locatable layout - object
         pacman ghost - locatable
-        location score coord - int
+        location score - int
     )
 
     (:constants the_pacman - pacman)

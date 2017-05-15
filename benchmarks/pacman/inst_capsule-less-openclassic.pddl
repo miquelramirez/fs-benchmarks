@@ -109,7 +109,7 @@
 
   
 
-  (:bounds (location - int[1..225]) (coord - int[0..25]) (score - int[0..86]))
+  (:bounds (location - int[1..225]) (score - int[0..86]))
 
   
 )

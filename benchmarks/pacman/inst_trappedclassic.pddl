@@ -28,7 +28,7 @@
 
   
 
-  (:bounds (location - int[1..40]) (coord - int[0..8]) (score - int[0..4]))
+  (:bounds (location - int[1..40]) (score - int[0..4]))
 
   
 )
