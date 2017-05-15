@@ -5,7 +5,7 @@
 ;;; Loosely based on the IPC 2008 version available at <http://ipc.informatik.uni-freiburg.de/PddlExtension>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain blocksworld-fn-cond)
+(define (domain blocksworld-fn)
 
   (:types place - object
           block - place
