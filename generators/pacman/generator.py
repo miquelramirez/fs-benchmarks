@@ -78,7 +78,7 @@ def generate(random, output):
 
     for filename in glob.iglob(layout_dir + '/*.json'):
         layout_name = os.path.split(filename)[1][:-5]  # Filenames end with ".lay"
-        inst = "inst_{}".format(layout_name)
+        inst = "{}".format(layout_name)
 
         with open(filename) as data_file:
             data = json.load(data_file)
