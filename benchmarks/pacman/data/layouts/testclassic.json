@@ -1,6 +1,7 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "5x10", 
   "ghost_orig_pos": [
     [
       2, 
@@ -11,7 +12,7 @@
     13
   ], 
   "height": 10, 
-  "layout": "testClassic", 
+  "layout": "testclassic", 
   "num_food": 8, 
   "num_ghosts": 1, 
   "num_locations": 50, 
@@ -64,6 +65,7 @@
       7
     ]
   ], 
+  "size": 50, 
   "walls_at": [
     46, 
     41, 

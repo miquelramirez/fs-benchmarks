@@ -23,6 +23,7 @@
       6
     ]
   ], 
+  "dimensions": "31x8", 
   "ghost_orig_pos": [
     [
       15, 
@@ -33,7 +34,7 @@
     47
   ], 
   "height": 8, 
-  "layout": "bigSafeSearch", 
+  "layout": "bigsafesearch", 
   "num_food": 81, 
   "num_ghosts": 1, 
   "num_locations": 248, 
@@ -451,6 +452,7 @@
       6
     ]
   ], 
+  "size": 248, 
   "walls_at": [
     218, 
     187, 

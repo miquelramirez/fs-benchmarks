@@ -39,6 +39,8 @@ def main():
             layout=layout_name,
             width=width,
             height=height,
+            dimensions="{}x{}".format(width, height),
+            size=width*height,
             num_locations=width*height,
             num_ghosts=l.numGhosts,
             num_food=l.food.count(),

@@ -33,6 +33,7 @@
       11
     ]
   ], 
+  "dimensions": "20x13", 
   "ghost_orig_pos": [
     [
       8, 
@@ -58,7 +59,7 @@
     112
   ], 
   "height": 13, 
-  "layout": "trickyClassic", 
+  "layout": "trickyclassic", 
   "num_food": 114, 
   "num_ghosts": 4, 
   "num_locations": 260, 
@@ -641,6 +642,7 @@
       10
     ]
   ], 
+  "size": 260, 
   "walls_at": [
     241, 
     221, 

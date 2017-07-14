@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "37x37", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 37, 
-  "layout": "bigMaze", 
+  "layout": "bigmaze", 
   "num_food": 1, 
   "num_ghosts": 0, 
   "num_locations": 1369, 
@@ -22,6 +23,7 @@
       1
     ]
   ], 
+  "size": 1369, 
   "walls_at": [
     1333, 
     1296, 

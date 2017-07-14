@@ -8,6 +8,7 @@
       1
     ]
   ], 
+  "dimensions": "25x9", 
   "ghost_orig_pos": [
     [
       22, 
@@ -18,7 +19,7 @@
     123
   ], 
   "height": 9, 
-  "layout": "openClassic", 
+  "layout": "openclassic", 
   "num_food": 86, 
   "num_ghosts": 1, 
   "num_locations": 225, 
@@ -461,6 +462,7 @@
       6
     ]
   ], 
+  "size": 225, 
   "walls_at": [
     201, 
     176, 

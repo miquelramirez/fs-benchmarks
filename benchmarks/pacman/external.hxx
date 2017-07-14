@@ -36,14 +36,6 @@ public:
     ObjectIdx   move_ghost(const State& state, const std::vector<ObjectIdx>& arguments ) const;
     ObjectIdx   move_ghost(const std::vector<ObjectIdx>& arguments ) const;
 
-    //! x(?o) - x coordinate of an object
-    ObjectIdx  x(const State& state, const std::vector<ObjectIdx>& arguments ) const;
-    ObjectIdx  x(const std::vector<ObjectIdx>& arguments ) const;
-
-    //! y(?o) - y coordinate of an object
-    ObjectIdx  y(const State& state, const std::vector<ObjectIdx>& arguments ) const;
-    ObjectIdx  y(const std::vector<ObjectIdx>& arguments ) const;
-
     //! valid_move(?l)
     //! whether location ?l is valid_move from the current location of the pacman
     bool  valid_move(const State& state, const std::vector<ObjectIdx>& arguments ) const;
@@ -51,9 +43,6 @@ public:
 
 
 protected:
-
-    int     get_x( ObjectIdx o ) const { return _location_x.at(o); }//return boost::get<int>( _location_x.at(o) ); }
-    int     get_y( ObjectIdx o ) const { return _location_y.at(o); }//return boost::get<int>( _location_y.at(o) ); }
 
     unsigned manhattan( ObjectIdx src, ObjectIdx dst ) const {
         return std::abs( get_x(src) - get_x(dst) ) + std::abs( get_y(src) - get_y(dst) );

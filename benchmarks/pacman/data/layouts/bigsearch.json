@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "31x15", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 15, 
-  "layout": "bigSearch", 
+  "layout": "bigsearch", 
   "num_food": 221, 
   "num_ghosts": 0, 
   "num_locations": 465, 
@@ -1122,6 +1123,7 @@
       13
     ]
   ], 
+  "size": 465, 
   "walls_at": [
     435, 
     404, 

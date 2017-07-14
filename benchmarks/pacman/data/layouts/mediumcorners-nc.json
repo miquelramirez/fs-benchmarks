@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "30x14", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 14, 
-  "layout": "mediumCorners-nc", 
+  "layout": "mediumcorners-nc", 
   "num_food": 4, 
   "num_ghosts": 0, 
   "num_locations": 420, 
@@ -37,6 +38,7 @@
       12
     ]
   ], 
+  "size": 420, 
   "walls_at": [
     391, 
     361, 

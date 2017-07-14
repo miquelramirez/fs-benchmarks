@@ -33,6 +33,7 @@
       7
     ]
   ], 
+  "dimensions": "20x9", 
   "ghost_orig_pos": [
     [
       8, 
@@ -53,7 +54,7 @@
     72
   ], 
   "height": 9, 
-  "layout": "contestClassic", 
+  "layout": "contestclassic", 
   "num_food": 69, 
   "num_ghosts": 3, 
   "num_locations": 180, 
@@ -411,6 +412,7 @@
       6
     ]
   ], 
+  "size": 180, 
   "walls_at": [
     161, 
     141, 

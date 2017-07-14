@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "36x18", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 18, 
-  "layout": "mediumDottedMaze-nc", 
+  "layout": "mediumdottedmaze-nc", 
   "num_food": 22, 
   "num_ghosts": 0, 
   "num_locations": 648, 
@@ -127,6 +128,7 @@
       14
     ]
   ], 
+  "size": 648, 
   "walls_at": [
     613, 
     577, 

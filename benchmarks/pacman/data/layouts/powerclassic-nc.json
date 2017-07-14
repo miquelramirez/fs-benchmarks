@@ -1,6 +1,7 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "20x7", 
   "ghost_orig_pos": [
     [
       8, 
@@ -26,7 +27,7 @@
     32
   ], 
   "height": 7, 
-  "layout": "powerClassic-nc", 
+  "layout": "powerclassic-nc", 
   "num_food": 53, 
   "num_ghosts": 4, 
   "num_locations": 140, 
@@ -304,6 +305,7 @@
       4
     ]
   ], 
+  "size": 140, 
   "walls_at": [
     121, 
     101, 

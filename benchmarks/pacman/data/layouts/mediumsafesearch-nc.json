@@ -1,6 +1,7 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "31x6", 
   "ghost_orig_pos": [
     [
       15, 
@@ -11,7 +12,7 @@
     47
   ], 
   "height": 6, 
-  "layout": "mediumSafeSearch-nc", 
+  "layout": "mediumsafesearch-nc", 
   "num_food": 37, 
   "num_ghosts": 1, 
   "num_locations": 186, 
@@ -209,6 +210,7 @@
       4
     ]
   ], 
+  "size": 186, 
   "walls_at": [
     156, 
     125, 

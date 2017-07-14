@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "20x5", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 5, 
-  "layout": "smallSearch-nc", 
+  "layout": "smallsearch-nc", 
   "num_food": 17, 
   "num_ghosts": 0, 
   "num_locations": 100, 
@@ -102,6 +103,7 @@
       3
     ]
   ], 
+  "size": 100, 
   "walls_at": [
     81, 
     61, 

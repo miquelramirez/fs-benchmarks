@@ -1,6 +1,7 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "38x18", 
   "ghost_orig_pos": [
     [
       20, 
@@ -26,7 +27,7 @@
     147
   ], 
   "height": 18, 
-  "layout": "mediumScaryMaze-nc", 
+  "layout": "mediumscarymaze-nc", 
   "num_food": 1, 
   "num_ghosts": 4, 
   "num_locations": 684, 
@@ -44,6 +45,7 @@
       1
     ]
   ], 
+  "size": 684, 
   "walls_at": [
     647, 
     609, 

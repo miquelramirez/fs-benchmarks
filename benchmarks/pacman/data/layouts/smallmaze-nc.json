@@ -1,10 +1,11 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "22x10", 
   "ghost_orig_pos": [], 
   "ghost_pos": [], 
   "height": 10, 
-  "layout": "smallMaze-nc", 
+  "layout": "smallmaze-nc", 
   "num_food": 1, 
   "num_ghosts": 0, 
   "num_locations": 220, 
@@ -22,6 +23,7 @@
       1
     ]
   ], 
+  "size": 220, 
   "walls_at": [
     199, 
     177, 

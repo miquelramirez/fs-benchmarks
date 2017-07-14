@@ -1,6 +1,7 @@
 {
   "capsules": [], 
   "capsules_orig": [], 
+  "dimensions": "8x5", 
   "ghost_orig_pos": [
     [
       1, 
@@ -16,7 +17,7 @@
     15
   ], 
   "height": 5, 
-  "layout": "trappedClassic-nc", 
+  "layout": "trappedclassic-nc", 
   "num_food": 4, 
   "num_ghosts": 2, 
   "num_locations": 40, 
@@ -49,6 +50,7 @@
       1
     ]
   ], 
+  "size": 40, 
   "walls_at": [
     33, 
     25, 
