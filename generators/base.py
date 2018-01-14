@@ -123,7 +123,9 @@ class Generator(object):
         self.base_dir = base_dir
 
     def __call__(self, printer):
-        filename = self.base_dir + '/' + printer.get_domain_name() + '/' + printer.problem.name + '.pddl'
+        basedir = os.path.join(self.base_dir, printer.get_domain_name())
+        filename = os.path.join(basedir, printer.problem.name + '.pddl')
+        os.makedirs(basedir, exist_ok=True)
         save_file(filename, printer.print())
         print("Generated problem instance '{}'".format(filename))
 

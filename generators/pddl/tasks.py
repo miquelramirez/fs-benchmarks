@@ -14,7 +14,7 @@ import itertools
 
 class Task(object):
     def __init__(self, domain_name, task_name, requirements,
-                 types, objects, predicates, functions, init, goal, actions, axioms, limits, constraints, bounds, use_metric):
+                 types, objects, predicates, functions, init, goal, actions, axioms, limits, constraints, bounds, constants, use_metric):
         self.domain_name = domain_name
         self.task_name = task_name
         self.requirements = requirements
@@ -31,6 +31,7 @@ class Task(object):
         self.constraints = constraints
         self.bounds = bounds
         self.use_min_cost_metric = use_metric
+        self.constants = constants
 
     def add_axiom(self, parameters, condition):
         name = "new-axiom@%d" % self.axiom_counter
@@ -60,7 +61,7 @@ class Task(object):
         #init += [conditions.Atom("=", (obj.name, obj.name)) for obj in objects]
 
         return Task(domain_name, task_name, requirements, types, objects,
-                    predicates, functions, init, goal, actions, axioms, limits, constraints, bounds, use_metric)
+                    predicates, functions, init, goal, actions, axioms, limits, constraints, bounds, constants, use_metric)
 
     def dump(self):
         print("Problem %s: %s [%s]" % (
