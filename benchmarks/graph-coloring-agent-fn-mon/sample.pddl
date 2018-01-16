@@ -60,7 +60,7 @@
 
   (:bounds (color_t - int[1..4]) (color_t_undef - int[0..4]))
 
-  (transitions
+  (:transitions
     (transition (color v1) 0 1)
     (transition (color v1) 0 2)
     (transition (color v1) 0 3)

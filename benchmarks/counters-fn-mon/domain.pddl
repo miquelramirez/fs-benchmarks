@@ -12,19 +12,20 @@
 
     (:functions
         (value ?c - counter) - val  ;; The value shown in counter ?c
+        (maxvalue) - val
     )
 
     ;; Increment the value in the given counter by one
     (:action increment
          :parameters (?c - counter)
-         :precondition (and )
+         :precondition (and (< (value ?c) (maxvalue)))
          :effect (and (assign (value ?c) (+ (value ?c) 1)))
     )
 
     ;; Decrement the value in the given counter by one
     (:action decrement
          :parameters (?c - counter)
-         :precondition (and )
+         :precondition (and (> (value ?c) 0))
          :effect (and (assign (value ?c) (- (value ?c) 1)))
     )
 )

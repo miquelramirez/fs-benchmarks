@@ -8,6 +8,7 @@
     (= (value c0) 0)
 	  (= (value c1) 0)
 	  (= (value c2) 0)
+    (= (maxvalue) 4)
   )
 
   (:goal
@@ -20,7 +21,7 @@
 
   (:bounds (val - int[0..4]))
 
-  (transitions
+  (:transitions
     (transition (val c0) 0 1)
     (transition (val c0) 1 2)
     (transition (val c0) 2 3)
