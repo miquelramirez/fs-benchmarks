@@ -6,8 +6,8 @@
 
   (:init
     (= (value c0) 0)
-	  (= (value c1) 0)
-	  (= (value c2) 0)
+    (= (value c1) 0)
+    (= (value c2) 0)
     (= (maxvalue) 4)
   )
 
@@ -22,19 +22,19 @@
   (:bounds (val - int[0..4]))
 
   (:transitions
-    (transition (val c0) 0 1)
-    (transition (val c0) 1 2)
-    (transition (val c0) 2 3)
-    (transition (val c0) 3 4)
+    ((value c0) 0 1)
+    ((value c0) 1 2)
+    ((value c0) 2 3)
+    ((value c0) 3 4)
     
-    (transition (val c1) 0 1)
-    (transition (val c1) 1 2)
-    (transition (val c1) 2 3)
-    (transition (val c1) 3 4)
+    ((value c1) 0 1)
+    ((value c1) 1 2)
+    ((value c1) 2 3)
+    ((value c1) 3 4)
 
-    (transition (val c2) 0 1)
-    (transition (val c2) 1 2)
-    (transition (val c2) 2 3)
-    (transition (val c2) 3 4)    
+    ((value c2) 0 1)
+    ((value c2) 1 2)
+    ((value c2) 2 3)
+    ((value c2) 3 4)    
   )   
 )
