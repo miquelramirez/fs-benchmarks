@@ -23,9 +23,10 @@ def parse_arguments():
 
 
 class FStripsPrinter(TranslationPrinter):
-    def __init__(self, domain_name, instance_name, filename, task):
+    def __init__(self, domain_name, instance_name, filename, task, transitions):
         self.days = []
         self.planes = []
+        self.transitions = transitions
         super().__init__(domain_name, instance_name, filename, task)
 
     def translate_objects(self, objects):
@@ -105,7 +106,7 @@ def generate(random, output):
     domain_name = "maintenance"
 
     for instance_name, filename, task in util.get_instances_of(domain_name):
-        translator = FStripsPrinter(domain_name, instance_name, filename, task)
+        translator = FStripsPrinter(domain_name, instance_name, filename, task, transitions=True)
         generator(translator)
 
 

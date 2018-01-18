@@ -17,5 +17,7 @@ ${header_comment}
 
   ${domain_bounds}
 
+  ${transitions}
+
   ${metric}
 )

@@ -25,9 +25,12 @@ def parse_arguments():
 class FStripsPrinter(TranslationPrinter):
     def __init__(self, domain_name, instance_name, filename, task):
 
-        self.breads = []
-        self.portions = []
-        self.children = []
+        self.breads = set()
+        self.portions = set()
+        self.children = set()
+        self.gluten_free = set()
+        self.sandwiches = set()
+        self.gluten_allergic = set()
 
         self.index_components(task.objects, task.init)
 
@@ -37,6 +40,7 @@ class FStripsPrinter(TranslationPrinter):
         self.breads = set(o.name for o in objects if o.type == 'bread-portion')
         self.portions = set(o.name for o in objects if o.type == 'content-portion')
         self.children = set(o.name for o in objects if o.type == 'child')
+        self.sandwiches = set(o.name for o in objects if o.type == 'sandwich')
 
         breads_kitchen = set()
         portions_kitchen = set()
@@ -52,12 +56,15 @@ class FStripsPrinter(TranslationPrinter):
         assert self.breads == breads_kitchen
         assert self.portions == portions_kitchen
 
-
     def translate_objects(self, objects):
-        for o in objects:  # Simply add the same objects with the same types than the original problem
-            if o.type == 'place':
-                if o.name != 'kitchen':
-                    self.instance.add_object(o.name, 'room')
+        for o in objects:
+            if o in self.task.constants:
+                continue
+
+            if o.type == 'content-portion':
+                self.instance.add_object(o.name, 'content')
+            elif o.type == 'bread-portion':
+                self.instance.add_object(o.name, 'bread')
             else:
                 self.instance.add_object(o.name, o.type)
 
@@ -66,17 +73,27 @@ class FStripsPrinter(TranslationPrinter):
             for translated in self.translate_atom_idx(atom):
                 self.instance.add_init(translated)
 
-        self.instance.add_init("(= (loc undef_s) nonexistent)")
+        self.instance.add_init("(= (foodloc no_sandwich) nowhere)")
+        self.instance.add_init("(= (type no_sandwich) unprepared)")
         for child in self.children:
-            self.instance.add_init("(= (served {}) undef_s)".format(child))
+            self.instance.add_init("(= (served {}) no_sandwich)".format(child))
 
+        for s in self.sandwiches:
+            self.instance.add_init("(= (foodloc {}) nowhere)".format(s))
+
+        for b in self.breads | self.portions:
+            if b not in self.gluten_free:
+                self.instance.add_init("(= (type {} gluten_yes))".format(b))
 
     def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
         for child in self.children:
-            self.instance.add_goal("(not (= (served {}) undef_s))".format(child))
+            self.instance.add_goal("(not (= (served {}) no_sandwich))".format(child))
 
-        all_children = ' '.join("(served {})".format(c) for c in self.children)
-        self.instance.add_goal("(@alldiff {})".format(all_children))
+        for c in self.gluten_allergic:
+            self.instance.add_goal("(= (type (served {})) gluten_no)".format(c))
+
+        # all_children = ' '.join("(served {})".format(c) for c in self.children)
+        # self.instance.add_goal("(@alldiff {})".format(all_children))
 
     def translate_atom_idx(self, atom):
         assert isinstance(atom, pddl.Atom)
@@ -84,38 +101,42 @@ class FStripsPrinter(TranslationPrinter):
 
         if name == 'at':
             tray, place = atom.args
-            return ["(= (loc {}) {})".format(tray, place)]
+            return ["(= (trayloc {}) {})".format(tray, place)]
 
         elif name in ('at_kitchen_bread', 'at_kitchen_content'):
             elem,  = atom.args
-            return ["(available {})".format(elem)]
+            return ["(= (foodloc {}) kitchen)".format(elem)]
 
         elif name in ('no_gluten_bread', 'no_gluten_content'):
             elem, = atom.args
-            return ["(no_gluten {})".format(elem)]
+            self.gluten_free.add(elem)
+            return ["(= (type {} gluten_no))".format(elem)]
 
         elif name == 'allergic_gluten':
             elem, = atom.args
-            return ["(allergic {})".format(elem)]
+            self.gluten_allergic.add(elem)
+            return ["(= (type {} gluten_no))".format(elem)]
 
         elif name == 'not_allergic_gluten':
             elem, = atom.args
-            return ["(not_allergic {})".format(elem)]
+            return ["(= (type {} gluten_yes))".format(elem)]
 
         elif name == 'waiting':
             child, where, = atom.args
-            return ["(= (loc {}) {})".format(child, where)]
+            return ["(= (childloc {}) {})".format(child, where)]
 
         elif name == 'notexist':
             what, = atom.args
-            return ["(= (loc {}) {})".format(what, 'nonexistent')]
+            return ["(= (type {}) unprepared)".format(what)]
 
     def get_domain_name(self):
-        components = [self.problem.domain, 'fn']
+        components = [self.problem.domain, 'fn-mon']
         return '-'.join(components)
 
-    def add_bounds(self):
-        pass
+    def add_transitions(self):
+        for s in self.sandwiches:
+            self.instance.add_transition("((type {}) unprepared gluten_yes)".format(s))
+            self.instance.add_transition("((type {}) unprepared gluten_no)".format(s))
 
 
 def generate(random, output):

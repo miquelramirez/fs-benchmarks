@@ -15,6 +15,7 @@ class PlanningProblem(object):
         self.objects = OrderedDict()  # Map of object names to object types
         self.init = []
         self.goal = []
+        self.transitions = []
         self.state_constraints = []
         self.bounds = []
         self.header_comment_lines = []
@@ -29,6 +30,9 @@ class PlanningProblem(object):
 
     def add_goal(self, atom):
         self.goal.append(atom)
+
+    def add_transition(self, t):
+        self.transitions.append(t)
 
     def add_state_constraint(self, constraint):
         self.state_constraints.append(constraint)
@@ -53,19 +57,25 @@ class PlanningProblem(object):
         assert type in ('minimize', 'maximize')
         self.metric = '(:metric {} ({}))'.format(type, var)
 
+    def create_block(self, name, elements):
+        block = "(:{}\n\t{})".format(name, '\n\t'.join(elements)) if elements else ''
+        return block
+
     def print(self):
         template = os.path.dirname(os.path.realpath(__file__)) + '/templates/fn_instance.pddl.tpl'
 
-        sctr = "(:constraints {})".format(' '.join(self.state_constraints)) if self.state_constraints else ''
-        bounds = "(:bounds {})".format(' '.join(self.bounds)) if self.bounds else ''
+        sctr = self.create_block("constraints", self.state_constraints)
+        bounds= self.create_block("bounds", self.bounds)
+        transitions = self.create_block("transitions", self.transitions)
 
         if len(self.goal) > 1:
             self.goal = ['(and '] + self.goal + [')']
 
         return Template(load_file(template)).substitute(
             objects='\n\t'.join(self.print_objects()),
-            init='\n\t'.join(self.init),
+            init='\n\t'.join(sorted(self.init)),
             goal='\n\t'.join(self.goal),
+            transitions=transitions,
             instance_name=sanitize(self.name),
             domain_name=sanitize(self.domain_name),
             state_constraints=sctr,
@@ -92,11 +102,15 @@ class AbstractProblemPrinter(object):
         self.add_goals()
         self.add_constraints()
         self.add_bounds()
+        self.add_transitions()
 
     def print(self):
         return self.instance.print()
 
     def add_objects(self):
+        pass
+
+    def add_transitions(self):
         pass
 
     def add_init(self):
