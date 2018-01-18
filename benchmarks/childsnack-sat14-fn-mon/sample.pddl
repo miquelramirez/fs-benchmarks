@@ -52,8 +52,7 @@
 
 
      (= (foodloc no_sandwich) nowhere)
-     (= (foodloc no_sandwich) nowhere)
-     (= (type no_sandwich) gluten_yes)
+     (= (type no_sandwich) unprepared)
   )
 
   (:goal
