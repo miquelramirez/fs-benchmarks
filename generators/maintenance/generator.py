@@ -23,14 +23,14 @@ def parse_arguments():
 
 
 class FStripsPrinter(TranslationPrinter):
-    def __init__(self, domain_name, instance_name, filename, task, transitions):
+    def __init__(self, domain_name, instance_name, filename, task, transitions=False):
         self.days = []
         self.planes = []
         self.transitions = transitions
         super().__init__(domain_name, instance_name, filename, task)
 
     def translate_objects(self, objects):
-        for o in objects:  # Add all objects but capacity-number's
+        for o in objects:
             self.instance.add_object(o.name, o.type)
 
             if o.type == 'day':
@@ -43,6 +43,10 @@ class FStripsPrinter(TranslationPrinter):
         for atom in self.task.init:
             for translated in self.translate_atom(atom, processed_atoms):
                 self.instance.add_init(translated)
+        if self.transitions:
+            for d in self.days:
+                self.instance.add_init("(= (where {}) nowhere)".format(d))
+
 
     # def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
     #     assert isinstance(self.task.goal, pddl.conditions.Conjunction)
@@ -95,20 +99,44 @@ class FStripsPrinter(TranslationPrinter):
         assert False
 
     def get_domain_name(self):
-        return 'maintenance-sat14-fn'
+        components = [self.problem.domain, 'fn']
+        if self.transitions:
+            components.append('mon')
+        return '-'.join(components)
 
-    def add_bounds(self):
-        pass
 
+class FStripsPrinterTransitionVersion(FStripsPrinter):
+    def __init__(self, domain_name, instance_name, filename, task):
+        super().__init__(domain_name, instance_name, filename, task, transitions=True)
+
+    def add_goals(self):
+        days = self.days
+        planes = self.planes
+        comments = ';; xi: the day where plane "i" will coincide with the location of the worker'
+
+        ex_vars = ' '.join("?x{}".format(i) for i in range(1, len(self.planes)+1))  # e.g. the string "?X1 ?X2 ?X3"
+        quantif = "(exists ({} - day)\n\t(and ".format(ex_vars)
+
+        atoms = []
+        for i, plane in enumerate(planes, 1):
+            atoms.append("(at {} ?x{} (where ?x{}))".format(plane, i, i))
+
+        # values = ' '.join("(value c{} ?v{})".format(i, i) for i in range(0, self.problem.counters))
+        # relations = ' '.join("(lt ?v{} ?v{})".format(i, i + 1) for i in range(0, self.problem.counters - 1))
+        goal = '\n\t'.join([comments, quantif, '\n\t\t'.join(atoms), '))'])
+        # goal = ' '.join([quantif, values, relations, '))'])
+        self.instance.add_goal(goal)
 
 def generate(random, output):
     generator = Generator(output)
-    domain_name = "maintenance"
+    domain_name = "maintenance-sat14"
 
     for instance_name, filename, task in util.get_instances_of(domain_name):
-        translator = FStripsPrinter(domain_name, instance_name, filename, task, transitions=True)
+        translator = FStripsPrinter(domain_name, instance_name, filename, task)
         generator(translator)
 
+        translator = FStripsPrinterTransitionVersion(domain_name, instance_name, filename, task)
+        generator(translator)
 
 def main():
     import random

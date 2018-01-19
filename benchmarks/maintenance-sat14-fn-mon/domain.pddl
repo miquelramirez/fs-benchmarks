@@ -6,7 +6,7 @@
 ; on given days. The problem is to schedule the presence
 ; of the mechanics so that each plane will get maintenance.
 
-(define (domain maintenance-sat14-fn)
+(define (domain maintenance-sat14-fn-mon)
  (:requirements :typing)
 
  (:types plane day airport)

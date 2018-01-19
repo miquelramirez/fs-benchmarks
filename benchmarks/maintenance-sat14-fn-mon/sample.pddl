@@ -4,7 +4,7 @@
 ;; 
 
 (define (problem maintenance130601805-000)
-  (:domain maintenance-sat14-fn)
+  (:domain maintenance-sat14-fn-mon)
   (:objects
     ap1 ap2 ap3 - plane
 	d1 d2 d3 - day
@@ -26,7 +26,7 @@
   )
 
   (:goal
-    ;; xi: the day where plane "i" will coincide with the location of the worker
+    ;; xi: the day where plane "i" will coincide with the location of the worker 
     (exists (?x1 ?x2 ?x3 - day)
     (and
     	(at ap1 ?x1 (where ?x1))
@@ -40,7 +40,7 @@
     ((where d1) nowhere ber)
     ((where d1) nowhere ham)
 
-	((where d2) nowhere fra)
+	  ((where d2) nowhere fra)
     ((where d2) nowhere ber)
     ((where d2) nowhere ham)
 
