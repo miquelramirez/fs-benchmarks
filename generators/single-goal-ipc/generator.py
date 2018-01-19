@@ -49,7 +49,8 @@ sys.path.append("..")
   #             'zenotravel'
   #   ]
 
-BENCHMARKS = ['airport', 'assembly', 'barman-sat11-strips', 'barman-sat14-strips',
+BENCHMARKS = ['airport',
+              'assembly', 'barman-sat11-strips', 'barman-sat14-strips',
 'blocks', 'cavediving-14-adl', 'childsnack-sat14-strips',
 'citycar-sat14-adl', 'depot', 'driverlog', 'elevators-sat08-strips',
 'elevators-sat11-strips', 'floortile-sat11-strips',
@@ -144,7 +145,6 @@ def expand_name(original, i):
 def generate(input_dir, output):
 
     for d in next(os.walk(input_dir))[1]:
-        print(d)
         if d not in BENCHMARKS or d in EXCLUDE:  # Ignore certain benchmarks
             continue
         bm_dir = os.path.join(input_dir, d)
@@ -154,17 +154,29 @@ def generate(input_dir, output):
         translated_domain_basedir = os.path.join(output, tr_domain_name)
         os.makedirs(translated_domain_basedir, exist_ok=True)
 
-        copy_domains(bm_dir, translated_domain_basedir)
+        # copy_domains(bm_dir, translated_domain_basedir)
 
-        for instance_name, filename, task in util.get_instances(bm_dir):
+        for it, (instance_name, filename, task) in enumerate(util.get_instances(bm_dir), 0):
             assert(isinstance(task.goal, pddl.conditions.Conjunction))
-            ngoals = len(task.goal.parts)
-            if ngoals > 50:
-                print("Beware! Instance {} has {} goal atoms!".format(instance_name, ngoals))
+            # ngoals = len(task.goal.parts)
+            # if ngoals > 50:
+            #     print("Beware! Instance {} has {} goal atoms!".format(instance_name, ngoals))
+
+            expected_domain_name = find_domain_filename(filename)
+            domdirname, dombasename = os.path.split(expected_domain_name)
+            if dombasename == "domain.pddl" and it == 0:
+                shutil.copy(expected_domain_name, translated_domain_basedir)
+
             for i, atom in enumerate(task.goal.parts, 1):
                 if i > 10:
                     break
                 iname = expand_name(instance_name, i)
+                dname = "domain-{}.pddl".format(iname)
+
+                if dombasename != "domain.pddl":
+                    target_domainname = os.path.join(translated_domain_basedir, dname)
+                    shutil.copy(expected_domain_name, target_domainname)
+
                 translator = SingleGoalAtomTranslator(task.domain_name, iname,
                                                       filename, task, atom)
 
@@ -181,6 +193,26 @@ def copy_domains(bm_dir, translated_domain_basedir):
             print("Copied domain '{}'".format(filename))
             shutil.copy(filename, translated_domain_basedir)
 
+
+def find_domain_filename(task_filename):
+    """
+    Find domain filename for the given task using automatic naming rules.
+    """
+    dirname, basename = os.path.split(task_filename)
+
+    domain_basenames = [
+        "domain.pddl",
+        basename[:3] + "-domain.pddl",
+        "domain_" + basename,
+    ]
+
+    for domain_basename in domain_basenames:
+        domain_filename = os.path.join(dirname, domain_basename)
+        if os.path.exists(domain_filename):
+            return domain_filename
+
+    raise SystemExit(
+        "Error: Could not find domain file using automatic naming rules.")
 
 if __name__ == "__main__":
     args = parse_arguments()
