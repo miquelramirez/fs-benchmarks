@@ -26,6 +26,7 @@ class FStripsPrinter(TranslationPrinter):
     def __init__(self, domain_name, instance_name, filename, task, transitions=False):
         self.days = []
         self.planes = []
+        self.airports = []
         self.transitions = transitions
         super().__init__(domain_name, instance_name, filename, task)
 
@@ -37,6 +38,8 @@ class FStripsPrinter(TranslationPrinter):
                 self.days.append(o.name)
             elif o.type == 'plane':
                 self.planes.append(o.name)
+            elif o.type == 'airport':
+                self.airports.append(o.name)
 
     def add_init(self):  # We need to redefine add_init to allow for the use of the location dictionaries
         processed_atoms = set()
@@ -110,7 +113,6 @@ class FStripsPrinterTransitionVersion(FStripsPrinter):
         super().__init__(domain_name, instance_name, filename, task, transitions=True)
 
     def add_goals(self):
-        days = self.days
         planes = self.planes
         comments = ';; xi: the day where plane "i" will coincide with the location of the worker'
 
@@ -121,11 +123,15 @@ class FStripsPrinterTransitionVersion(FStripsPrinter):
         for i, plane in enumerate(planes, 1):
             atoms.append("(at {} ?x{} (where ?x{}))".format(plane, i, i))
 
-        # values = ' '.join("(value c{} ?v{})".format(i, i) for i in range(0, self.problem.counters))
-        # relations = ' '.join("(lt ?v{} ?v{})".format(i, i + 1) for i in range(0, self.problem.counters - 1))
         goal = '\n\t'.join([comments, quantif, '\n\t\t'.join(atoms), '))'])
-        # goal = ' '.join([quantif, values, relations, '))'])
         self.instance.add_goal(goal)
+
+    def add_transitions(self):
+        for d in self.days:
+            for ap in self.airports:
+                if ap != "nowhere":
+                    self.instance.add_transition("((where {}) nowhere {})".format(d, ap))
+
 
 def generate(random, output):
     generator = Generator(output)
