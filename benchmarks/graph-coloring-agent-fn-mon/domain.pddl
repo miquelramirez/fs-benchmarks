@@ -10,7 +10,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain graph-coloring-agent-fn)
+(define (domain graph-coloring-agent-fn-mon)
     (:requirements :typing :object-fluents)
     (:types colorable - object
     		thing vertex - colorable

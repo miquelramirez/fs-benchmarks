@@ -106,7 +106,7 @@ class FStripsPrinter(AbstractProblemPrinter):
             self.instance.add_init("(= (color {}) 0)".format(n))
 
     def add_goals(self):
-        for atom in compute_std_goal(self.problem, 'color'):
+        for atom in compute_std_goal(self.problem, 'color', nonnull=True):
             self.instance.add_goal(atom)
 
     def add_bounds(self):
@@ -115,6 +115,16 @@ class FStripsPrinter(AbstractProblemPrinter):
 
     def get_domain_name(self):
         return self.problem.domain + '-agent-fn'
+
+
+class StripsMonotonicPrinter(FStripsPrinter):
+    def get_domain_name(self):
+        return self.problem.domain + '-agent-fn-mon'
+
+    def add_transitions(self):
+        for o in self.problem.vertices:
+            for i in range(1, self.problem.num_colors + 1):
+                self.instance.add_transition("((color {}) 0 {})".format(o, i))
 
 
 class ExStripsCSPPrinter(AbstractProblemPrinter):
@@ -277,7 +287,8 @@ def generate_all_encodings(generator, problem):
 
 def generate_agent_encodings(generator, problem):
     generator(FStripsPrinter(problem))  # The Functional version
-    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
+    generator(FStripsPrinter(problem))  # The Functional version
+    generator(StripsMonotonicPrinter(problem))  # standard STRIPS version, custom version
     generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
 
 

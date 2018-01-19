@@ -1,6 +1,6 @@
 
 (define (problem instance_5_4_18_1)
-  (:domain graph-coloring-agent-fn)
+  (:domain graph-coloring-agent-fn-mon)
   (:objects
     v1 v2 v3 v4 v5 - vertex
   )
@@ -58,7 +58,9 @@
   )
 
 
-  (:bounds (color_t - int[1..4]) (color_t_undef - int[0..4]))
+  (:bounds 
+  	(color_t - int[1..4])
+  	(color_t_undef - int[0..4]))
 
   (:transitions
     ((color v1) 0 1)
