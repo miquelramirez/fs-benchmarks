@@ -30,20 +30,54 @@ sys.path.append("..")
 #               'visitall-opt14-strips', 'visitall-sat14-strips',
 #               'woodworking-opt11-strips', 'woodworking-sat11-strips', 'zenotravel']
 
-BENCHMARKS = [
-    'barman-opt11-strips', 'blocks',
-     'cavediving-14-adl',
-    'childsnack-opt14-strips',
-    'depot', 'driverlog',
-              'elevators-sat08-strips', 'elevators-sat11-strips', 'floortile-opt11-strips',
-              'freecell', 'ged-opt14-strips',
-              'grid', 'gripper', 'logistics00',
-              'openstacks-opt11-strips'
-              'sokoban-sat11-strips',
-              'tidybot-sat11-strips', 'tpp',
-              'transport-opt14-strips',
-              'zenotravel'
-    ]
+# BENCHMARKS = [
+#     'barman-sat11-strips',
+    # 'barman-opt11-strips',
+    # 'blocks',
+    #  'cavediving-14-adl',
+    # 'childsnack-opt14-strips',
+    # 'depot', 'driverlog',
+  # 'elevators-sat08-strips',
+  #   'elevators-sat11-strips',
+  #   'floortile-opt11-strips',
+  #             'freecell', 'ged-opt14-strips',
+  #             'grid', 'gripper', 'logistics00',
+  #             'openstacks-opt11-strips'
+  #             'sokoban-sat11-strips',
+  #             'tidybot-sat11-strips', 'tpp',
+  #             'transport-opt14-strips',
+  #             'zenotravel'
+  #   ]
+
+BENCHMARKS = ['airport', 'assembly', 'barman-sat11-strips', 'barman-sat14-strips',
+'blocks', 'cavediving-14-adl', 'childsnack-sat14-strips',
+'citycar-sat14-adl', 'depot', 'driverlog', 'elevators-sat08-strips',
+'elevators-sat11-strips', 'floortile-sat11-strips',
+'floortile-sat14-strips', 'freecell', 'ged-sat14-strips', 'grid',
+'gripper', 'hiking-sat14-strips', 'logistics00', 'logistics98',
+'maintenance-sat14-adl', 'miconic', 'miconic-fulladl',
+'miconic-simpleadl', 'movie', 'mprime', 'mystery',
+'nomystery-sat11-strips', 'openstacks', 'openstacks-sat08-adl',
+'openstacks-sat08-strips', 'openstacks-sat11-strips',
+'openstacks-sat14-strips', 'openstacks-strips', 'optical-telegraphs',
+'parcprinter-08-strips', 'parcprinter-sat11-strips',
+'parking-sat11-strips', 'parking-sat14-strips', 'pathways',
+'pathways-noneg', 'pegsol-08-strips', 'pegsol-sat11-strips',
+'philosophers', 'pipesworld-notankage', 'pipesworld-tankage',
+'psr-large', 'psr-middle', 'psr-small', 'rovers', 'satellite',
+'scanalyzer-08-strips', 'scanalyzer-sat11-strips', 'schedule',
+'sokoban-sat08-strips', 'sokoban-sat11-strips', 'storage',
+'tetris-sat14-strips', 'thoughtful-sat14-strips',
+'tidybot-sat11-strips', 'tpp', 'transport-sat08-strips',
+'transport-sat11-strips', 'transport-sat14-strips', 'trucks',
+'trucks-strips', 'visitall-sat11-strips', 'visitall-sat14-strips',
+'woodworking-sat08-strips', 'woodworking-sat11-strips', 'zenotravel']
+
+EXCLUDE = set(
+    ['psr-middle', 'psr-large', 'miconic-fulladl']
+)
+
+
 
 from translator import TranslationPrinter
 import util
@@ -68,8 +102,8 @@ def print_array(array):
 def print_atom(atom):
     if isinstance(atom, pddl.f_expression.Assign):
         fl = atom.fluent
-        assert len(fl.parts) == 0
-        return "(= ({}) {})".format(atom.fluent.symbol, atom.expression.value)
+        params = " ".join(fl.args)
+        return "(= ({} {}) {})".format(atom.fluent.symbol, params, atom.expression.value)
     elif isinstance(atom, pddl.conditions.NegatedAtom):
         return "(not ({} {}))".format(atom.predicate, print_array(atom.args))
     elif isinstance(atom, pddl.conditions.Atom):
@@ -110,7 +144,8 @@ def expand_name(original, i):
 def generate(input_dir, output):
 
     for d in next(os.walk(input_dir))[1]:
-        if d not in BENCHMARKS:  # Ignore certain benchmarks
+        print(d)
+        if d not in BENCHMARKS or d in EXCLUDE:  # Ignore certain benchmarks
             continue
         bm_dir = os.path.join(input_dir, d)
         print("Processing benchmark folder '{}'".format(bm_dir))
@@ -127,6 +162,8 @@ def generate(input_dir, output):
             if ngoals > 50:
                 print("Beware! Instance {} has {} goal atoms!".format(instance_name, ngoals))
             for i, atom in enumerate(task.goal.parts, 1):
+                if i > 10:
+                    break
                 iname = expand_name(instance_name, i)
                 translator = SingleGoalAtomTranslator(task.domain_name, iname,
                                                       filename, task, atom)
