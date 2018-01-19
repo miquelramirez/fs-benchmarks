@@ -3,7 +3,7 @@
 ;;; counters domain, functional strips version
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (domain counters-fn)
+(define (domain counters-fn-mon)
     (:requirements :strips :typing :equality :adl)
     (:types
         counter - object
@@ -12,13 +12,13 @@
 
     (:functions
         (value ?c - counter) - val  ;; The value shown in counter ?c
-        (maxvalue) - val
+        (max_int) - val ;; The maximum integer we consider - a static value
     )
 
     ;; Increment the value in the given counter by one
     (:action increment
          :parameters (?c - counter)
-         :precondition (and (< (value ?c) (maxvalue)))
+         :precondition (and (< (value ?c) (max_int)))
          :effect (and (assign (value ?c) (+ (value ?c) 1)))
     )
 

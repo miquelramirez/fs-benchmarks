@@ -1,5 +1,5 @@
 (define (problem instance_5)
-  (:domain counters-fn)
+  (:domain counters-fn-mon)
   (:objects
     c0 c1 c2 - counter
   )
@@ -8,7 +8,7 @@
     (= (value c0) 0)
     (= (value c1) 0)
     (= (value c2) 0)
-    (= (maxvalue) 4)
+    (= (max_int) 4)
   )
 
   (:goal

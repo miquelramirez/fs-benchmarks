@@ -35,6 +35,8 @@ class FStripsPrinter(ProblemPrinter):
     def add_init(self):
         super().add_init()
 
+        self.instance.add_init("(= (max_int) {})".format(self.problem.max_int))
+
         for i in range(0, self.problem.counters):
             self.instance.add_init('(= (value c{}) {})'.format(i, self.problem.init_values[i]))
 
@@ -130,9 +132,6 @@ class MetricPDDLPrinter(FStripsPrinter):
     def get_domain_name(self):
         return self.problem.domain + '-mt'
 
-    def add_bounds(self):
-        self.instance.add_init("(= (max_int) {})".format(self.problem.max_int))
-
 
 class Problem(object):
     def __init__(self, random, name, domain, counters, max_int, rnd=False, inv=False):
@@ -151,6 +150,18 @@ class Problem(object):
             self.init_values = [0 for _ in range(0, self.counters)]
 
 
+class FStripsMonotonicityPrinter(FStripsPrinter):
+    def get_domain_name(self):
+        return self.problem.domain + '-fn-mon'
+
+    def add_transitions(self):
+        for i in range(0, self.problem.counters):
+            for v in range(0, self.problem.max_int):
+                self.instance.add_transition("((value c{}) {} {})".format(i, v, v+1))
+
+
+
+
 def generate(random, output):
     generator = Generator(output)
 
@@ -164,26 +175,27 @@ def generate(random, output):
         generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
         generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
         generator(FStripsPrinter(problem))  # The Functional version
+        generator(FStripsMonotonicityPrinter(problem))  # The Functional version with monotonicity constraints
 
-        # First we generate the inversed versions
-        domain = "counters-inv"
-        name = instance_name(size)
-        problem = Problem(random, name, domain, size, size*2, inv=True)
-        generator(PDDLPrinter(problem))  # The PDDL version
-        generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
-        generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
-        generator(FStripsPrinter(problem))  # The Functional version
-
-        # Second we generate the inequality versions with random initial values (a number of runs)
-        domain = "counters-rnd"
-        for run in range(1, 4):
-            name = instance_name(size, run)
-            problem = Problem(random, name, domain, size, size*2, rnd=True)
-            generator(PDDLPrinter(problem))  # The PDDL version
-            generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
-            generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
-            generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
-            generator(FStripsPrinter(problem))  # The Functional version
+        # # First we generate the inversed versions
+        # domain = "counters-inv"
+        # name = instance_name(size)
+        # problem = Problem(random, name, domain, size, size*2, inv=True)
+        # generator(PDDLPrinter(problem))  # The PDDL version
+        # generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+        # generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
+        # generator(FStripsPrinter(problem))  # The Functional version
+        #
+        # # Second we generate the inequality versions with random initial values (a number of runs)
+        # domain = "counters-rnd"
+        # for run in range(1, 4):
+        #     name = instance_name(size, run)
+        #     problem = Problem(random, name, domain, size, size*2, rnd=True)
+        #     generator(PDDLPrinter(problem))  # The PDDL version
+        #     generator(ExPDDLPrinter(problem))  # The PDDL version with existential variables
+        #     generator(PairwiseExPDDLPrinter(problem))  # The PDDL version with existential variables
+        #     generator(MetricPDDLPrinter(problem))  # The numerical-fluents PDDL version
+        #     generator(FStripsPrinter(problem))  # The Functional version
 
 
 def main():
