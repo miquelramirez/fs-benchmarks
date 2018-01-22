@@ -18,7 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (domain child-snack-fn)
+(define (domain childsnack-sat14-fn-mon)
 (:requirements :typing :equality)
 (:types 
 	glutentype glutenaffected

@@ -1,7 +1,7 @@
 
 (define (problem sample)
 
-  (:domain child-snack-fn)
+  (:domain childsnack-sat14-fn-mon)
 
   (:objects
     child1 child2 child3  - child

@@ -83,7 +83,7 @@ class FStripsPrinter(TranslationPrinter):
 
         for b in self.breads | self.portions:
             if b not in self.gluten_free:
-                self.instance.add_init("(= (type {} gluten_yes))".format(b))
+                self.instance.add_init("(= (type {}) gluten_yes)".format(b))
 
     def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
         for child in self.children:
@@ -110,16 +110,16 @@ class FStripsPrinter(TranslationPrinter):
         elif name in ('no_gluten_bread', 'no_gluten_content'):
             elem, = atom.args
             self.gluten_free.add(elem)
-            return ["(= (type {} gluten_no))".format(elem)]
+            return ["(= (type {}) gluten_no)".format(elem)]
 
         elif name == 'allergic_gluten':
             elem, = atom.args
             self.gluten_allergic.add(elem)
-            return ["(= (type {} gluten_no))".format(elem)]
+            return ["(= (type {}) gluten_no)".format(elem)]
 
         elif name == 'not_allergic_gluten':
             elem, = atom.args
-            return ["(= (type {} gluten_yes))".format(elem)]
+            return ["(= (type {}) gluten_yes)".format(elem)]
 
         elif name == 'waiting':
             child, where, = atom.args

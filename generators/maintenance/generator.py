@@ -50,7 +50,6 @@ class FStripsPrinter(TranslationPrinter):
             for d in self.days:
                 self.instance.add_init("(= (where {}) nowhere)".format(d))
 
-
     # def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
     #     assert isinstance(self.task.goal, pddl.conditions.Conjunction)
     #     processed_atoms = set()
@@ -103,8 +102,6 @@ class FStripsPrinter(TranslationPrinter):
 
     def get_domain_name(self):
         components = [self.problem.domain, 'fn']
-        if self.transitions:
-            components.append('mon')
         return '-'.join(components)
 
 
@@ -132,8 +129,41 @@ class FStripsPrinterTransitionVersion(FStripsPrinter):
                 if ap != "nowhere":
                     self.instance.add_transition("((where {}) nowhere {})".format(d, ap))
 
+    def get_domain_name(self):
+        components = [self.problem.domain, 'fn', 'mon']
+        return '-'.join(components)
 
-def generate(random, output):
+
+class FStripsPrinterCSPVersion(FStripsPrinter):
+    def __init__(self, domain_name, instance_name, filename, task):
+        super().__init__(domain_name, instance_name, filename, task, transitions=False)
+
+    def add_goals(self):
+        planes = self.planes
+        comments = ';; Di: the day where plane "i" will be fixed'
+        comments += '\n\t;; Li: the place where plane "i" will be fixed'
+
+        plane_vars = lambda var: ' '.join(
+            "?{}{}".format(var, i) for i in range(1, len(self.planes) + 1))  # e.g. the string "?X1 ?X2 ?X3"
+        quantif = "(exists ({} - day {} - airport)\n\t(and ".format(plane_vars("D"), plane_vars("L"))
+
+        atoms = []
+        for i, plane in enumerate(planes, 1):
+            atoms.append("(at {} ?D{} ?L{})".format(plane, i, i))
+
+        for i in range(1, len(self.planes) + 1):
+            for j in range(i+1, len(self.planes) + 1):
+                atoms.append("(or (not (= ?D{i} ?D{j})) (= ?L{i} ?L{j}))".format(i=i, j=j))
+
+        goal = '\n\t'.join([comments, quantif, '\n\t\t'.join(atoms), '))'])
+        self.instance.add_goal(goal)
+
+    def get_domain_name(self):
+        components = [self.problem.domain, 'fn', 'csp']
+        return '-'.join(components)
+
+
+def generate(output):
     generator = Generator(output)
     domain_name = "maintenance-sat14"
 
@@ -144,10 +174,13 @@ def generate(random, output):
         translator = FStripsPrinterTransitionVersion(domain_name, instance_name, filename, task)
         generator(translator)
 
+        translator = FStripsPrinterCSPVersion(domain_name, instance_name, filename, task)
+        generator(translator)
+
+
 def main():
-    import random
     args = parse_arguments()
-    generate(random, os.path.realpath(args.output_dir))
+    generate(os.path.realpath(args.output_dir))
 
 
 if __name__ == "__main__":
