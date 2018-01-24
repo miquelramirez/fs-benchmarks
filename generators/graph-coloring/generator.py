@@ -23,11 +23,21 @@ def parse_arguments():
 
 
 def compute_std_goal(problem, color_predicate, nonnull=False):
-    atoms = []
+    atoms = compute_state_constraints(problem, color_predicate)
     if nonnull:
-        for n in problem.vertices:
-            atoms.append("(not (= ({} {}) 0))".format(color_predicate, n))
+        atoms += compute_nonnull_constraints(problem, color_predicate)
+    return atoms
 
+
+def compute_nonnull_constraints(problem, color_predicate):
+    atoms = []
+    for n in problem.vertices:
+        atoms.append("(not (= ({} {}) 0))".format(color_predicate, n))
+    return atoms
+
+
+def compute_state_constraints(problem, color_predicate):
+    atoms = []
     for n1, n2 in problem.connections:
         atoms.append("(not (= ({} {}) ({} {})))".format(color_predicate, n1, color_predicate, n2))
     return atoms
@@ -117,9 +127,19 @@ class FStripsPrinter(AbstractProblemPrinter):
         return self.problem.domain + '-agent-fn'
 
 
-class StripsMonotonicPrinter(FStripsPrinter):
+class FStripsMonotonicPrinter(FStripsPrinter):
     def get_domain_name(self):
         return self.problem.domain + '-agent-fn-mon'
+
+    def add_goals(self):
+        for atom in compute_nonnull_constraints(self.problem, 'color'):
+            self.instance.add_goal(atom)
+        for atom in compute_state_constraints(self.problem, 'color'):
+            self.instance.add_goal(atom)
+
+    # def add_constraints(self):
+    #     for atom in compute_state_constraints(self.problem, 'color'):
+    #         self.instance.add_state_constraint(atom)
 
     def add_transitions(self):
         for o in self.problem.vertices:
@@ -288,7 +308,7 @@ def generate_all_encodings(generator, problem):
 def generate_agent_encodings(generator, problem):
     generator(FStripsPrinter(problem))  # The Functional version
     generator(FStripsPrinter(problem))  # The Functional version
-    generator(StripsMonotonicPrinter(problem))  # standard STRIPS version, custom version
+    generator(FStripsMonotonicPrinter(problem))  # standard STRIPS version, custom version
     generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
 
 
@@ -342,10 +362,12 @@ def generate(random, output):
 
     print("Processed a total of {} DIMACS instances".format(num_dimacs))
 
+
 def main():
     import random
     args = parse_arguments()
     generate(random, os.path.realpath(args.output_dir))
-    
+
+
 if __name__ == "__main__":
     main()
