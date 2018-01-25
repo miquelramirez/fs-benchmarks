@@ -76,6 +76,19 @@
 
     ((type sandw3) unprepared gluten_yes)
     ((type sandw3) unprepared gluten_no)
+
+
+    ((served child1) no_sandwich sandw1)
+    ((served child1) no_sandwich sandw2)
+    ((served child1) no_sandwich sandw3)
+
+    ((served child2) no_sandwich sandw1)
+    ((served child2) no_sandwich sandw2)
+    ((served child2) no_sandwich sandw3)
+
+    ((served child3) no_sandwich sandw1)
+    ((served child3) no_sandwich sandw2)
+    ((served child3) no_sandwich sandw3)
   )
 
 )

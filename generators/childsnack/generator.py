@@ -137,6 +137,9 @@ class FStripsPrinter(TranslationPrinter):
         for s in self.sandwiches:
             self.instance.add_transition("((type {}) unprepared gluten_yes)".format(s))
             self.instance.add_transition("((type {}) unprepared gluten_no)".format(s))
+        for c in self.children:
+            for s in self.sandwiches:
+                self.instance.add_transition("((served {}) no_sandwich {})".format(c, s))
 
 
 def generate(random, output):
