@@ -306,10 +306,10 @@ def generate_all_encodings(generator, problem):
 
 
 def generate_agent_encodings(generator, problem):
-    generator(FStripsPrinter(problem))  # The Functional version
-    generator(FStripsPrinter(problem))  # The Functional version
-    generator(FStripsMonotonicPrinter(problem))  # standard STRIPS version, custom version
+    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
     generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
+    generator(FStripsPrinter(problem))  # The Functional version
+    generator(FStripsMonotonicPrinter(problem))  # Monotonic version
 
 
 def generate_pure_csp_encodings(generator, problem):
