@@ -1,7 +1,7 @@
 
 (define (problem sample)
 
-  (:domain childsnack-sat14-fn-mon-v2)
+  (:domain childsnack-sat14-fn-mon-v3)
 
   (:objects
     child1 child2 child3  - child
@@ -48,9 +48,20 @@
      (= (childtype child2) gluten_yes)
      (= (childtype child3) gluten_no)
 
-
-
      (= (sndloc no_sandwich) nowhere)
+
+
+     (unassigned bread1)
+     (unassigned bread2)
+     (unassigned bread3)
+
+     (unassigned content1)
+     (unassigned content2)
+     (unassigned content3)
+
+     (unassigned_s sandw1)
+     (unassigned_s sandw2)
+     (unassigned_s sandw3)
   )
 
   (:goal
@@ -72,15 +83,21 @@
     (not (= (ct child3) no_content))
     (not (= (sn child3) no_sandwich))
 
-    (= (foodtype (br child3)) gluten_no)
-    (= (foodtype (ct child3)) gluten_no)
+    ;; (= (foodtype (br child3)) gluten_no) ;; Compiled into action preconditions
+    ;; (= (foodtype (ct child3)) gluten_no) ;; Compiled into action preconditions
 
-    (@alldiff (br child1) (br child2) (br child3) )
+    ;; (@alldiff (br child1) (br child2) (br child3) ) ;; Compiled into action preconditions
+    ;; (@alldiff (ct child1) (ct child2) (ct child3) ) ;; Compiled into action preconditions
+    ;; (@alldiff (sn child1) (sn child2) (sn child3) )   ;; Compiled into action preconditions 
+
+    (= (foodtype (br child3)) gluten_no) ;; Compiled into action preconditions
+    (= (foodtype (ct child3)) gluten_no) ;; Compiled into action preconditions
+
+    (@alldiff (br child1) (br child2) (br child3))
     (@alldiff (ct child1) (ct child2) (ct child3) )
     (@alldiff (sn child1) (sn child2) (sn child3) )   
     )
   )
-
 
 
   (:transitions

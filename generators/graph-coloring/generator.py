@@ -147,6 +147,11 @@ class FStripsMonotonicPrinter(FStripsPrinter):
                 self.instance.add_transition("((color {}) 0 {})".format(o, i))
 
 
+class FStripsMonotonicSimplePrinter(FStripsPrinter):
+    def get_domain_name(self):
+        return self.problem.domain + '-agent-fn-mon-simple'
+
+
 class ExStripsCSPPrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
     def __init__(self, problem):
@@ -310,6 +315,7 @@ def generate_agent_encodings(generator, problem):
     generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
     generator(FStripsPrinter(problem))  # The Functional version
     generator(FStripsMonotonicPrinter(problem))  # Monotonic version
+    generator(FStripsMonotonicSimplePrinter(problem))  # Monotonic+simple FSTRIPS version
 
 
 def generate_pure_csp_encodings(generator, problem):
@@ -351,7 +357,7 @@ def generate(random, output):
 
     # Generate some extra large instances for the RAW csp version, which is easier!
     for num_vertices in [100, 300, 500]:
-        for num_colors in [10, 30]:
+        for num_colors in [10, 20, 30]:
             for run in range(1, 3):
                 name = instance_name(num_vertices, num_colors, edge_factor, run)
                 problem = RandomProblem(random=random, name=name, domain="graph-coloring",

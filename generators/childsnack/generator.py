@@ -210,13 +210,16 @@ class FStrips2Printer(TranslationPrinter):
             if b not in self.gluten_free:
                 self.instance.add_init("(= (foodtype {}) gluten_yes)".format(b))
 
-    def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
+    def add_basic_goals(self):
         for child in self.children:
             # self.instance.add_goal("(not (= (served {}) no_sandwich))".format(child))
             self.instance.add_goal("(served {})".format(child))
             self.instance.add_goal("(not (= (br {}) no_bread))".format(child))
             self.instance.add_goal("(not (= (ct {}) no_content))".format(child))
             self.instance.add_goal("(not (= (sn {}) no_sandwich))".format(child))
+
+    def add_goals(self):
+        self.add_basic_goals()
 
         for c in self.gluten_allergic:
             self.instance.add_goal("(= (foodtype (br {})) gluten_no)".format(c))
@@ -290,6 +293,24 @@ class FStrips2Printer(TranslationPrinter):
                 self.instance.add_transition("((ct {}) no_content {})".format(c, s))
 
 
+class FStripsSimplePrinter(FStrips2Printer):
+    def add_init(self):
+        super().add_init()
+
+        for s in self.sandwiches:
+            self.instance.add_init("(unassigned_s {})".format(s))
+
+        for b in self.breads | self.portions:
+            self.instance.add_init("(unassigned {})".format(b))
+
+    def add_goals(self):
+        self.add_basic_goals()
+
+    def get_domain_name(self):
+        components = [self.problem.domain, 'fn-mon-v3']
+        return '-'.join(components)
+
+
 def generate(random, output):
     generator = Generator(output)
 
@@ -298,10 +319,13 @@ def generate(random, output):
 
 def _gen(generator, domain_name):
     for instance_name, filename, task in util.get_instances_of(domain_name):
-        translator = FStripsPrinter(domain_name, instance_name, filename, task)
-        generator(translator)
+        # translator = FStripsPrinter(domain_name, instance_name, filename, task)
+        # generator(translator)
 
         translator = FStrips2Printer(domain_name, instance_name, filename, task)
+        generator(translator)
+
+        translator = FStripsSimplePrinter(domain_name, instance_name, filename, task)
         generator(translator)
 
 
