@@ -5,6 +5,7 @@
 import argparse
 import os
 import sys
+from collections import defaultdict
 
 sys.path.append("..")
 
@@ -27,6 +28,7 @@ class FStripsPrinter(TranslationPrinter):
         self.days = []
         self.planes = []
         self.airports = []
+        self.plane_locs = defaultdict(list)
         self.transitions = transitions
         super().__init__(domain_name, instance_name, filename, task)
 
@@ -50,28 +52,23 @@ class FStripsPrinter(TranslationPrinter):
             for d in self.days:
                 self.instance.add_init("(= (where {}) nowhere)".format(d))
 
-    # def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
-    #     assert isinstance(self.task.goal, pddl.conditions.Conjunction)
-    #     processed_atoms = set()
-    #     for atom in self.task.goal.parts:
-    #         for translated in self.translate_atom(atom, processed_atoms):
-    #             self.instance.add_goal(translated)
-
     def add_goals(self):
         days = self.days
         planes = self.planes
-        comments = ';; xi: where the worker will be on the i-the day'
+        comments = ';; Li: where the worker will be on the i-the day'
         sep = '\n\t'
 
-        ex_vars = ' '.join("?x{}".format(i) for i in range(1, len(self.days)+1))  # e.g. the string "?X1 ?X2 ?X3"
+        ex_vars = ' '.join("?L{}".format(i) for i in range(1, len(self.days)+1))  # e.g. the string "?X1 ?X2 ?X3"
         quantif = "(exists ({} - airport)\n\t(and ".format(ex_vars)
 
         atoms = []
         for plane in planes:
             disjunction = []
-            for i, day in enumerate(days, 1):
-                disjunction.append("(at {} {} ?x{})".format(plane, day, i))
-            atoms.append("\t(or " + " ".join(disjunction) + ")\n" + sep)
+            for daynumber, loc in sorted(self.plane_locs[plane]):
+                disjunction.append("(= ?L{} {})".format(daynumber, loc))
+            # for i, day in enumerate(days, 1):
+            #     disjunction.append("(at {} {} ?x{})".format(plane, day, i))
+            atoms.append("\t(or " + " ".join(disjunction) + ")" + sep)
         all_atoms = ' '.join(atoms)
 
         # values = ' '.join("(value c{} ?v{})".format(i, i) for i in range(0, self.problem.counters))
@@ -90,6 +87,8 @@ class FStripsPrinter(TranslationPrinter):
         name = atom.predicate
 
         if name == 'at':
+            plane, day, location = atom.args
+            self.plane_locs[plane].append((int(day[1:]), location))  # We transform "d21" into int(21)
             return ["(at {} {} {})".format(*atom.args)]
 
         elif name == 'today':
@@ -174,8 +173,8 @@ def generate(output):
         translator = FStripsPrinterTransitionVersion(domain_name, instance_name, filename, task)
         generator(translator)
 
-        translator = FStripsPrinterCSPVersion(domain_name, instance_name, filename, task)
-        generator(translator)
+        # translator = FStripsPrinterCSPVersion(domain_name, instance_name, filename, task)
+        # generator(translator)
 
 
 def main():
