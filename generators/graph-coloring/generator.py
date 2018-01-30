@@ -147,7 +147,7 @@ class FStripsMonotonicPrinter(FStripsPrinter):
                 self.instance.add_transition("((color {}) 0 {})".format(o, i))
 
 
-class FStripsMonotonicSimplePrinter(FStripsPrinter):
+class FStripsMonotonicSimplePrinter(FStripsMonotonicPrinter):
     def get_domain_name(self):
         return self.problem.domain + '-agent-fn-mon-simple'
 
