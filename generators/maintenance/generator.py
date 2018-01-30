@@ -52,30 +52,30 @@ class FStripsPrinter(TranslationPrinter):
             for d in self.days:
                 self.instance.add_init("(= (where {}) nowhere)".format(d))
 
+    def get_conjunction(self):
+        sep = '\n\t'
+        clauses = []
+        for plane in self.planes:
+            disjunction = []
+            for daynumber, loc in sorted(self.plane_locs[plane]):
+                disjunction.append("(= {} {})".format(self.name_var(daynumber), loc))
+            clauses.append("\t(or " + " ".join(disjunction) + ")" + sep)
+        return '(and ' + ' '.join(clauses) + ')'
+
     def add_goals(self):
-        days = self.days
-        planes = self.planes
         comments = ';; Li: where the worker will be on the i-the day'
         sep = '\n\t'
 
         ex_vars = ' '.join("?L{}".format(i) for i in range(1, len(self.days)+1))  # e.g. the string "?X1 ?X2 ?X3"
-        quantif = "(exists ({} - airport)\n\t(and ".format(ex_vars)
+        quantif = "(exists ({} - airport)\n\t".format(ex_vars)
 
-        atoms = []
-        for plane in planes:
-            disjunction = []
-            for daynumber, loc in sorted(self.plane_locs[plane]):
-                disjunction.append("(= ?L{} {})".format(daynumber, loc))
-            # for i, day in enumerate(days, 1):
-            #     disjunction.append("(at {} {} ?x{})".format(plane, day, i))
-            atoms.append("\t(or " + " ".join(disjunction) + ")" + sep)
-        all_atoms = ' '.join(atoms)
+        all_atoms = self.get_conjunction()
 
-        # values = ' '.join("(value c{} ?v{})".format(i, i) for i in range(0, self.problem.counters))
-        # relations = ' '.join("(lt ?v{} ?v{})".format(i, i + 1) for i in range(0, self.problem.counters - 1))
-        goal = sep.join([comments, quantif, all_atoms, '))'])
-        # goal = ' '.join([quantif, values, relations, '))'])
+        goal = sep.join([comments, quantif, all_atoms, ')'])
         self.instance.add_goal(goal)
+
+    def name_var(self, i):
+        return "?L{}".format(i)
 
     def translate_atom(self, atom, processed_atoms):
         assert isinstance(atom, pddl.Atom)
@@ -104,29 +104,21 @@ class FStripsPrinter(TranslationPrinter):
         return '-'.join(components)
 
 
-class FStripsPrinterTransitionVersion(FStripsPrinter):
+class FStripsPrinterMonotonicChoiceCompilation(FStripsPrinter):
     def __init__(self, domain_name, instance_name, filename, task):
         super().__init__(domain_name, instance_name, filename, task, transitions=True)
 
     def add_goals(self):
-        planes = self.planes
-        comments = ';; xi: the day where plane "i" will coincide with the location of the worker'
-
-        ex_vars = ' '.join("?x{}".format(i) for i in range(1, len(self.planes)+1))  # e.g. the string "?X1 ?X2 ?X3"
-        quantif = "(exists ({} - day)\n\t(and ".format(ex_vars)
-
-        atoms = []
-        for i, plane in enumerate(planes, 1):
-            atoms.append("(at {} ?x{} (where ?x{}))".format(plane, i, i))
-
-        goal = '\n\t'.join([comments, quantif, '\n\t\t'.join(atoms), '))'])
-        self.instance.add_goal(goal)
+        self.instance.add_goal(self.get_conjunction())
 
     def add_transitions(self):
         for d in self.days:
             for ap in self.airports:
                 if ap != "nowhere":
                     self.instance.add_transition("((where {}) nowhere {})".format(d, ap))
+
+    def name_var(self, i):
+        return "(where d{})".format(i)
 
     def get_domain_name(self):
         components = [self.problem.domain, 'fn', 'mon']
@@ -170,7 +162,7 @@ def generate(output):
         translator = FStripsPrinter(domain_name, instance_name, filename, task)
         generator(translator)
 
-        translator = FStripsPrinterTransitionVersion(domain_name, instance_name, filename, task)
+        translator = FStripsPrinterMonotonicChoiceCompilation(domain_name, instance_name, filename, task)
         generator(translator)
 
         # translator = FStripsPrinterCSPVersion(domain_name, instance_name, filename, task)

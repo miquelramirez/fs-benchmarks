@@ -6,9 +6,9 @@
 (define (problem maintenance131003005-001)
   (:domain maintenance-sat14-fn)
   (:objects
-    d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 d38 d39 d40 d41 d42 d43 d44 d45 d46 d47 d48 d49 d50 d51 d52 d53 d54 d55 d56 d57 d58 d59 d60 d61 d62 d63 d64 d65 d66 d67 d68 d69 d70 d71 d72 d73 d74 d75 d76 d77 d78 d79 d80 d81 d82 d83 d84 d85 d86 d87 d88 d89 d90 d91 d92 d93 d94 d95 d96 d97 d98 d99 d100 d101 - day
-	fra ber ham - airport
+    fra ber ham - airport
 	ap1 ap2 ap3 ap4 ap5 ap6 ap7 ap8 ap9 ap10 ap11 ap12 ap13 ap14 ap15 ap16 ap17 ap18 ap19 ap20 ap21 ap22 ap23 ap24 ap25 ap26 ap27 ap28 ap29 ap30 ap31 ap32 ap33 ap34 ap35 ap36 ap37 ap38 ap39 ap40 ap41 ap42 ap43 ap44 ap45 ap46 ap47 ap48 ap49 ap50 ap51 ap52 ap53 ap54 ap55 ap56 ap57 ap58 ap59 ap60 ap61 ap62 ap63 ap64 ap65 ap66 ap67 ap68 ap69 ap70 ap71 ap72 ap73 ap74 ap75 ap76 ap77 ap78 ap79 ap80 ap81 ap82 ap83 ap84 ap85 ap86 ap87 ap88 ap89 ap90 ap91 ap92 ap93 ap94 ap95 ap96 ap97 ap98 ap99 ap100 ap101 ap102 ap103 ap104 ap105 ap106 ap107 ap108 ap109 ap110 ap111 ap112 ap113 ap114 ap115 ap116 ap117 ap118 ap119 ap120 ap121 ap122 ap123 ap124 ap125 ap126 ap127 ap128 ap129 ap130 ap131 ap132 ap133 ap134 ap135 ap136 ap137 ap138 ap139 ap140 ap141 ap142 ap143 ap144 ap145 ap146 ap147 ap148 ap149 ap150 ap151 ap152 ap153 ap154 ap155 ap156 ap157 ap158 ap159 ap160 ap161 ap162 ap163 ap164 ap165 ap166 ap167 ap168 ap169 ap170 ap171 ap172 ap173 ap174 ap175 ap176 ap177 ap178 ap179 ap180 ap181 ap182 ap183 ap184 ap185 ap186 ap187 ap188 ap189 ap190 ap191 ap192 ap193 ap194 ap195 ap196 ap197 ap198 ap199 ap200 ap201 ap202 ap203 ap204 ap205 ap206 ap207 ap208 ap209 ap210 ap211 ap212 ap213 ap214 ap215 ap216 ap217 ap218 ap219 ap220 ap221 ap222 ap223 ap224 ap225 ap226 ap227 ap228 ap229 ap230 ap231 ap232 ap233 ap234 ap235 ap236 ap237 ap238 ap239 ap240 ap241 ap242 ap243 ap244 ap245 ap246 ap247 ap248 ap249 ap250 ap251 ap252 ap253 ap254 ap255 ap256 ap257 ap258 ap259 ap260 ap261 ap262 ap263 ap264 ap265 ap266 ap267 ap268 ap269 ap270 ap271 ap272 ap273 ap274 ap275 ap276 ap277 ap278 ap279 ap280 ap281 ap282 ap283 ap284 ap285 ap286 ap287 ap288 ap289 ap290 ap291 ap292 ap293 ap294 ap295 ap296 ap297 ap298 ap299 ap300 - plane
+	d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 d32 d33 d34 d35 d36 d37 d38 d39 d40 d41 d42 d43 d44 d45 d46 d47 d48 d49 d50 d51 d52 d53 d54 d55 d56 d57 d58 d59 d60 d61 d62 d63 d64 d65 d66 d67 d68 d69 d70 d71 d72 d73 d74 d75 d76 d77 d78 d79 d80 d81 d82 d83 d84 d85 d86 d87 d88 d89 d90 d91 d92 d93 d94 d95 d96 d97 d98 d99 d100 d101 - day
   )
 
   (:init
@@ -1512,8 +1512,8 @@
   (:goal
     ;; Li: where the worker will be on the i-the day
 	(exists (?L1 ?L2 ?L3 ?L4 ?L5 ?L6 ?L7 ?L8 ?L9 ?L10 ?L11 ?L12 ?L13 ?L14 ?L15 ?L16 ?L17 ?L18 ?L19 ?L20 ?L21 ?L22 ?L23 ?L24 ?L25 ?L26 ?L27 ?L28 ?L29 ?L30 ?L31 ?L32 ?L33 ?L34 ?L35 ?L36 ?L37 ?L38 ?L39 ?L40 ?L41 ?L42 ?L43 ?L44 ?L45 ?L46 ?L47 ?L48 ?L49 ?L50 ?L51 ?L52 ?L53 ?L54 ?L55 ?L56 ?L57 ?L58 ?L59 ?L60 ?L61 ?L62 ?L63 ?L64 ?L65 ?L66 ?L67 ?L68 ?L69 ?L70 ?L71 ?L72 ?L73 ?L74 ?L75 ?L76 ?L77 ?L78 ?L79 ?L80 ?L81 ?L82 ?L83 ?L84 ?L85 ?L86 ?L87 ?L88 ?L89 ?L90 ?L91 ?L92 ?L93 ?L94 ?L95 ?L96 ?L97 ?L98 ?L99 ?L100 ?L101 - airport)
-	(and 
-		(or (= ?L11 ber) (= ?L28 ham) (= ?L83 ham) (= ?L97 ham) (= ?L99 ber))
+	
+	(and 	(or (= ?L11 ber) (= ?L28 ham) (= ?L83 ham) (= ?L97 ham) (= ?L99 ber))
 	 	(or (= ?L15 ber) (= ?L48 ber) (= ?L54 ber) (= ?L55 fra) (= ?L87 fra))
 	 	(or (= ?L23 ham) (= ?L29 fra) (= ?L38 ham) (= ?L61 ham) (= ?L84 fra))
 	 	(or (= ?L8 fra) (= ?L48 ber) (= ?L50 ber) (= ?L51 fra) (= ?L97 fra))
@@ -1813,8 +1813,8 @@
 	 	(or (= ?L22 ham) (= ?L45 fra) (= ?L60 fra) (= ?L72 ber) (= ?L91 fra))
 	 	(or (= ?L11 ber) (= ?L47 ber) (= ?L81 ber) (= ?L83 ham) (= ?L95 ham))
 	 	(or (= ?L28 fra) (= ?L36 fra) (= ?L43 ber) (= ?L74 ham) (= ?L92 ber))
-	
-	))
+	)
+	)
   )
 
   

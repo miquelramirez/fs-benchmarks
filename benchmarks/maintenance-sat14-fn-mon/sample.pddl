@@ -1,9 +1,6 @@
 ;; 
-;; Problem automatically translated from file:
-;; 		/home/gfrances/projects/code/fs-benchmarks/benchmarks/maintenance-sat14-strips/maintenance.1.3.060.180.5-000.pddl
-;; 
 
-(define (problem maintenance130601805-000)
+(define (problem sample)
   (:domain maintenance-sat14-fn-mon)
   (:objects
     ap1 ap2 ap3 - plane
