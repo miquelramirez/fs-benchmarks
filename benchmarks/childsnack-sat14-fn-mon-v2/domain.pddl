@@ -21,17 +21,14 @@
 (define (domain childsnack-sat14-fn-mon-v2)
 (:requirements :typing :equality)
 (:types 
-	child sandwich glutentype glutenaffected
+	glutentype glutenaffected
 	tray place - sndlocation
-	content bread - food
+	content bread sandwich child - int
 )
 
 (:constants nowhere                           - sndlocation
             kitchen                           - place
             gluten_yes gluten_no              - glutentype
-            no_sandwich                       - sandwich
-            no_bread                          - bread
-            no_content                        - content
 )
 
 (:predicates 
@@ -44,18 +41,22 @@
 	(childloc ?c - child)       - place
 
 	(childtype ?c - child)      - glutentype
-	(foodtype ?f - food)        - glutentype
+	(btype ?f - bread)          - glutentype
+	(ctype ?f - content)        - glutentype
 
 	(sn ?c - child)             - sandwich
 	(br ?c - child)             - bread
 	(ct ?c - child)             - content
+
+	(cassign)                   - child
 )
+
 
 (:action prepare :parameters (?c - child)
 	:precondition (and
-		(not (= (br ?c) no_bread))
-		(not (= (ct ?c) no_content))
-		(not (= (sn ?c) no_sandwich))
+		(not (= (br ?c) 0))
+		(not (= (ct ?c) 0))
+		(not (= (sn ?c) 0))
 		(= (sndloc (sn ?c)) nowhere)
 	)
 	:effect (and 
@@ -65,22 +66,26 @@
 
 (:action assign_br :parameters (?b - bread ?c - child)
 	:precondition (and
-		(= (br ?c) no_bread))
+		(= (cassign) ?c)
+		(= (br ?c) 0))
 	:effect (and 
 		(assign (br ?c) ?b))
 )
 
 (:action assign_ct :parameters (?x - content ?c - child)
 	:precondition (and
-		(= (ct ?c) no_content))
+		(not (= (br ?c) 0))
+		(= (ct ?c) 0))
 	:effect (and 
 		(assign (ct ?c) ?x))
 )
 
 (:action assign_sn :parameters (?s - sandwich ?c - child)
 	:precondition (and
-		(= (sn ?c) no_sandwich))
+		(not (= (sn ?c) 0))
+		(= (sn ?c) 0))
 	:effect (and 
+		(= (cassign) (+ (cassign) 1))
 		(assign (sn ?c) ?s))
 )
 
@@ -103,7 +108,7 @@
 
 (:action put_on_tray :parameters (?s - sandwich ?t - tray)
 	 :precondition (and
-	 	(not (= ?s no_sandwich))
+	 	(not (= ?s 0))
 	 	(= (sndloc ?s) kitchen)
 	 	(= (trayloc ?t) kitchen)
      )

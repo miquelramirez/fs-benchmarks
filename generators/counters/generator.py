@@ -165,7 +165,7 @@ class FStripsMonotonicityPrinter(FStripsPrinter):
 def generate(random, output):
     generator = Generator(output)
 
-    for size in [5, 7, 9, 11, 13, 15, 20, 25, 30, 35, 40, 50]:
+    for size in [5, 7, 9, 11, 13, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100]:
         # First we generate the standard inequality versions
         domain = "counters"
         name = instance_name(size)

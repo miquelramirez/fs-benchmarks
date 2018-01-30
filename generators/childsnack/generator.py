@@ -14,12 +14,26 @@ import pddl  # This should be imported from a custom-set PYTHONPATH containing t
 from base import Generator
 
 
+import re
+
+def sorted_nicely( l ):
+    """ Sort the given iterable in the way that humans expect."""
+    convert = lambda text: int(text) if text.isdigit() else text
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+    return sorted(l, key = alphanum_key)
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Translate \'childsnack\' problem instances.')
     parser.add_argument("--output-dir", default="../../benchmarks",
                         help='Output dir where the generated problems will be placed')
     args = parser.parse_args()
     return args
+
+
+def element_id(elem):
+    for s in ["bread", "content", "sandw", "child"]:
+        if elem.startswith(s):
+            return int(elem[len(s):])
 
 
 class FStripsPrinter(TranslationPrinter):
@@ -160,7 +174,7 @@ class FStrips2Printer(TranslationPrinter):
         self.breads = set(o.name for o in objects if o.type == 'bread-portion')
         self.portions = set(o.name for o in objects if o.type == 'content-portion')
         self.children = set(o.name for o in objects if o.type == 'child')
-        self.sandwiches = set(o.name for o in objects if o.type == 'sandwich')
+        self.sandwiches = set(o.name for o in objects if o.type == 'sandwich' if element_id(o.name) <= len(self.children))
 
         breads_kitchen = set()
         portions_kitchen = set()
@@ -182,9 +196,15 @@ class FStrips2Printer(TranslationPrinter):
                 continue
 
             if o.type == 'content-portion':
-                self.instance.add_object(o.name, 'content')
+                # self.instance.add_object(o.name, 'content')
+                pass
+            elif o.type == 'sandwich':
+                pass
             elif o.type == 'bread-portion':
-                self.instance.add_object(o.name, 'bread')
+                # self.instance.add_object(o.name, 'bread')
+                pass
+            elif o.type == 'child':
+                pass
             else:
                 self.instance.add_object(o.name, o.type)
 
@@ -193,52 +213,75 @@ class FStrips2Printer(TranslationPrinter):
             for translated in self.translate_atom_idx(atom):
                 self.instance.add_init(translated)
 
-        self.instance.add_init("(= (sndloc no_sandwich) nowhere)")
-
-        self.instance.add_init("(= (foodtype no_bread) gluten_yes)")
-        self.instance.add_init("(= (foodtype no_content) gluten_yes)")
+        self.instance.add_init("(= (sndloc 0) nowhere)")
+        self.instance.add_init("(= (btype 0) gluten_yes)")
+        self.instance.add_init("(= (ctype 0) gluten_yes)")
+        self.instance.add_init("(= (cassign) 1)")
 
         for child in self.children:
-            self.instance.add_init("(= (sn {}) no_sandwich)".format(child))
-            self.instance.add_init("(= (br {}) no_bread)".format(child))
-            self.instance.add_init("(= (ct {}) no_content)".format(child))
+            self.instance.add_init("(= (sn {}) 0)".format(element_id(child)))
+            self.instance.add_init("(= (br {}) 0)".format(element_id(child)))
+            self.instance.add_init("(= (ct {}) 0)".format(element_id(child)))
 
         for s in self.sandwiches:
-            self.instance.add_init("(= (sndloc {}) nowhere)".format(s))
+            self.instance.add_init("(= (sndloc {}) nowhere)".format(element_id(s)))
 
-        for b in self.breads | self.portions:
+        for b in self.breads:
             if b not in self.gluten_free:
-                self.instance.add_init("(= (foodtype {}) gluten_yes)".format(b))
+                self.instance.add_init("(= (btype {}) gluten_yes)".format(element_id(b)))
+
+        for b in self.portions:
+            if b not in self.gluten_free:
+                self.instance.add_init("(= (ctype {}) gluten_yes)".format(element_id(b)))
 
     def add_basic_goals(self):
         for child in self.children:
             # self.instance.add_goal("(not (= (served {}) no_sandwich))".format(child))
-            self.instance.add_goal("(served {})".format(child))
-            self.instance.add_goal("(not (= (br {}) no_bread))".format(child))
-            self.instance.add_goal("(not (= (ct {}) no_content))".format(child))
-            self.instance.add_goal("(not (= (sn {}) no_sandwich))".format(child))
+            self.instance.add_goal("(served {})".format(element_id(child)))
+            self.instance.add_goal("(not (= (br {}) 0))".format(element_id(child)))
+            self.instance.add_goal("(not (= (ct {}) 0))".format(element_id(child)))
+            self.instance.add_goal("(not (= (sn {}) 0))".format(element_id(child)))
 
     def add_goals(self):
         self.add_basic_goals()
 
         for c in self.gluten_allergic:
-            self.instance.add_goal("(= (foodtype (br {})) gluten_no)".format(c))
-            self.instance.add_goal("(= (foodtype (ct {})) gluten_no)".format(c))
+            self.instance.add_goal("(= (btype (br {})) gluten_no)".format(element_id(c)))
+            self.instance.add_goal("(= (ctype (ct {})) gluten_no)".format(element_id(c)))
 
 
         # THESE COULD ALL BE STATE CONSTRAINTS AS WELL:
-        all_children = ' '.join("(br {})".format(c) for c in sorted(self.children))
+        all_children = ' '.join("(br {})".format(element_id(c)) for c in sorted(self.children))
         self.instance.add_goal("(@alldiff {})".format(all_children))
 
-        all_children = ' '.join("(ct {})".format(c) for c in sorted(self.children))
+        all_children = ' '.join("(ct {})".format(element_id(c)) for c in sorted(self.children))
         self.instance.add_goal("(@alldiff {})".format(all_children))
 
-        all_children = ' '.join("(sn {})".format(c) for c in sorted(self.children))
+        all_children = ' '.join("(sn {})".format(element_id(c)) for c in sorted(self.children))
         self.instance.add_goal("(@alldiff {})".format(all_children))
+
+        sorted_all = sorted_nicely(self.children)
+        sorted_allergic = [c for c in sorted_all if c in self.gluten_allergic]
+        sorted_non_allergic = [c for c in sorted_all if c not in self.gluten_allergic]
+
+        for c1, c2 in zip(sorted_allergic, sorted_allergic[1:]):
+            self.instance.add_goal("(< (br {}) (br {}))".format(element_id(c1), element_id(c2)))
+
+        for c1, c2 in zip(sorted_non_allergic, sorted_non_allergic[1:]):
+            self.instance.add_goal("(< (br {}) (br {}))".format(element_id(c1), element_id(c2)))
+
+        for c1, c2 in zip(sorted_allergic, sorted_allergic[1:]):
+            self.instance.add_goal("(< (ct {}) (ct {}))".format(element_id(c1), element_id(c2)))
+
+        for c1, c2 in zip(sorted_non_allergic, sorted_non_allergic[1:]):
+            self.instance.add_goal("(< (ct {}) (ct {}))".format(element_id(c1), element_id(c2)))
+
+        for c1, c2 in zip(sorted_all, sorted_all[1:]):
+            self.instance.add_goal("(< (sn {}) (sn {}))".format(element_id(c1), element_id(c2)))
+
 
         # all_children = ' '.join("(served {})".format(c) for c in self.children)
         # self.instance.add_goal("(@alldiff {})".format(all_children))
-
 
     def translate_atom_idx(self, atom):
         assert isinstance(atom, pddl.Atom)
@@ -252,23 +295,28 @@ class FStrips2Printer(TranslationPrinter):
             elem,  = atom.args
             return []
 
-        elif name in ('no_gluten_bread', 'no_gluten_content'):
+        elif name in ('no_gluten_content'):
             elem, = atom.args
             self.gluten_free.add(elem)
-            return ["(= (foodtype {}) gluten_no)".format(elem)]
+            return ["(= (ctype {}) gluten_no)".format(element_id(elem))]
+
+        elif name in ('no_gluten_bread'):
+            elem, = atom.args
+            self.gluten_free.add(elem)
+            return ["(= (btype {}) gluten_no)".format(element_id(elem))]
 
         elif name == 'allergic_gluten':
             elem, = atom.args
             self.gluten_allergic.add(elem)
-            return ["(= (childtype {}) gluten_no)".format(elem)]
+            return ["(= (childtype {}) gluten_no)".format(element_id(elem))]
 
         elif name == 'not_allergic_gluten':
             elem, = atom.args
-            return ["(= (childtype {}) gluten_yes)".format(elem)]
+            return ["(= (childtype {}) gluten_yes)".format(element_id(elem))]
 
         elif name == 'waiting':
             child, where, = atom.args
-            return ["(= (childloc {}) {})".format(child, where)]
+            return ["(= (childloc {}) {})".format(element_id(child), where)]
 
         elif name == 'notexist':
             what, = atom.args
@@ -284,13 +332,20 @@ class FStrips2Printer(TranslationPrinter):
             # if c[-1:] not in ('1', '2', '3'): continue
             for s in self.sandwiches:
                 # if s[-2:] not in ('w1', 'w2', 'w3'): continue
-                self.instance.add_transition("((sn {}) no_sandwich {})".format(c, s))
+                self.instance.add_transition("((sn {}) 0 {})".format(element_id(c), element_id(s)))
             for s in self.breads:
                 # if s[-1:] not in ('1', '2', '3'): continue
-                self.instance.add_transition("((br {}) no_bread {})".format(c, s))
+                self.instance.add_transition("((br {}) 0 {})".format(element_id(c), element_id(s)))
             for s in self.portions:
                 # if s[-1:] not in ('1', '2', '3'): continue
-                self.instance.add_transition("((ct {}) no_content {})".format(c, s))
+                self.instance.add_transition("((ct {}) 0 {})".format(element_id(c), element_id(s)))
+
+    def add_bounds(self):
+        self.instance.add_domain_bound("(bread - int[0..{}])".format(len(self.breads)))
+        self.instance.add_domain_bound("(content - int[0..{}])".format(len(self.portions)))
+        self.instance.add_domain_bound("(sandwich - int[0..{}])".format(len(self.sandwiches)))
+        self.instance.add_domain_bound("(child - int[1..{}])".format(len(self.children)))
+        self.instance.add_domain_bound("(assignable - int[1..{}])".format(len(self.children)+1))
 
 
 class FStripsSimplePrinter(FStrips2Printer):
@@ -298,13 +353,16 @@ class FStripsSimplePrinter(FStrips2Printer):
         super().add_init()
 
         for s in self.sandwiches:
-            self.instance.add_init("(unassigned_s {})".format(s))
+            self.instance.add_init("(unassigned_s {})".format(element_id(s)))
 
-        for b in self.breads | self.portions:
-            self.instance.add_init("(unassigned {})".format(b))
+        for b in self.breads:
+            self.instance.add_init("(unassigned_b {})".format(element_id(b)))
+
+        for b in self.portions:
+            self.instance.add_init("(unassigned_c {})".format(element_id(b)))
 
     def add_goals(self):
-        self.add_basic_goals()
+        super().add_goals()
 
     def get_domain_name(self):
         components = [self.problem.domain, 'fn-mon-v3']

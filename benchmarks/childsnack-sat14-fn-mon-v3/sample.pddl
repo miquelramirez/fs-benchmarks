@@ -95,8 +95,19 @@
 
     (@alldiff (br child1) (br child2) (br child3))
     (@alldiff (ct child1) (ct child2) (ct child3) )
-    (@alldiff (sn child1) (sn child2) (sn child3) )   
-    )
+    (@alldiff (sn child1) (sn child2) (sn child3) )
+
+    ;; Symmetry-breaking constraints
+    ;; gluten-averse children: just one, child3
+    ;; gluten-normal children:
+    (< (br child1) (br child2))
+    (< (ct child1) (ct child2))
+
+    ;; sandwiches: gluten is irrelevant
+    (< (sn child1) (sn child2))
+    (< (sn child2) (sn child3))
+
+  )
   )
 
 
