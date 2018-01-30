@@ -5,6 +5,7 @@ graph-coloring*/dimacs*.pddl
 # But version the IJCAI2016 papers
 !graph-coloring-strips-ex-2016/instance*.pddl
 !graph-coloring-strips-ex-2016/dimacs*.pddl
+!graph-coloring-agent*/dimacs*.pddl
 array-sort*/instance*.pddl
 block-grouping*/instance*.pddl
 blocksworld*/instance*.pddl
