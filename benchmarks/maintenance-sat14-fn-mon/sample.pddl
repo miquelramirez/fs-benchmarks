@@ -17,7 +17,6 @@
 
 	(at ap3 d2 ham)	
 
-  (at ap4 d2 ber) 
 
 	(= (where d1) nowhere)
 	(= (where d2) nowhere)
@@ -26,12 +25,11 @@
 
   (:goal
     ;; xi: the day where plane "i" will coincide with the location of the worker 
-    (exists (?x1 ?x2 ?x3 ?x4 - day)
+    (exists (?x1 ?x2 ?x3 - day)
     (and
     	(at ap1 ?x1 (where ?x1))
     	(at ap2 ?x2 (where ?x2))
     	(at ap3 ?x3 (where ?x3))
-      (at ap4 ?x4 (where ?x4))
     ))
   )
 
