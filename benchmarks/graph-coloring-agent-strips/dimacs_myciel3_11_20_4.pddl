@@ -2,8 +2,8 @@
 (define (problem dimacs_myciel3_11_20_4)
   (:domain graph-coloring-agent-strips)
   (:objects
-    c1 c2 c3 c4 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 - vertex
+	c1 c2 c3 c4 - color_t
   )
 
   (:init
@@ -48,10 +48,10 @@
 	(adjacent v9 v11)
 	(adjacent v9 v5)
 	(at a v5)
-	(at c1 v8)
-	(at c2 v2)
-	(at c3 v3)
-	(at c4 v5)
+	(at c1 v10)
+	(at c2 v9)
+	(at c3 v10)
+	(at c4 v7)
 	(not-carrying a)
 	(not-has-color v1 c1)
 	(not-has-color v1 c2)

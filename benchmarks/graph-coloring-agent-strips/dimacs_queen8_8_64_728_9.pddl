@@ -2,8 +2,8 @@
 (define (problem dimacs_queen8_8_64_728_9)
   (:domain graph-coloring-agent-strips)
   (:objects
-    c1 c2 c3 c4 c5 c6 c7 c8 c9 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 - vertex
+	c1 c2 c3 c4 c5 c6 c7 c8 c9 - color_t
   )
 
   (:init
@@ -1463,16 +1463,16 @@
 	(adjacent v9 v54)
 	(adjacent v9 v57)
 	(adjacent v9 v63)
-	(at a v28)
-	(at c1 v16)
-	(at c2 v35)
-	(at c3 v18)
-	(at c4 v35)
-	(at c5 v46)
-	(at c6 v48)
-	(at c7 v14)
-	(at c8 v30)
-	(at c9 v15)
+	(at a v15)
+	(at c1 v23)
+	(at c2 v5)
+	(at c3 v47)
+	(at c4 v41)
+	(at c5 v52)
+	(at c6 v60)
+	(at c7 v44)
+	(at c8 v62)
+	(at c9 v49)
 	(not-carrying a)
 	(not-has-color v1 c1)
 	(not-has-color v1 c2)

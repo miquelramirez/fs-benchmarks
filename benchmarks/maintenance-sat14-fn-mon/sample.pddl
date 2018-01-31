@@ -3,7 +3,7 @@
 (define (problem sample)
   (:domain maintenance-sat14-fn-mon)
   (:objects
-    ap1 ap2 ap3 - plane
+    ap1 ap2 ap3 ap4 - plane
 	d1 d2 d3 - day
 	fra ber ham - airport
   )
@@ -17,6 +17,8 @@
 
 	(at ap3 d2 ham)	
 
+  (at ap4 d2 ber) 
+
 	(= (where d1) nowhere)
 	(= (where d2) nowhere)
 	(= (where d3) nowhere)
@@ -24,11 +26,12 @@
 
   (:goal
     ;; xi: the day where plane "i" will coincide with the location of the worker 
-    (exists (?x1 ?x2 ?x3 - day)
+    (exists (?x1 ?x2 ?x3 ?x4 - day)
     (and
     	(at ap1 ?x1 (where ?x1))
     	(at ap2 ?x2 (where ?x2))
     	(at ap3 ?x3 (where ?x3))
+      (at ap4 ?x4 (where ?x4))
     ))
   )
 

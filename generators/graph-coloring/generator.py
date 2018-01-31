@@ -66,7 +66,8 @@ def compute_existential_goal(problem, predicate, undef_val='undef'):
 
 class FStripsCSPChoicePrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
-    def __init__(self, problem):
+    def __init__(self, problem, suffix):
+        self.suffix = suffix
         super().__init__(problem)
 
     def add_objects(self):
@@ -78,18 +79,23 @@ class FStripsCSPChoicePrinter(AbstractProblemPrinter):
             self.instance.add_init("(adjacent {} {})".format(n1, n2))
             self.instance.add_init("(adjacent {} {})".format(n2, n1))
         for n in self.problem.vertices:
-            self.instance.add_init("(= (choice {}) 0)".format(n))
+            self.instance.add_init("(= (color {}) 0)".format(n))
 
     def add_goals(self):
-        for atom in compute_std_goal(self.problem, 'choice', nonnull=True):
+        for atom in compute_std_goal(self.problem, 'color', nonnull=True):
             self.instance.add_goal(atom)
 
     def get_domain_name(self):
-        return self.problem.domain + '-choice-compilation-fn'
+        return self.problem.domain + '-fn-mon'
+
+    def add_bounds(self):
+        self.instance.add_int_bound("color_t", 1, self.problem.num_colors)
+        self.instance.add_int_bound("color_t_undef", 0, self.problem.num_colors)
 
 
 class FStripsPrinter(AbstractProblemPrinter):
-    def __init__(self, problem):
+    def __init__(self, problem, suffix):
+        self.suffix = suffix
         super().__init__(problem)
 
     def add_objects(self):
@@ -154,7 +160,8 @@ class FStripsMonotonicSimplePrinter(FStripsMonotonicPrinter):
 
 class ExStripsCSPPrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
-    def __init__(self, problem):
+    def __init__(self, problem, suffix):
+        self.suffix = suffix
         super().__init__(problem)
 
     def add_objects(self):
@@ -177,7 +184,8 @@ class ExStripsCSPPrinter(AbstractProblemPrinter):
 
 class StripsCSPPrinter(AbstractProblemPrinter):
     """ A printer for the raw CSP version of the problem """
-    def __init__(self, problem):
+    def __init__(self, problem, suffix):
+        self.suffix = suffix
         super().__init__(problem)
 
     def add_objects(self):
@@ -205,8 +213,8 @@ class StripsCSPPrinter(AbstractProblemPrinter):
 
 
 class StripsPrinter(StripsCSPPrinter):
-    def __init__(self, problem):
-        super().__init__(problem)
+    def __init__(self, problem, suffix):
+        super().__init__(problem, suffix)
 
     def add_init(self):
         super().add_init()
@@ -221,7 +229,8 @@ class StripsPrinter(StripsCSPPrinter):
 
 
 class ExStripsPrinter(AbstractProblemPrinter):
-    def __init__(self, problem):
+    def __init__(self, problem, suffix):
+        self.suffix = suffix
         super().__init__(problem)
 
     def add_objects(self):
@@ -283,7 +292,6 @@ class Problem(object):
             self.color_locations[color] = v
 
 
-
 class RandomProblem(Problem):
     def __init__(self, random, name, domain, num_vertices, num_colors, edge_factor):
         graph = random_walk(list(range(num_vertices)), int(num_vertices * edge_factor))
@@ -305,33 +313,34 @@ def compile_dimacs_instances():
         yield identifier, graph, chromatic_numbers[identifier]
 
 
-def generate_all_encodings(generator, problem):
-    generate_agent_encodings(generator, problem)
-    generate_pure_csp_encodings(generator, problem)
+def generate_all_encodings(generator, problem, suffix=""):
+    generate_agent_encodings(generator, problem, suffix)
+    generate_pure_csp_encodings(generator, problem, suffix)
 
 
-def generate_agent_encodings(generator, problem):
-    generator(StripsPrinter(problem))  # standard STRIPS version, custom version
-    generator(ExStripsPrinter(problem))  # standard STRIPS version, existential vars
-    generator(FStripsPrinter(problem))  # The Functional version
-    generator(FStripsMonotonicPrinter(problem))  # Monotonic version
-    generator(FStripsMonotonicSimplePrinter(problem))  # Monotonic+simple FSTRIPS version
+def generate_agent_encodings(generator, problem, suffix=""):
+    generator(StripsPrinter(problem, suffix))  # standard STRIPS version, custom version
+    generator(ExStripsPrinter(problem, suffix))  # standard STRIPS version, existential vars
+    generator(FStripsPrinter(problem, suffix))  # The Functional version
+    generator(FStripsMonotonicPrinter(problem, suffix))  # Monotonic version
+    generator(FStripsMonotonicSimplePrinter(problem, suffix))  # Monotonic+simple FSTRIPS version
 
 
-def generate_pure_csp_encodings(generator, problem):
-    generator(StripsCSPPrinter(problem))  # The Strips version, raw CSP version of the problem
-    generator(ExStripsCSPPrinter(problem))  # The Functional version, raw CSP version of the problem
-    generator(FStripsCSPChoicePrinter(problem))  # Raw CSP version of the problem with choice compilation
+def generate_pure_csp_encodings(generator, problem, suffix=""):
+    generator(StripsCSPPrinter(problem, suffix))  # The Strips version, raw CSP version of the problem
+    generator(ExStripsCSPPrinter(problem, suffix))  # The Functional version, raw CSP version of the problem
+    generator(FStripsCSPChoicePrinter(problem, suffix))  # Raw CSP version of the problem with choice compilation
 
 
 def generate_dimacs_instances(generator, random):
     counter = 0
     for identifier, graph, k in compile_dimacs_instances():
         counter += 1
-        for num_colors in [k, k+1]:
+        for num_colors in [k-1, k, k+1]:
+            suffix = "unsolv" if num_colors == k-1 else ""
             name = instance_name(identifier, len(graph.nodes), len(graph.edges), num_colors, base="dimacs")
             problem = Problem(random, name, "graph-coloring", num_colors, graph)
-            generate_all_encodings(generator, problem)
+            generate_all_encodings(generator, problem, suffix)
     return counter
 
 

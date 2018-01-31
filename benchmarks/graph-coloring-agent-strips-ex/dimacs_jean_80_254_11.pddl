@@ -2,8 +2,8 @@
 (define (problem dimacs_jean_80_254_11)
   (:domain graph-coloring-agent-strips-ex)
   (:objects
-    c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 v65 v66 v67 v68 v69 v70 v71 v72 v73 v74 v75 v76 v77 v78 v79 v80 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 v65 v66 v67 v68 v69 v70 v71 v72 v73 v74 v75 v76 v77 v78 v79 v80 - vertex
+	c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 - color_t
   )
 
   (:init
@@ -596,18 +596,18 @@
 	(color v8 undef)
 	(color v80 undef)
 	(color v9 undef)
-	(color_on c1 v28)
-	(color_on c10 v63)
-	(color_on c11 v19)
-	(color_on c2 v21)
-	(color_on c3 v54)
-	(color_on c4 v16)
-	(color_on c5 v20)
-	(color_on c6 v33)
-	(color_on c7 v8)
-	(color_on c8 v22)
-	(color_on c9 v42)
-	(on a v33)
+	(color_on c1 v68)
+	(color_on c10 v2)
+	(color_on c11 v11)
+	(color_on c2 v73)
+	(color_on c3 v69)
+	(color_on c4 v3)
+	(color_on c5 v33)
+	(color_on c6 v12)
+	(color_on c7 v36)
+	(color_on c8 v8)
+	(color_on c9 v73)
+	(on a v58)
   )
 
   (:goal
