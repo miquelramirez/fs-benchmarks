@@ -336,7 +336,7 @@ def generate_dimacs_instances(generator, random):
     counter = 0
     for identifier, graph, k in compile_dimacs_instances():
         counter += 1
-        for num_colors in [k-1, k, k+1]:
+        for num_colors in [k, k+1]:
             suffix = "unsolv" if num_colors == k-1 else ""
             name = instance_name(identifier, len(graph.nodes), len(graph.edges), num_colors, base="dimacs")
             problem = Problem(random, name, "graph-coloring", num_colors, graph)

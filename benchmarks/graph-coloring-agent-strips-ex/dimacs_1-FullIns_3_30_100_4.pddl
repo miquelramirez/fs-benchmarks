@@ -2,8 +2,8 @@
 (define (problem dimacs_1-FullIns_3_30_100_4)
   (:domain graph-coloring-agent-strips-ex)
   (:objects
-    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 - vertex
-	c1 c2 c3 c4 - color_t
+    c1 c2 c3 c4 - color_t
+	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 - vertex
   )
 
   (:init
@@ -238,11 +238,11 @@
 	(color v7 undef)
 	(color v8 undef)
 	(color v9 undef)
-	(color_on c1 v11)
-	(color_on c2 v21)
-	(color_on c3 v8)
-	(color_on c4 v22)
-	(on a v25)
+	(color_on c1 v2)
+	(color_on c2 v3)
+	(color_on c3 v23)
+	(color_on c4 v13)
+	(on a v9)
   )
 
   (:goal
