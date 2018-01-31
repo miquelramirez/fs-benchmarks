@@ -92,6 +92,10 @@ class FStripsCSPChoicePrinter(AbstractProblemPrinter):
         self.instance.add_int_bound("color_t", 1, self.problem.num_colors)
         self.instance.add_int_bound("color_t_undef", 0, self.problem.num_colors)
 
+    def add_transitions(self):
+        for o in self.problem.vertices:
+            for i in range(1, self.problem.num_colors + 1):
+                self.instance.add_transition("((color {}) 0 {})".format(o, i))
 
 class FStripsPrinter(AbstractProblemPrinter):
     def __init__(self, problem, suffix):
