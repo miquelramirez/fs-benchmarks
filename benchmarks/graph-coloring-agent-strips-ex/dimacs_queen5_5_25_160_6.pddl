@@ -2,8 +2,8 @@
 (define (problem dimacs_queen5_5_25_160_6)
   (:domain graph-coloring-agent-strips-ex)
   (:objects
-    c1 c2 c3 c4 c5 c6 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 - vertex
+	c1 c2 c3 c4 c5 c6 - color_t
   )
 
   (:init
@@ -353,13 +353,13 @@
 	(color v7 undef)
 	(color v8 undef)
 	(color v9 undef)
-	(color_on c1 v1)
-	(color_on c2 v1)
-	(color_on c3 v22)
-	(color_on c4 v16)
-	(color_on c5 v1)
-	(color_on c6 v22)
-	(on a v7)
+	(color_on c1 v19)
+	(color_on c2 v22)
+	(color_on c3 v4)
+	(color_on c4 v13)
+	(color_on c5 v20)
+	(color_on c6 v24)
+	(on a v22)
   )
 
   (:goal

@@ -2,8 +2,8 @@
 (define (problem dimacs_myciel5_47_236_7)
   (:domain graph-coloring-agent-strips)
   (:objects
-    c1 c2 c3 c4 c5 c6 c7 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 - vertex
+	c1 c2 c3 c4 c5 c6 c7 - color_t
   )
 
   (:init
@@ -479,14 +479,14 @@
 	(adjacent v9 v39)
 	(adjacent v9 v45)
 	(adjacent v9 v5)
-	(at a v37)
-	(at c1 v47)
-	(at c2 v28)
-	(at c3 v40)
-	(at c4 v27)
+	(at a v43)
+	(at c1 v46)
+	(at c2 v29)
+	(at c3 v41)
+	(at c4 v1)
 	(at c5 v38)
-	(at c6 v47)
-	(at c7 v26)
+	(at c6 v8)
+	(at c7 v12)
 	(not-carrying a)
 	(not-has-color v1 c1)
 	(not-has-color v1 c2)

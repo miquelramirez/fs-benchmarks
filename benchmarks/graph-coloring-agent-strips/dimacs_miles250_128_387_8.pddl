@@ -2,8 +2,8 @@
 (define (problem dimacs_miles250_128_387_8)
   (:domain graph-coloring-agent-strips)
   (:objects
-    c1 c2 c3 c4 c5 c6 c7 c8 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 v65 v66 v67 v68 v69 v70 v71 v72 v73 v74 v75 v76 v77 v78 v79 v80 v81 v82 v83 v84 v85 v86 v87 v88 v89 v90 v91 v92 v93 v94 v95 v96 v97 v98 v99 v100 v101 v102 v103 v104 v105 v106 v107 v108 v109 v110 v111 v112 v113 v114 v115 v116 v117 v118 v119 v120 v121 v122 v123 v124 v125 v126 v127 v128 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47 v48 v49 v50 v51 v52 v53 v54 v55 v56 v57 v58 v59 v60 v61 v62 v63 v64 v65 v66 v67 v68 v69 v70 v71 v72 v73 v74 v75 v76 v77 v78 v79 v80 v81 v82 v83 v84 v85 v86 v87 v88 v89 v90 v91 v92 v93 v94 v95 v96 v97 v98 v99 v100 v101 v102 v103 v104 v105 v106 v107 v108 v109 v110 v111 v112 v113 v114 v115 v116 v117 v118 v119 v120 v121 v122 v123 v124 v125 v126 v127 v128 - vertex
+	c1 c2 c3 c4 c5 c6 c7 c8 - color_t
   )
 
   (:init
@@ -781,15 +781,15 @@
 	(adjacent v99 v62)
 	(adjacent v99 v7)
 	(adjacent v99 v91)
-	(at a v102)
-	(at c1 v108)
-	(at c2 v64)
-	(at c3 v85)
-	(at c4 v44)
-	(at c5 v116)
-	(at c6 v31)
-	(at c7 v45)
-	(at c8 v33)
+	(at a v85)
+	(at c1 v61)
+	(at c2 v85)
+	(at c3 v121)
+	(at c4 v109)
+	(at c5 v65)
+	(at c6 v20)
+	(at c7 v37)
+	(at c8 v93)
 	(not-carrying a)
 	(not-has-color v1 c1)
 	(not-has-color v1 c2)

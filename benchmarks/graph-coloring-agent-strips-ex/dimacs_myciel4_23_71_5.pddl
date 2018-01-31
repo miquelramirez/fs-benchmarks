@@ -2,8 +2,8 @@
 (define (problem dimacs_myciel4_23_71_5)
   (:domain graph-coloring-agent-strips-ex)
   (:objects
-    c1 c2 c3 c4 c5 - color_t
-	v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 - vertex
+    v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 - vertex
+	c1 c2 c3 c4 c5 - color_t
   )
 
   (:init
@@ -173,12 +173,12 @@
 	(color v7 undef)
 	(color v8 undef)
 	(color v9 undef)
-	(color_on c1 v18)
-	(color_on c2 v9)
-	(color_on c3 v21)
-	(color_on c4 v3)
-	(color_on c5 v15)
-	(on a v18)
+	(color_on c1 v4)
+	(color_on c2 v23)
+	(color_on c3 v11)
+	(color_on c4 v13)
+	(color_on c5 v7)
+	(on a v6)
   )
 
   (:goal
