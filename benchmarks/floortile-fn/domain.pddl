@@ -2,14 +2,14 @@
 ;; Coded into Functional STRIPS by Miquel Ramirez
 ;;Domain for painting floor tiles with two colors
 
-(define (domain floor-tile-fn)
+(define (domain floortile-fn)
 (:requirements :typing :action-costs)
 (:types
         robot tile color - object
 )
 
 (:constants
-        clear - color
+        clear somerobot - color
         nowhere - tile
 )
 
@@ -56,6 +56,8 @@
   :parameters (?r - robot ?y - tile)
   :precondition (and (= (up (robot-at ?r)) ?y) (!= ?y nowhere) (= (painted ?y) clear))
   :effect (and (assign (robot-at ?r) ?y)
+               (assign (painted (robot-at ?r)) clear)
+               (assign (painted ?y) somerobot)
                (increase (total-cost) 3))
 )
 
@@ -63,6 +65,8 @@
   :parameters (?r - robot ?y - tile)
   :precondition (and (= (down (robot-at ?r)) ?y) (!= ?y nowhere) (= (painted ?y) clear))
   :effect (and (assign (robot-at ?r) ?y)
+               (assign (painted (robot-at ?r)) clear)
+               (assign (painted ?y) somerobot)
                (increase (total-cost) 1))
 )
 
@@ -70,6 +74,8 @@
   :parameters (?r - robot ?y - tile)
   :precondition (and (= (right (robot-at ?r)) ?y) (!= ?y nowhere) (= (painted ?y) clear))
   :effect (and (assign (robot-at ?r) ?y)
+               (assign (painted (robot-at ?r)) clear)
+               (assign (painted ?y) somerobot)
                (increase (total-cost) 1))
 )
 
@@ -77,6 +83,8 @@
   :parameters (?r - robot ?y - tile)
   :precondition (and (= (left (robot-at ?r)) ?y) (!= ?y nowhere) (= (painted ?y) clear))
   :effect (and (assign (robot-at ?r) ?y)
+               (assign (painted (robot-at ?r)) clear)
+               (assign (painted ?y) somerobot)
                (increase (total-cost) 1))
 )
 

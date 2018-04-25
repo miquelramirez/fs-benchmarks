@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
     Problem translator for the floortile domain.
 """
@@ -41,17 +41,22 @@ class FStripsPrinter(TranslationPrinter):
         self.tiles_with_right = set()
         for atom in self.task.init:
             for translated in self.translate_atom(atom):
-                if translated is None : continue
+                if translated is None:
+                    continue
                 self.instance.add_init(translated)
-        for t in self.tile_set :
-            if t not in self.tiles_with_down :
+        for t in self.tile_set:
+            if t not in self.tiles_with_down:
                 self.instance.add_init("(= (down {}) nowhere)".format(t))
-            if t not in self.tiles_with_up :
+            if t not in self.tiles_with_up:
                 self.instance.add_init("(= (up {}) nowhere)".format(t))
-            if t not in self.tiles_with_left :
+            if t not in self.tiles_with_left:
                 self.instance.add_init("(= (left {}) nowhere)".format(t))
-            if t not in self.tiles_with_right :
+            if t not in self.tiles_with_right:
                 self.instance.add_init("(= (right {}) nowhere)".format(t))
+
+        self.instance.add_init("(= (painted nowhere) clear)".format())
+        for d in "up down left right".split(' '):
+            self.instance.add_init("(= ({} nowhere) nowhere)".format(d))
 
     def add_goals(self):  # We need to redefine add_goal to allow for the use of the location dictionaries
         assert isinstance(self.task.goal, pddl.conditions.Conjunction)
@@ -71,7 +76,9 @@ class FStripsPrinter(TranslationPrinter):
         if name == 'robot-at':
             thing, place = atom.args
             symbol = 'robot-at'
-            return ["(= ({} {}) {})".format(symbol, thing, place)]
+            return ["(= ({} {}) {})".format(symbol, thing, place),
+                    "(= (painted {}) somerobot)".format(place)
+                    ]
         if name == 'robot-has':
             robot, what = atom.args
             symbol = 'robot-has'
@@ -82,7 +89,7 @@ class FStripsPrinter(TranslationPrinter):
 
         elif name == 'available-color':
             color = atom.args[0]
-            return ["({} {})".format(name,color)]
+            return ["({} {})".format(name, color)]
 
         elif name == 'up':
             above, below = atom.args
@@ -108,19 +115,18 @@ class FStripsPrinter(TranslationPrinter):
             self.tile_set.add(center)
             self.tiles_with_left.add(center)
             return ["(= (left {}) {})".format(center, left)]
-        elif name == 'painted' :
+        elif name == 'painted':
             obj, color = atom.args
             return ["(= (painted {}) {})".format(obj, color)]
 
         assert False
 
     def get_domain_name(self):
-        return 'floor-tile-fn'
+        return 'floortile-fn'
 
     def add_bounds(self):
-        #self.instance.add_int_bound('count', self.min_count, self.max_count)
+        # self.instance.add_int_bound('count', self.min_count, self.max_count)
         pass
-
 
 
 def generate(random, output):
@@ -128,7 +134,7 @@ def generate(random, output):
     domain_name = "floortile"
 
     for instance_name, filename, task in util.get_instances_of(domain_name):
-        print("Translating {} from file {}".format(instance_name,filename))
+        print("Translating {} from file {}".format(instance_name, filename))
         translator = FStripsPrinter(domain_name, instance_name, filename, task)
         generator(translator)
 
