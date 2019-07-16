@@ -4,7 +4,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (domain counters-fn)
-    (:requirements :strips :typing :equality :adl)
+    (:requirements :adl :numeric-fluents)
     (:types
         counter - object
         val     - int
