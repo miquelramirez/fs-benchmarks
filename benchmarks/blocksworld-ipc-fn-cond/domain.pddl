@@ -7,6 +7,11 @@
 
 (define (domain blocksworld-fn)
 
+  (:requirements
+    :equality
+    :object-fluents
+  )
+
   (:types place - object
           block - place
   )
@@ -27,11 +32,25 @@
               (clear ?b)
 		      (clear ?to)
 		      (not (= ?b ?to))
+              (not (= (loc ?b) ?to))
+              (not (= ?to table)))
+   :effect (and
+   		(assign (loc ?b) ?to)
+		(clear (loc ?b))
+		(not (clear ?to))
+	)
+   )
+
+   (:action move2
+   :parameters (?b - block ?to - place)
+   :precondition (and
+              (clear ?b)
+		      (clear ?to)
+		      (not (= ?b ?to))
               (not (= (loc ?b) ?to)))
    :effect (and
    		(assign (loc ?b) ?to)
 		(clear (loc ?b))
-		(when (not (= ?to table)) (not (clear ?to)))
 	)
    )
 

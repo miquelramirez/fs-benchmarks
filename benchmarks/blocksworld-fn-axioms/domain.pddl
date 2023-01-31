@@ -7,6 +7,9 @@
 
 (define (domain blocksworld-fn)
 
+  (:requirements
+  )
+
   (:types place - object
           block - place
   )

@@ -6,7 +6,7 @@
 
 (define (domain childsnack-fn)
 
-  (:types place - object
+  (:types place disposable - object
           placeable room - place
           child tray sandwich - placeable
           bread-portion content-portion - disposable
